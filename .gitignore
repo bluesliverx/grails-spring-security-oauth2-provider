@@ -1,0 +1,11 @@
+*.class
+target
+*.zip
+plugin.xml
+*.log
+*plugin.xml
+*.pom
+*.md5
+*.sha1
+.classpath
+.link_to_grails_plugins
