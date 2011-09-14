@@ -26,7 +26,7 @@ security {
 		}
 		verificationCode {
 			clientAuthenticationCache = 'oauthClientAuthenticationCache'
-			services = 'oauthInMemoryVerificationCodeServices'
+			services = 'oauthVerificationCodeServices'
 		}
 		tokenServices {
 			tokenSecretLengthBytes = 80
@@ -35,5 +35,11 @@ security {
 			reuseRefreshToken = true
 			supportRefreshToken = true
 		}
+	}
+}
+
+environments {
+	test {
+		security.oauthProvider.active = false
 	}
 }
