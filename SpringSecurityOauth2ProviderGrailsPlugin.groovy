@@ -69,14 +69,14 @@ OAuth2 Provider support for the Spring Security plugin.  Based on Burt Beckwith\
 			return
 		}
 
-		println 'Configuring Spring Security OAuth2 Provider ...'
-
 		SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
 		// have to get again after overlaying DefaultOAuthProviderSecurityConfig
 		conf = SpringSecurityUtils.securityConfig
 		
 		if (!conf.oauthProvider.active)
 			return
+
+		println 'Configuring Spring Security OAuth2 Provider ...'
 		
 		SpringSecurityUtils.registerProvider 'oauthVerificationAuthenticationProvider'
 		SpringSecurityUtils.registerProvider 'oauthAccessGrantAuthenticationProvider'
