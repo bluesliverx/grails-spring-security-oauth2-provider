@@ -84,13 +84,13 @@ OAuth2 Provider support for the Spring Security plugin.  Based on Burt Beckwith\
 		SpringSecurityUtils.registerProvider 'oauthClientPasswordAuthenticationProvider'
 		SpringSecurityUtils.registerProvider 'oauthClientCredentialsAuthenticationProvider'
 		SpringSecurityUtils.registerFilter 'oauthExceptionHandlerFilter',
-				SecurityFilterPosition.EXCEPTION_TRANSLATION_FILTER.order + 1
+				conf.filterStartPosition + 1
 		SpringSecurityUtils.registerFilter 'verificationCodeFilter',
-				SecurityFilterPosition.EXCEPTION_TRANSLATION_FILTER.order + 2
+				conf.filterStartPosition + 2
 		SpringSecurityUtils.registerFilter 'oauthAuthorizationFilter',
-				SecurityFilterPosition.EXCEPTION_TRANSLATION_FILTER.order + 3
+				conf.filterStartPosition + 3
 		SpringSecurityUtils.registerFilter 'oauthProtectedResourceFilter',
-				SecurityFilterPosition.EXCEPTION_TRANSLATION_FILTER.order + 4
+				conf.filterStartPosition + 4
 		SpringSecurityUtils.registerFilter 'oauthUserApprovalFilter', 1
 		
 		// Providers
