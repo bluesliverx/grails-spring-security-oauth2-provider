@@ -31,7 +31,7 @@ grails.project.dependency.resolution = {
 
 	dependencies {
 		// Exclude dependencies pulled in by spring-security-core plugin
-		runtime 'org.springframework.security.oauth:spring-security-oauth:1.0.0.M3', {
+		runtime 'org.springframework.security.oauth:spring-security-oauth:1.0.0.M4', {
 			excludes "spring-security-core", "spring-security-web", "commons-codec"
 		}
 	}
