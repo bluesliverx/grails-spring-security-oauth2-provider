@@ -23,7 +23,7 @@ security {
 			approvalParameter = "user_oauth_approval"
 			approvalParameterValue = true
 			authUrl = '/oauth/user/authorize'
-			confirmUrl = '/login/confirm'
+			confirmUrl = '/oauth/confirm'
 		}
 		client {
 			authUrl = '/oauth/authorize'
