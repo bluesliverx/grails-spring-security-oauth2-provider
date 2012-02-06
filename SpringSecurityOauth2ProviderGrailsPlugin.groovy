@@ -15,38 +15,39 @@
 import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
-import org.springframework.security.oauth.common.signature.CoreOAuthSignatureMethodFactory
 import org.springframework.security.oauth2.common.DefaultOAuth2SerializationService
 import org.springframework.security.oauth2.common.DefaultThrowableAnalyzer
-import org.springframework.security.oauth2.provider.AccessGrantAuthenticationProvider
+import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices
+
 import org.springframework.security.oauth2.provider.BaseClientDetails
 import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
-import org.springframework.security.oauth2.provider.OAuth2AuthorizationFilter
-import org.springframework.security.oauth2.provider.OAuth2AuthorizationSuccessHandler
-import org.springframework.security.oauth2.provider.OAuth2ExceptionHandlerFilter
-import org.springframework.security.oauth2.provider.OAuth2ProtectedResourceFilter
-import org.springframework.security.oauth2.provider.password.ClientPasswordAuthenticationProvider
-import org.springframework.security.oauth2.provider.client.ClientCredentialsAuthenticationProvider
-import org.springframework.security.oauth2.provider.refresh.RefreshAuthenticationProvider
-import org.springframework.security.oauth2.provider.token.InMemoryOAuth2ProviderTokenServices
-import org.springframework.security.oauth2.provider.verification.BasicUserApprovalFilter
-import org.springframework.security.oauth2.provider.verification.DefaultClientAuthenticationCache
-import org.springframework.security.oauth2.provider.verification.InMemoryVerificationCodeServices
-import org.springframework.security.oauth2.provider.verification.VerificationCodeAuthenticationProvider
-import org.springframework.security.oauth2.provider.verification.VerificationCodeFilter
+import org.springframework.security.oauth2.provider.token.InMemoryTokenStore
+import org.springframework.security.oauth2.provider.token.RandomValueTokenServices
+import org.springframework.security.oauth2.provider.filter.OAuth2ExceptionHandlerFilter
+import org.springframework.security.oauth2.provider.filter.OAuth2ProtectedResourceFilter
 
 class SpringSecurityOauth2ProviderGrailsPlugin {
-	def version = "0.3-SNAPSHOT"
+	def version = "1.0.0.M5-SNAPSHOT"
 	String grailsVersion = '1.2.2 > *'
 	
 	List pluginExcludes = [
 		'docs/**',
 		'src/docs/**',
+		// Domains
 		'test/**',
+		// Controllers
+		'grails-app/controllers/**',
+		'grails-app/domain/**',
+		'grails-app/i18n/**',
+		// Views
+		'web-app/**',
+		'grails-app/views/login/**',
+		'grails-app/views/secured/**',
+		'grails-app/views/index.gsp',
 	]
 
 	//Map dependsOn = [springSecurityCore: '1.0 > *']
-	def loadAfter = ["core", "springSecurityCore"]
+	def loadAfter = ["springSecurityCore"]
 
 	def license = "APACHE"
 	def organization = [ name:"Adaptive Computing", url:"http://adaptivecomputing.com" ]
@@ -78,83 +79,59 @@ OAuth2 Provider support for the Spring Security plugin.  Based on Burt Beckwith\
 
 		println 'Configuring Spring Security OAuth2 Provider ...'
 		
-		SpringSecurityUtils.registerProvider 'oauthVerificationAuthenticationProvider'
-		SpringSecurityUtils.registerProvider 'oauthAccessGrantAuthenticationProvider'
-		SpringSecurityUtils.registerProvider 'oauthRefreshAuthenticationProvider'
-		SpringSecurityUtils.registerProvider 'oauthClientPasswordAuthenticationProvider'
-		SpringSecurityUtils.registerProvider 'oauthClientCredentialsAuthenticationProvider'
-		SpringSecurityUtils.registerFilter 'oauthExceptionHandlerFilter',
-				conf.oauthProvider.filterStartPosition + 1
-		SpringSecurityUtils.registerFilter 'verificationCodeFilter',
-				conf.oauthProvider.filterStartPosition + 2
-		SpringSecurityUtils.registerFilter 'oauthAuthorizationFilter',
-				conf.oauthProvider.filterStartPosition + 3
-		SpringSecurityUtils.registerFilter 'oauthProtectedResourceFilter',
-				conf.oauthProvider.filterStartPosition + 4
-		SpringSecurityUtils.registerFilter 'oauthUserApprovalFilter', 1
-		
-		// Providers
-		oauthAccessGrantAuthenticationProvider(AccessGrantAuthenticationProvider) {
-			clientDetailsService = ref('clientDetailsService')
-		}
-		oauthVerificationAuthenticationProvider(VerificationCodeAuthenticationProvider) {
-			verificationServices = ref('oauthVerificationCodeServices')
-		}
-		oauthRefreshAuthenticationProvider(RefreshAuthenticationProvider)
-		oauthClientPasswordAuthenticationProvider(ClientPasswordAuthenticationProvider)
-		oauthClientCredentialsAuthenticationProvider(ClientCredentialsAuthenticationProvider)
-		
-		
-		// Filters
-		oauthUserApprovalFilter(BasicUserApprovalFilter) {
-			approvalParameter = conf.oauthProvider.user.approvalParameter	// user_oauth_approval
-			approvalParameterValue = conf.oauthProvider.user.approvalParameterValue	// true
-		}
-		verificationCodeFilter(VerificationCodeFilter) {
-			allowSessionCreation = conf.apf.allowSessionCreation // true
-			authenticationCache = ref(conf.oauthProvider.verificationCode.clientAuthenticationCache)	// oauthClientAuthenticationCache
-			clientDetailsService = ref('clientDetailsService')
-			continueChainBeforeSuccessfulAuthentication = conf.apf.continueChainBeforeSuccessfulAuthentication // false
-			filterProcessesUrl = conf.oauthProvider.user.authUrl // /oauth/user/authorize'
-			userApprovalHandler = ref('oauthUserApprovalFilter')
-			verificationServices = ref('oauthVerificationCodeServices')
-			unapprovedAuthenticationHandler = ref('oauthUnapprovedAuthenticationHandler')
-		}
-		oauthAuthorizationFilter(OAuth2AuthorizationFilter) {
-			allowSessionCreation = conf.apf.allowSessionCreation // true
-			authenticationManager = ref('authenticationManager')
-			authenticationSuccessHandler = ref('oauthSuccessfulAuthenticationHandler')
-			continueChainBeforeSuccessfulAuthentication = conf.apf.continueChainBeforeSuccessfulAuthentication // false
-			filterProcessesUrl = conf.oauthProvider.client.authUrl	// /oauth/client/authorize'
-		}
-		oauthExceptionHandlerFilter(OAuth2ExceptionHandlerFilter)
-		oauthProtectedResourceFilter(OAuth2ProtectedResourceFilter) {
-			tokenServices = ref('oauthTokenServices')
-		}
-		
-		
-		// Handlers
-		oauthSuccessfulAuthenticationHandler(OAuth2AuthorizationSuccessHandler) {
-			tokenServices = ref('oauthTokenServices')
-		}
-		oauthUnapprovedAuthenticationHandler(SimpleUrlAuthenticationFailureHandler) {
-			defaultFailureUrl = conf.oauthProvider.user.confirmUrl 	// /login/confirm
-		}
-		
-		
-		// Services
 		clientDetailsService(InMemoryClientDetailsService)
-		oauthClientAuthenticationCache(DefaultClientAuthenticationCache)
-		oauthTokenServices(InMemoryOAuth2ProviderTokenServices) {
-			reuseRefreshToken = conf.oauthProvider.tokenServices.reuseRefreshToken	// true
-			supportRefreshToken = conf.oauthProvider.tokenServices.supportRefreshToken	// true
-			tokenSecretLengthBytes = conf.oauthProvider.tokenServices.tokenSecretLengthBytes // 80
-			refreshTokenValiditySeconds = conf.oauthProvider.tokenServices.refreshTokenValiditySeconds // 10 minutes
-			accessTokenValiditySeconds = conf.oauthProvider.tokenServices.accessTokenValiditySeconds // 12 hours
+		tokenStore(InMemoryTokenStore)
+		tokenServices(RandomValueTokenServices) {
+			tokenStore = ref("tokenStore")
+			accessTokenValiditySeconds = conf.oauthProvider.tokenServices.accessTokenValiditySeconds
+			refreshTokenValiditySeconds = conf.oauthProvider.tokenServices.refreshTokenValiditySeconds
+			reuseRefreshToken = conf.oauthProvider.tokenServices.reuseRefreshToken
+			supportRefreshToken = conf.oauthProvider.tokenServices.supportRefreshToken
 		}
-		oauthVerificationCodeServices(InMemoryVerificationCodeServices)
+		authorizationCodeServices(InMemoryAuthorizationCodeServices)
 		
-		// TODO Implement oauth2ProtectedResourceDetails bean to give permissions to resources based on annotations?
-		//oauth2ProtectedResourceDetails()
+		// Oauth namespace
+		xmlns oauth:"http://www.springframework.org/schema/security/oauth2"
+		
+		oauth.'authorization-server'(
+				'client-details-service-ref':"clientDetailsService",
+				'token-services-ref':"tokenServices",
+				'authorization-endpoint-url':conf.oauthProvider.authorizationEndpointUrl,
+				'token-endpoint-url':conf.oauthProvider.tokenEndpointUrl) {
+			
+			oauth.'authorization-code'(
+				'services-ref':"authorizationCodeServices",
+				'disabled':!conf.oauthProvider.grantTypes.authorizationCode,
+				'user-approval-page':conf.oauthProvider.userApprovalEndpointUrl,
+				'approval-parameter-name':conf.oauthProvider.authorizationCode.approvalParameterName)
+			
+			oauth.'implicit'(
+				'disabled':!conf.oauthProvider.grantTypes.implicit
+			)
+			oauth.'refresh-token'(
+				'disabled':!conf.oauthProvider.grantTypes.refreshToken
+			)
+			oauth.'client-credentials'(
+				'disabled':!conf.oauthProvider.grantTypes.clientCredentials
+			)
+			oauth.'password'(
+				'authentication-manager-ref':'authenticationManager',
+				'disabled':!conf.oauthProvider.grantTypes.password
+			)
+		}
+			
+		// Register endpoint URL filter since we define the URLs above
+		SpringSecurityUtils.registerFilter 'oauth2EndpointUrlFilter',
+				conf.oauthProvider.filterStartPosition + 1
+				
+		oauth2ExceptionHandlerFilter(OAuth2ExceptionHandlerFilter)
+		SpringSecurityUtils.registerFilter 'oauth2ExceptionHandlerFilter',
+				conf.oauthProvider.filterStartPosition + 2
+		oauth2ProtectedResourceFilter(OAuth2ProtectedResourceFilter) {
+			tokenServices = ref("tokenServices")
+		}
+		SpringSecurityUtils.registerFilter 'oauth2ProtectedResourceFilter',
+				conf.oauthProvider.filterStartPosition + 3
+		
 	}
 }

@@ -19,25 +19,27 @@ security {
 	oauthProvider {
 		active = true
 		filterStartPosition = SecurityFilterPosition.EXCEPTION_TRANSLATION_FILTER.order
-		user {
-			approvalParameter = "user_oauth_approval"
-			approvalParameterValue = true
-			authUrl = '/oauth/user/authorize'
-			confirmUrl = '/oauth/confirm'
-		}
-		client {
-			authUrl = '/oauth/authorize'
-		}
-		verificationCode {
-			clientAuthenticationCache = 'oauthClientAuthenticationCache'
-			services = 'oauthVerificationCodeServices'
+		
+		authorizationCode {
+			approvalParameterName = "user_oauth_approval"
 		}
 		tokenServices {
-			tokenSecretLengthBytes = 80
-			refreshTokenValiditySeconds = 60 * 10 //default 10 minutes
 			accessTokenValiditySeconds = 60 * 60 * 12 //default 12 hours
+			refreshTokenValiditySeconds = 60 * 10 //default 10 minutes
 			reuseRefreshToken = true
 			supportRefreshToken = true
+		}
+		authorizationEndpointUrl = "/oauth/authorize"
+		tokenEndpointUrl = "/oauth/token"
+		userApprovalEndpointUrl = "/oauth/confirm"
+		
+		// Decides which grant types are enabled or not
+		grantTypes {
+			authorizationCode = true
+			implicit = true
+			refreshToken = true
+			clientCredentials = true
+			password = true
 		}
 	}
 }

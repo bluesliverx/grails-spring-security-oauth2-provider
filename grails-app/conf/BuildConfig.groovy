@@ -27,11 +27,12 @@ grails.project.dependency.resolution = {
 
 		mavenLocal()
 		mavenRepo "http://maven.springframework.org/milestone"	// For spring-security-oauth provider
+		mavenCentral()
 	}
 
 	dependencies {
 		// Exclude dependencies pulled in by spring-security-core plugin
-		runtime 'org.springframework.security.oauth:spring-security-oauth:1.0.0.M3', {
+		runtime 'org.springframework.security.oauth:spring-security-oauth2:1.0.0.M5', {
 			excludes "spring-security-core", "spring-security-web", "commons-codec"
 		}
 	}
@@ -44,9 +45,12 @@ grails.project.dependency.resolution = {
 		test ':codenarc:0.15', {
 			export = false
 		}
-		provided ':release:1.0.0.RC3', {
+		provided ':release:1.0.1', {
 			export = false
 		}
-		compile ':spring-security-core:1.2.1'
+		provided ':svn:1.0.2', {
+			export = false
+		}
+		compile ':spring-security-core:1.2.6'
 	}
 }
