@@ -1,4 +1,4 @@
-start package test
+package test
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 
 class LogoutController {
