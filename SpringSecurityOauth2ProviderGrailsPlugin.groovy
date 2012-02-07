@@ -27,7 +27,7 @@ import grails.plugins.springsecurity.oauthprovider.SpringSecurityOAuth2ProviderU
 class SpringSecurityOauth2ProviderGrailsPlugin {
 	static Logger log = Logger.getLogger('grails.app.bootstrap.BootStrap')
 	
-	def version = "1.0.0.M5-SNAPSHOT"
+	def version = "1.0.0.M5.1-SNAPSHOT"
 	String grailsVersion = '1.2.2 > *'
 	
 	List pluginExcludes = [
@@ -58,7 +58,7 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 	String authorEmail = 'bsaville@adaptivecomputing.com'
 	String title = 'OAuth2 Provider support for the Spring Security plugin.'
 	String description = '''\
-OAuth2 Provider support for the Spring Security plugin.  Based on Burt Beckwith\'s OAuth 1 Provider plugin
+OAuth2 Provider support for the Spring Security plugin.
 '''
 
 	String documentation = 'http://grails.org/plugin/spring-security-oauth2-provider'
