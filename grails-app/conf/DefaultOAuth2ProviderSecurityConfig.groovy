@@ -41,6 +41,14 @@ security {
 			clientCredentials = true
 			password = true
 		}
+		defaultClientConfig {
+			resourceIds = []
+			authorizedGrantTypes = ["authorization_code", "refresh_token"]
+			scope = []
+			registeredRedirectUri = null
+			authorities = []
+		}
+		clients = []
 	}
 }
 

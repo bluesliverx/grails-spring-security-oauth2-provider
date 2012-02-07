@@ -1,10 +1,14 @@
 This plugin is an OAuth2 Provider based on the spring security libraries.  It is based off of Burt Beckwith's OAuth Provider plugin (never officially released).
 
 NOTE: This plugin is incomplete still and does not provide full functionality.  Teh following works and has been at least partially tested:
+
 * The full flow of logging in with both users and clients using tokens and authorization codes
+
 However, the following items have not been tested and may or may not work:
+
 * Grant types besides `authorization_code` and `client_credentials`
-* Protected resources via spring OAuth2 protection - this is simply done with the Spring Security core methods as of now
+* Protected resources via Spring OAuth2
+** This is currently done with the Spring Security core methods (ie request maps, annotations, intercept maps)
 
 ## Setup
 
@@ -13,14 +17,76 @@ location should match the `userApprovalEndpointUrl` setting discussed below.
 
 ## How to Use
 
-### OAuth Controller/View
+### Register Clients in Configuration
 
-The `userApprovalEndpointUrl` setting controls where the user will be redirected to confirm access to a certain client
+Clients are configured using the default in memory client details service in an option in Config.groovy or an external configuration
+file specified by `grails.config.locations`.  The following is an example of configuring a simple client with an ID
+of `myId` and a secret key of `mySecret`:
 
-### Register Clients
+```groovy
+grails.plugins.springsecurity.oauthProvider.clients = [
+	[
+		clientId:"myId",
+		clientSecret:"mySecret"
+	]
+]
+```
 
-This is an example of registering a client (to be run in the BootStrap of your application):
-def clientDetailsService
+Notice that the client configuration consists of a list of maps with each map representing a single configured client.
+The properties which can be configured match the properties in the `org.springframework.security.oauth2.provider.BaseClientDetails`
+class.  The only difference is the `webServerRedirectUri` has been renamed to `registeredRedirectUri` in order to be compatible
+with newer releases of Spring Security OAuth2.  Default values have been configured for each property except for `clientId` and
+`clientSecret` since these are unique for each configured client.  These default values are shown in the following code block with
+their default values.  These default values may be modified by placing a line similar to the following in Config.groovy or an external
+configuration file.
+
+```groovy
+grails.plugins.springsecurity.oauthProvider.defaultClientConfig.resourceIds = []
+grails.plugins.springsecurity.oauthProvider.defaultClientConfig.authorizedGrantTypes = ["authorization_code", "refresh_token"]
+grails.plugins.springsecurity.oauthProvider.defaultClientConfig.scope = []
+grails.plugins.springsecurity.oauthProvider.defaultClientConfig.registeredRedirectUri = null
+grails.plugins.springsecurity.oauthProvider.defaultClientConfig.authorities = []
+```
+
+For example, with a default configuration option in Config.groovy of:
+
+```groovy
+grails.plugins.springsecurity.oauthProvider.defaultClientConfig.authorizedGrantTypes = ["implicit"]
+```
+
+And a client configuration of:
+
+```groovy
+grails.plugins.springsecurity.oauthProvider.clients = [
+	[
+		clientId:"myId",
+		clientSecret:"mySecret"
+	]
+]
+```
+
+Will result in a client with an ID of `myId` and a single authorized grant type of `implicit`.  However, if the client configuration
+was modified to the following:
+
+```groovy
+grails.plugins.springsecurity.oauthProvider.clients = [
+	[
+		clientId:"myId",
+		clientSecret:"mySecret",
+		authorizedGrantTypes:["authorization_code"]
+	]
+]
+```
+
+Then the resulting configured client `myId` would have a single authorized grant type of `authorization_code`.  In other words,
+the default configuration is overridden by the individual client configuration.
+
+Using this method, when the configuration changes, the entire list of clients is reloaded and replaces the old list.
+
+### Registering Clients in Bootstrap
+
+Clients may also be individually registered by using the `BaseClientDetails` class in combination with the `clientDetailsService`
+bean in the Bootstrap process.  The following is an example of registering a client programmatically (to be run in the BootStrap of your application):
 
 ```groovy
 import org.springframework.security.oauth2.provider.BaseClientDetails;
@@ -33,7 +99,10 @@ class BootStrap {
 		client.clientId = "clientId"
 		client.clientSecret = "clientSecret"
 		client.authorizedGrantTypes = ["authorization_code", "refresh_token", "client_credentials", "password", "implicit"]
+		
+		// Set the full contents of the client details service store to the newly created client
 		clientDetailsService.clientDetailsStore = [
+			// Map of client ID to the client details instance
 			"clientId":client
 		]
 	}
@@ -121,7 +190,8 @@ grails.plugins.springsecurity.oauthProvider.tokenEndpointUrl = "/oauth/token"	//
 grails.plugins.springsecurity.oauthProvider.userApprovalEndpointUrl = "/oauth/confirm"	// Where the user confirms that they approve the client
 ```
 
-NOTE: The `userApprovalEndpointUrl` never is actually redirected to, but is simply used to load the `confirm.gsp` view.
+NOTE: The `userApprovalEndpointUrl` never is actually redirected to, but is simply used to specify the location of the view.
+For example, a `userApprovalEndpointUrl` of `/custom/oauth_confirm` would map to the `grails-app/views/custom/oauth_confirm.gsp` view.
 
 ### Grant Types
 

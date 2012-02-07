@@ -12,13 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
+import org.apache.log4j.Logger;
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
-import org.springframework.security.oauth2.common.DefaultOAuth2SerializationService
-import org.springframework.security.oauth2.common.DefaultThrowableAnalyzer
 import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices
-
 import org.springframework.security.oauth2.provider.BaseClientDetails
 import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
 import org.springframework.security.oauth2.provider.token.InMemoryTokenStore
@@ -26,7 +22,11 @@ import org.springframework.security.oauth2.provider.token.RandomValueTokenServic
 import org.springframework.security.oauth2.provider.filter.OAuth2ExceptionHandlerFilter
 import org.springframework.security.oauth2.provider.filter.OAuth2ProtectedResourceFilter
 
+import grails.plugins.springsecurity.oauthprovider.SpringSecurityOAuth2ProviderUtility
+
 class SpringSecurityOauth2ProviderGrailsPlugin {
+	static Logger log = Logger.getLogger('grails.app.bootstrap.BootStrap')
+	
 	def version = "1.0.0.M5-SNAPSHOT"
 	String grailsVersion = '1.2.2 > *'
 	
@@ -64,7 +64,6 @@ OAuth2 Provider support for the Spring Security plugin.  Based on Burt Beckwith\
 	String documentation = 'http://grails.org/plugin/spring-security-oauth2-provider'
 
 	def doWithSpring = {
-
 		def conf = SpringSecurityUtils.securityConfig
 		if (!conf || !conf.active) {
 			return
@@ -77,7 +76,7 @@ OAuth2 Provider support for the Spring Security plugin.  Based on Burt Beckwith\
 		if (!conf.oauthProvider.active)
 			return
 
-		println 'Configuring Spring Security OAuth2 Provider ...'
+		log.debug 'Configuring Spring Security OAuth2 provider ...'
 		
 		clientDetailsService(InMemoryClientDetailsService)
 		tokenStore(InMemoryTokenStore)
@@ -133,5 +132,54 @@ OAuth2 Provider support for the Spring Security plugin.  Based on Burt Beckwith\
 		SpringSecurityUtils.registerFilter 'oauth2ProtectedResourceFilter',
 				conf.oauthProvider.filterStartPosition + 3
 		
+		log.debug "... done configured Spring Security OAuth2 provider"
+	}
+
+    def doWithApplicationContext = { applicationContext ->
+		def conf = SpringSecurityUtils.securityConfig
+		if (!conf || !conf.active) {
+			return
+		}
+
+		SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
+		// have to get again after overlaying DefaultOAuthProviderSecurityConfig
+		conf = SpringSecurityUtils.securityConfig
+		
+		if (!conf.oauthProvider.active || !conf.oauthProvider.clients)
+			return
+
+		log.debug 'Configuring OAuth2 clients ...'
+		
+		def clientDetailsService = applicationContext.getBean("clientDetailsService")
+		if (clientDetailsService instanceof InMemoryClientDetailsService)
+			SpringSecurityOAuth2ProviderUtility.registerClients(conf, clientDetailsService)
+		else
+			log.info("Client details service bean is not an in-memory implementation, ignoring client config")
+		
+		log.debug '... done configuring OAuth2 clients'
+    }
+	
+    def onConfigChange = { event ->
+		def conf = SpringSecurityUtils.securityConfig
+		if (!conf || !conf.active) {
+			return
+		}
+
+		SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
+		// have to get again after overlaying DefaultOAuthProviderSecurityConfig
+		conf = SpringSecurityUtils.securityConfig
+		
+		if (!conf.oauthProvider.active || !conf.oauthProvider.clients)
+			return
+
+		log.debug 'Reconfiguring OAuth2 clients ...'
+		
+		def clientDetailsService = applicationContext.getBean("clientDetailsService")
+		if (clientDetailsService instanceof InMemoryClientDetailsService)
+			SpringSecurityOAuth2ProviderUtility.registerClients(conf, clientDetailsService)
+		else
+			log.info("Client details service bean is not an in-memory implementation, ignoring config change")
+		
+		log.debug '... done reconfiguring OAuth2 clients'
 	}
 }

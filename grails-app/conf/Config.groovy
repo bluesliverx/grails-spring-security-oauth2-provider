@@ -7,11 +7,20 @@ grails.plugins.springsecurity.userLookup.userDomainClassName = 'test.User'
 grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'test.UserRole'
 grails.plugins.springsecurity.authority.className = 'test.Role'
 
+grails.plugins.springsecurity.oauthProvider.clients = [
+	[
+		clientId:"clientId",
+		clientSecret:"clientSecret",
+		authorizedGrantTypes:["authorization_code", "refresh_token", "client_credentials", "password", "implicit"]
+	],
+]
+
 grails.serverURL = "http://localhost:8080/oauth2"
 
 log4j = {
 	debug	'grails.app.bootstrap.BootStrap',
-			'grails.app'
+			'grails.app',
+			'grails.plugins.springsecurity.oauthprovider'
 	info	'org.hibernate.SQL',
 			'org.springframework.security'
 	error	'org.codehaus.groovy.grails.web.servlet',	//	controllers
