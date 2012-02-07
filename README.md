@@ -8,15 +8,8 @@ However, the following items have not been tested and may or may not work:
 
 ## Setup
 
-A few steps are required before the plugin is ready for use.  First, add the necessary URL mappings to URLMappings.groovy:
-
-```groovy
-"/oauth/authorize"(uri:"/oauth/authorize.dispatch")
-"/oauth/token"(uri:"/oauth/token.dispatch")
-```
-
-Note that these URLs should match the `tokenEndpointUrl` and `authorizationEndpointUrl` settings discussed below.
-Additionally, the confirm.gsp view should exist in `views/oauth/confirm.gsp`.
+On install, a view is created at `grails-app/views/oauth/confirm.gsp`.  This view may be modified as desired, but the
+location should match the `userApprovalEndpointUrl` setting discussed below.
 
 ## How to Use
 
@@ -118,13 +111,17 @@ but is untested.  If you have tested this plugin in these configurations, please
 
 ### Endpoint URLs
 
-By default, three endpoint URLs have been defined.  Their default values and how they would be set in Config.groovy are shown below:
+By default, three endpoint URLs have been defined.  Note that default URLMappings are provided for the 
+`authorizationEndpointUrl` and the `tokenEndpointUrl`.  If these are modified, additional URLMappings will have to
+be set.  Their default values and how they would be set in Config.groovy are shown below:
 
 ```groovy
 grails.plugins.springsecurity.oauthProvider.authorizationEndpointUrl = "/oauth/authorize"
 grails.plugins.springsecurity.oauthProvider.tokenEndpointUrl = "/oauth/token"	// Where the client is authorized
 grails.plugins.springsecurity.oauthProvider.userApprovalEndpointUrl = "/oauth/confirm"	// Where the user confirms that they approve the client
 ```
+
+NOTE: The `userApprovalEndpointUrl` never is actually redirected to, but is simply used to load the `confirm.gsp` view.
 
 ### Grant Types
 

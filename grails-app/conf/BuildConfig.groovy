@@ -1,7 +1,7 @@
 grails.project.class.dir = 'target/classes'
 grails.project.test.class.dir = 'target/test-classes'
 grails.project.test.reports.dir	= 'target/test-reports'
-grails.project.docs.output.dir = 'docs' // for backwards-compatibility, the docs are checked into gh-pages branch
+grails.project.docs.output.dir = 'target/docs' // for backwards-compatibility, the docs are checked into gh-pages branch
 
 grails.release.scm.enabled = false
 
@@ -31,9 +31,11 @@ grails.project.dependency.resolution = {
 	}
 
 	dependencies {
-		// Exclude dependencies pulled in by spring-security-core plugin
-		runtime 'org.springframework.security.oauth:spring-security-oauth2:1.0.0.M5', {
-			excludes "spring-security-core", "spring-security-web", "commons-codec"
+		compile('org.springframework.security:spring-security-crypto:3.1.0.RELEASE') {
+			excludes 'spring-core', 'commons-logging'
+		}
+		compile 'org.springframework.security.oauth:spring-security-oauth2:1.0.0.M5', {
+			excludes "spring-security-core", "spring-security-web"
 		}
 		compile 'net.sf.ezmorph:ezmorph:1.0.6', {
 			excludes "commons-lang"
