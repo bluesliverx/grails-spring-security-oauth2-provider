@@ -1,6 +1,8 @@
-This plugin is an OAuth2 Provider based on the spring security libraries.  It is based off of Burt Beckwith's OAuth Provider plugin (never officially released).
+This plugin is an OAuth2 Provider based on the Spring Security OAuth libraries.  It is partially based off of Burt Beckwith's OAuth 
+Provider plugin, which was never officially released.
 
-NOTE: This plugin is incomplete still and does not provide full functionality.  Teh following works and has been at least partially tested:
+While this plugin works for certain use cases, not all OAuth2 flows have been tested.  In particular, the following works and has 
+been tested:
 
 * The full flow of logging in with both users and clients using tokens and authorization codes
 
