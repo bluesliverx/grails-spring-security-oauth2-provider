@@ -35,6 +35,10 @@ grails.project.dependency.resolution = {
 		runtime 'org.springframework.security.oauth:spring-security-oauth2:1.0.0.M5', {
 			excludes "spring-security-core", "spring-security-web", "commons-codec"
 		}
+		compile 'net.sf.ezmorph:ezmorph:1.0.6', {
+			excludes "commons-lang"
+			export = false
+		}
 	}
 	
 	plugins {
