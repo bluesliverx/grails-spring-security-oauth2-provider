@@ -57,6 +57,6 @@ grails.project.dependency.resolution = {
 		provided ':svn:1.0.2', {
 			export = false
 		}
-		compile ':spring-security-core:1.2.6'
+		compile ':spring-security-core:1.2.7.2'
 	}
 }
