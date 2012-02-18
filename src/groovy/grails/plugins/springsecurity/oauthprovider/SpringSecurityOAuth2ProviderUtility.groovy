@@ -5,7 +5,7 @@ import org.springframework.security.oauth2.provider.BaseClientDetails
 
 import org.apache.log4j.Logger
 
-static class SpringSecurityOAuth2ProviderUtility {
+class SpringSecurityOAuth2ProviderUtility {
 	private static Logger log = Logger.getLogger(this)
 	
 	static registerClients(ConfigObject config, InMemoryClientDetailsService clientDetailsService) {

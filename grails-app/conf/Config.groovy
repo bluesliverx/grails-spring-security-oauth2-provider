@@ -1,3 +1,6 @@
+grails.views.default.codec="none" // none, html, base64
+grails.views.gsp.encoding="UTF-8"
+
 // Secure the oauth endpoints
 grails.plugins.springsecurity.controllerAnnotations.staticRules = [
 	'/oauth/authorize.dispatch':['ROLE_ADMIN'],

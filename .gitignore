@@ -9,3 +9,4 @@ plugin.xml
 *.sha1
 .classpath
 .link_to_grails_plugins
+web-app
