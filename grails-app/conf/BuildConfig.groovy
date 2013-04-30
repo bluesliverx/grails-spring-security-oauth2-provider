@@ -26,8 +26,7 @@ grails.project.dependency.resolution = {
 		grailsHome()
 		grailsCentral()
 
-		mavenLocal()
-		mavenRepo "http://maven.springframework.org/milestone"	// For spring-security-oauth provider
+//		mavenLocal()
 		mavenCentral()
 	}
 
@@ -35,7 +34,7 @@ grails.project.dependency.resolution = {
 		compile('org.springframework.security:spring-security-crypto:3.1.0.RELEASE') {
 			excludes 'spring-core', 'commons-logging'
 		}
-		compile 'org.springframework.security.oauth:spring-security-oauth2:1.0.0.M5', {
+		compile 'org.springframework.security.oauth:spring-security-oauth2:1.0.4.RELEASE', {
 			excludes "spring-security-core", "spring-security-web"
 		}
 		compile 'net.sf.ezmorph:ezmorph:1.0.6', {
@@ -58,6 +57,6 @@ grails.project.dependency.resolution = {
 		provided ':svn:1.0.2', {
 			export = false
 		}
-		compile ':spring-security-core:1.2.7.2'
+		compile ':spring-security-core:1.2.7.3'
 	}
 }

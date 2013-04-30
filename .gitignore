@@ -10,3 +10,6 @@ plugin.xml
 .classpath
 .link_to_grails_plugins
 web-app
+*.iml
+*.ipr
+.idea
