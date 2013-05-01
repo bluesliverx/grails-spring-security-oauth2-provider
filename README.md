@@ -48,6 +48,8 @@ grails.plugins.springsecurity.oauthProvider.defaultClientConfig.authorizedGrantT
 grails.plugins.springsecurity.oauthProvider.defaultClientConfig.scope = []
 grails.plugins.springsecurity.oauthProvider.defaultClientConfig.registeredRedirectUri = null
 grails.plugins.springsecurity.oauthProvider.defaultClientConfig.authorities = []
+grails.plugins.springsecurity.oauthProvider.defaultClientConfig.accessTokenValiditySeconds = []
+grails.plugins.springsecurity.oauthProvider.defaultClientConfig.refreshTokenValiditySeconds = []
 ```
 
 For example, with a default configuration option in Config.groovy of:

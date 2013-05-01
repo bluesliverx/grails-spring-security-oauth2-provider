@@ -43,7 +43,7 @@ security {
 			resourceIds = []
 			authorizedGrantTypes = ["authorization_code", "refresh_token"]
 			scope = []
-			registeredRedirectUris = null
+			registeredRedirectUri = null
 			authorities = []
 			accessTokenValiditySeconds = null
 			refreshTokenValiditySeconds = null
