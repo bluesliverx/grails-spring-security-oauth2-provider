@@ -37,24 +37,23 @@ grails.project.dependency.resolution = {
 		compile 'org.springframework.security.oauth:spring-security-oauth2:1.0.4.RELEASE', {
 			excludes "spring-security-core", "spring-security-web"
 		}
-		compile 'net.sf.ezmorph:ezmorph:1.0.6', {
-			excludes "commons-lang"
-			export = false
-		}
 	}
 	
 	plugins {
+		// Release
+		build (':release:2.0.4') {
+			export = false
+			excludes 'rest-client-builder'
+		}
+		build (':rest-client-builder:1.0.2') {
+			export = false
+		}
+
 		// Testing
 		test ':code-coverage:1.2.4', {
 			export = false
 		}
 		test ':codenarc:0.15', {
-			export = false
-		}
-		provided ':release:1.0.1', {
-			export = false
-		}
-		provided ':svn:1.0.2', {
 			export = false
 		}
 		compile ':spring-security-core:1.2.7.3'

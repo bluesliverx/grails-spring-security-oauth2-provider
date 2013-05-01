@@ -18,11 +18,8 @@ import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
 security {
 	oauthProvider {
 		active = true
-		filterStartPosition = SecurityFilterPosition.EXCEPTION_TRANSLATION_FILTER.order
+		filterStartPosition = SecurityFilterPosition.X509_FILTER.order
 		
-		authorizationCode {
-			approvalParameterName = "user_oauth_approval"
-		}
 		tokenServices {
 			accessTokenValiditySeconds = 60 * 60 * 12 //default 12 hours
 			refreshTokenValiditySeconds = 60 * 10 //default 10 minutes
@@ -32,6 +29,7 @@ security {
 		authorizationEndpointUrl = "/oauth/authorize"
 		tokenEndpointUrl = "/oauth/token"
 		userApprovalEndpointUrl = "/oauth/confirm"
+		userApprovalParameter = "user_oauth_approval"
 		
 		// Decides which grant types are enabled or not
 		grantTypes {
@@ -45,8 +43,10 @@ security {
 			resourceIds = []
 			authorizedGrantTypes = ["authorization_code", "refresh_token"]
 			scope = []
-			registeredRedirectUri = null
+			registeredRedirectUris = null
 			authorities = []
+			accessTokenValiditySeconds = null
+			refreshTokenValiditySeconds = null
 		}
 		clients = []
 	}
