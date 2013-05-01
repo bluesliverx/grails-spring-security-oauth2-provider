@@ -216,8 +216,8 @@ Here are some other configuration options that can be set and their default valu
 
 ```groovy
 grails.plugins.springsecurity.oauthProvider.active = true // Set to false to disable the provider, true in all environments but test where false is the default
-grails.plugins.springsecurity.oauthProvider.filterStartPosition = SecurityFilterPosition.EXCEPTION_TRANSLATION_FILTER.order // The starting location of the filters registered
-grails.plugins.springsecurity.oauthProvider.authorizationCode.approvalParameterName = "user_oauth_approval" // Used on the user confirmation page (see userApprovalEndpointUrl)
+grails.plugins.springsecurity.oauthProvider.filterStartPosition = SecurityFilterPosition.X509_FILTER.order // The starting location of the filters registered
+grails.plugins.springsecurity.oauthProvider.userApprovalParameterName = "user_oauth_approval" // Used on the user confirmation page (see userApprovalEndpointUrl)
 grails.plugins.springsecurity.oauthProvider.tokenServices.refreshTokenValiditySeconds = 60 * 10 //default 10 minutes
 grails.plugins.springsecurity.oauthProvider.tokenServices.accessTokenValiditySeconds = 60 * 60 * 12 //default 12 hours
 grails.plugins.springsecurity.oauthProvider.tokenServices.reuseRefreshToken = true
