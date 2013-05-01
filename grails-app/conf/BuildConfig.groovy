@@ -31,11 +31,15 @@ grails.project.dependency.resolution = {
 	}
 
 	dependencies {
-		compile('org.springframework.security:spring-security-crypto:3.1.0.RELEASE') {
-			excludes 'spring-core', 'commons-logging'
-		}
+//		compile('org.springframework.security:spring-security-crypto:3.1.4.RELEASE') {
+//			excludes 'spring-core', 'commons-logging'
+//		}
 		compile 'org.springframework.security.oauth:spring-security-oauth2:1.0.4.RELEASE', {
-			excludes "spring-security-core", "spring-security-web"
+			transitive = false
+		}
+		compile 'org.springframework.security:spring-security-config:3.1.2.RELEASE', {
+			excludes 'spring-core', 'spring-context', 'spring-aop', 'spring-web',
+					'aspectjweaver', 'servlet-api', 'commons-logging', 'aopalliance'
 		}
 	}
 	
