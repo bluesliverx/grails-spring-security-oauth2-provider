@@ -37,7 +37,7 @@ grails.project.dependency.resolution = {
 		compile 'org.springframework.security.oauth:spring-security-oauth2:1.0.4.RELEASE', {
 			transitive = false
 		}
-		compile 'org.springframework.security:spring-security-config:3.1.2.RELEASE', {
+		compile 'org.springframework.security:spring-security-config:3.0.7.RELEASE', {
 			excludes 'spring-core', 'spring-context', 'spring-aop', 'spring-web',
 					'aspectjweaver', 'servlet-api', 'commons-logging', 'aopalliance'
 		}
