@@ -25,7 +25,7 @@ import org.springframework.security.oauth2.provider.approval.TokenServicesUserAp
 class SpringSecurityOauth2ProviderGrailsPlugin {
 	static Logger log = Logger.getLogger('grails.app.bootstrap.BootStrap')
 	
-	def version = "1.0.0.M5.1-SNAPSHOT"
+	def version = "1.0.4-SNAPSHOT"
 	String grailsVersion = '1.2.2 > *'
 	
 	List pluginExcludes = [
