@@ -137,8 +137,7 @@ The response from a login such as this is the following JSON.  The `access_token
 
 The following URLs or configuration options show a typical flow authorizing a client for a certain user.
 
-* The client must first be logged in using the URL above.
-* Separately, the client must be logged into the application protected by this plugin.  Alternatively, they will be logged in
+* The user must be logged into the application protected by this plugin.  Alternatively, they will be logged in
 on the next step since the `authorizationEndpointUrl` must be protected with Spring Security Core.  One way to accomplish this
 is to use the static rules in Config.groovy:
 ```groovy
@@ -146,8 +145,10 @@ grails.plugins.springsecurity.controllerAnnotations.staticRules = [
 	'/oauth/authorize.dispatch':['ROLE_ADMIN'],
 ]
 ```
-** Note that the URL is mapped with `.dispatch` at the end.  This is essential in order to correctly protect the resource.  For
-example, a `authorizationEndpointUrl` of `/custom/authorize-oauth2` would need to be protected with `/custom/authorize-oauth2.dispatch`.
+
+> Note that the URL is mapped with `.dispatch` at the end.  This is essential in order to correctly protect the resource.  For
+> example, a `authorizationEndpointUrl` of `/custom/authorize-oauth2` would need to be protected with `/custom/authorize-oauth2.dispatch`.
+
 * A client attempting to use a service provided by the OAuth protected application is reached by a user.  The
 client then redirects the user to the `authorizationEndpointUrl` setting (`/oauth/authorize` by default).  This will actually
 redirect the user to the `userApprovalEndpointUrl` setting which will present the user with an option to authorize or deny access
@@ -163,16 +164,16 @@ The user will then be redirected to the `redirect_uri` with the code appended as
 http://localhost:8080/app/?code=YjZOa8
 ```
 
-* The client captures this code and sends it to the application at the `authorizationEndpointUrl` setting.  
+* The client captures this code and sends it to the application at the `tokenEndpointUrl` setting.  
 This will allow the client to access the application as the user.  Notice the `grant_type` of `authorization_code` this time.
 
 ```
-http://localhost:8080/app/oauth/authorize?grant_type=authorization_code&client_id=clientId&code=OVD8SZ&redirect_uri=http://localhost:8080/app/
+http://localhost:8080/app/oauth/token?grant_type=authorization_code&client_id=clientId&code=OVD8SZ&redirect_uri=http://localhost:8080/app/
 ```
 
 This will then give a token to the client that can be used to access the application as the user (an example needs to go here).
 
-NOTE: The redirect_uri in the `code` response and the `authorization_code` grant must match!  Otherwise, the authorization will fail.
+> WARNING: The redirect_uri in the `code` response and the `authorization_code` grant must match!  Otherwise, the authorization will fail.
 
 ### Protecting Resources
 
