@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 import org.apache.log4j.Logger;
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices
 import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
 import org.springframework.security.oauth2.provider.token.InMemoryTokenStore
@@ -25,7 +25,7 @@ import org.springframework.security.oauth2.provider.approval.TokenServicesUserAp
 class SpringSecurityOauth2ProviderGrailsPlugin {
 	static Logger log = Logger.getLogger('grails.app.bootstrap.BootStrap')
 	
-	def version = "1.0.4-SNAPSHOT"
+	def version = "1.0.5-SNAPSHOT"
 	String grailsVersion = '1.2.2 > *'
 	
 	List pluginExcludes = [

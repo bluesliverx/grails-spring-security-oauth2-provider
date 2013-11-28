@@ -1,7 +1,7 @@
 package test
 
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import grails.plugins.springsecurity.Secured
+import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.annotation.Secured
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.WebAttributes
 

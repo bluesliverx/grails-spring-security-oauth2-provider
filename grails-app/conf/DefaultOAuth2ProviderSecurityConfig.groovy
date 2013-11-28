@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import org.codehaus.groovy.grails.plugins.springsecurity.SecurityFilterPosition
+import grails.plugin.springsecurity.SecurityFilterPosition
 
 security {
 	oauthProvider {

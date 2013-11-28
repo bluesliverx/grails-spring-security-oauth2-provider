@@ -2,15 +2,15 @@ grails.views.default.codec="none" // none, html, base64
 grails.views.gsp.encoding="UTF-8"
 
 // Secure the oauth endpoints
-grails.plugins.springsecurity.controllerAnnotations.staticRules = [
+grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 	'/oauth/authorize.dispatch':['ROLE_ADMIN'],
 ]
 // Added by the Spring Security Core plugin:
-grails.plugins.springsecurity.userLookup.userDomainClassName = 'test.User'
-grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'test.UserRole'
-grails.plugins.springsecurity.authority.className = 'test.Role'
+grails.plugin.springsecurity.userLookup.userDomainClassName = 'test.User'
+grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'test.UserRole'
+grails.plugin.springsecurity.authority.className = 'test.Role'
 
-grails.plugins.springsecurity.oauthProvider.clients = [
+grails.plugin.springsecurity.oauthProvider.clients = [
 	[
 		clientId:"clientId",
 		clientSecret:"clientSecret",
@@ -23,7 +23,7 @@ grails.serverURL = "http://localhost:8080/oauth2"
 log4j = {
 	debug	'grails.app.bootstrap.BootStrap',
 			'grails.app',
-			'grails.plugins.springsecurity.oauthprovider'
+			'grails.plugin.springsecurity.oauthprovider'
 	info	'org.hibernate.SQL',
 			'org.springframework.security'
 	error	'org.codehaus.groovy.grails.web.servlet',	//	controllers
