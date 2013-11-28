@@ -26,7 +26,7 @@ file specified by `grails.config.locations`.  The following is an example of con
 of `myId` and a secret key of `mySecret`:
 
 ```groovy
-grails.plugins.springsecurity.oauthProvider.clients = [
+grails.plugin.springsecurity.oauthProvider.clients = [
 	[
 		clientId:"myId",
 		clientSecret:"mySecret"
@@ -43,25 +43,25 @@ their default values.  These default values may be modified by placing a line si
 configuration file.
 
 ```groovy
-grails.plugins.springsecurity.oauthProvider.defaultClientConfig.resourceIds = []
-grails.plugins.springsecurity.oauthProvider.defaultClientConfig.authorizedGrantTypes = ["authorization_code", "refresh_token"]
-grails.plugins.springsecurity.oauthProvider.defaultClientConfig.scope = []
-grails.plugins.springsecurity.oauthProvider.defaultClientConfig.registeredRedirectUri = null
-grails.plugins.springsecurity.oauthProvider.defaultClientConfig.authorities = []
-grails.plugins.springsecurity.oauthProvider.defaultClientConfig.accessTokenValiditySeconds = []
-grails.plugins.springsecurity.oauthProvider.defaultClientConfig.refreshTokenValiditySeconds = []
+grails.plugin.springsecurity.oauthProvider.defaultClientConfig.resourceIds = []
+grails.plugin.springsecurity.oauthProvider.defaultClientConfig.authorizedGrantTypes = ["authorization_code", "refresh_token"]
+grails.plugin.springsecurity.oauthProvider.defaultClientConfig.scope = []
+grails.plugin.springsecurity.oauthProvider.defaultClientConfig.registeredRedirectUri = null
+grails.plugin.springsecurity.oauthProvider.defaultClientConfig.authorities = []
+grails.plugin.springsecurity.oauthProvider.defaultClientConfig.accessTokenValiditySeconds = []
+grails.plugin.springsecurity.oauthProvider.defaultClientConfig.refreshTokenValiditySeconds = []
 ```
 
 For example, with a default configuration option in Config.groovy of:
 
 ```groovy
-grails.plugins.springsecurity.oauthProvider.defaultClientConfig.authorizedGrantTypes = ["implicit"]
+grails.plugin.springsecurity.oauthProvider.defaultClientConfig.authorizedGrantTypes = ["implicit"]
 ```
 
 And a client configuration of:
 
 ```groovy
-grails.plugins.springsecurity.oauthProvider.clients = [
+grails.plugin.springsecurity.oauthProvider.clients = [
 	[
 		clientId:"myId",
 		clientSecret:"mySecret"
@@ -73,7 +73,7 @@ Will result in a client with an ID of `myId` and a single authorized grant type 
 was modified to the following:
 
 ```groovy
-grails.plugins.springsecurity.oauthProvider.clients = [
+grails.plugin.springsecurity.oauthProvider.clients = [
 	[
 		clientId:"myId",
 		clientSecret:"mySecret",
@@ -141,7 +141,7 @@ The following URLs or configuration options show a typical flow authorizing a cl
 on the next step since the `authorizationEndpointUrl` must be protected with Spring Security Core.  One way to accomplish this
 is to use the static rules in Config.groovy:
 ```groovy
-grails.plugins.springsecurity.controllerAnnotations.staticRules = [
+grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 	'/oauth/authorize.dispatch':['ROLE_ADMIN'],
 ]
 ```
@@ -187,6 +187,8 @@ import org.scribe.oauth.*;
 import org.scribe.extractors.*;
 import org.scribe.exceptions.*;
 import org.scribe.utils.*;
+
+@Grab(group='org.scribe', module='scribe', version='1.3.5')
 
 class GrailsOAuth20Api extends DefaultApi20 {
     @Override
@@ -280,9 +282,9 @@ By default, three endpoint URLs have been defined.  Note that default URLMapping
 be set.  Their default values and how they would be set in Config.groovy are shown below:
 
 ```groovy
-grails.plugins.springsecurity.oauthProvider.authorizationEndpointUrl = "/oauth/authorize"
-grails.plugins.springsecurity.oauthProvider.tokenEndpointUrl = "/oauth/token"	// Where the client is authorized
-grails.plugins.springsecurity.oauthProvider.userApprovalEndpointUrl = "/oauth/confirm"	// Where the user confirms that they approve the client
+grails.plugin.springsecurity.oauthProvider.authorizationEndpointUrl = "/oauth/authorize"
+grails.plugin.springsecurity.oauthProvider.tokenEndpointUrl = "/oauth/token"	// Where the client is authorized
+grails.plugin.springsecurity.oauthProvider.userApprovalEndpointUrl = "/oauth/confirm"	// Where the user confirms that they approve the client
 ```
 
 NOTE: The `userApprovalEndpointUrl` never is actually redirected to, but is simply used to specify the location of the view.
@@ -294,11 +296,11 @@ The grant types for OAuth authentication may be enabled or disabled with simple 
 Set the option to false to disable it completely, regardless of client configuration.
 
 ```groovy
-grails.plugins.springsecurity.oauthProvider.grantTypes.authorizationCode = true
-grails.plugins.springsecurity.oauthProvider.grantTypes.implicit = true
-grails.plugins.springsecurity.oauthProvider.grantTypes.refreshToken = true
-grails.plugins.springsecurity.oauthProvider.grantTypes.clientCredentials = true
-grails.plugins.springsecurity.oauthProvider.grantTypes.password = true
+grails.plugin.springsecurity.oauthProvider.grantTypes.authorizationCode = true
+grails.plugin.springsecurity.oauthProvider.grantTypes.implicit = true
+grails.plugin.springsecurity.oauthProvider.grantTypes.refreshToken = true
+grails.plugin.springsecurity.oauthProvider.grantTypes.clientCredentials = true
+grails.plugin.springsecurity.oauthProvider.grantTypes.password = true
 ```
 
 ### Configuration
@@ -306,11 +308,11 @@ grails.plugins.springsecurity.oauthProvider.grantTypes.password = true
 Here are some other configuration options that can be set and their default values.  Again, these would be placed in Config.groovy:
 
 ```groovy
-grails.plugins.springsecurity.oauthProvider.active = true // Set to false to disable the provider, true in all environments but test where false is the default
-grails.plugins.springsecurity.oauthProvider.filterStartPosition = SecurityFilterPosition.X509_FILTER.order // The starting location of the filters registered
-grails.plugins.springsecurity.oauthProvider.userApprovalParameterName = "user_oauth_approval" // Used on the user confirmation page (see userApprovalEndpointUrl)
-grails.plugins.springsecurity.oauthProvider.tokenServices.refreshTokenValiditySeconds = 60 * 10 //default 10 minutes
-grails.plugins.springsecurity.oauthProvider.tokenServices.accessTokenValiditySeconds = 60 * 60 * 12 //default 12 hours
-grails.plugins.springsecurity.oauthProvider.tokenServices.reuseRefreshToken = true
-grails.plugins.springsecurity.oauthProvider.tokenServices.supportRefreshToken = true
+grails.plugin.springsecurity.oauthProvider.active = true // Set to false to disable the provider, true in all environments but test where false is the default
+grails.plugin.springsecurity.oauthProvider.filterStartPosition = SecurityFilterPosition.X509_FILTER.order // The starting location of the filters registered
+grails.plugin.springsecurity.oauthProvider.userApprovalParameterName = "user_oauth_approval" // Used on the user confirmation page (see userApprovalEndpointUrl)
+grails.plugin.springsecurity.oauthProvider.tokenServices.refreshTokenValiditySeconds = 60 * 10 //default 10 minutes
+grails.plugin.springsecurity.oauthProvider.tokenServices.accessTokenValiditySeconds = 60 * 60 * 12 //default 12 hours
+grails.plugin.springsecurity.oauthProvider.tokenServices.reuseRefreshToken = true
+grails.plugin.springsecurity.oauthProvider.tokenServices.supportRefreshToken = true
 ```
