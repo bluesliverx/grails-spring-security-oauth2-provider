@@ -31,9 +31,6 @@ grails.project.dependency.resolution = {
 	}
 
 	dependencies {
-//		compile('org.springframework.security:spring-security-crypto:3.1.4.RELEASE') {
-//			excludes 'spring-core', 'commons-logging'
-//		}
 		compile 'org.springframework.security.oauth:spring-security-oauth2:1.0.5.RELEASE', {
 			transitive = false
 		}
