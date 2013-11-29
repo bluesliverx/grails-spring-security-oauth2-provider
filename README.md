@@ -38,6 +38,16 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 Second, add the `clientCredentialsAuthenticationProvider` name to the `grails.plugin.springsecurity.providerNames` list.
 This is required in order to use the authentication/authorization flows listed below.
 
+```groovy
+// Add to the default list from spring security core
+grails.plugin.springsecurity.providerNames = [
+		'daoAuthenticationProvider',
+		'anonymousAuthenticationProvider',
+		'rememberMeAuthenticationProvider',
+		'clientCredentialsAuthenticationProvider'
+]
+```
+
 ### (Optional) Customize Confirm View
 
 On install, a view is created at `grails-app/views/oauth/confirm.gsp`.  This view may be modified as desired, but the
