@@ -140,6 +140,7 @@ The following URLs or configuration options show a typical flow authorizing a cl
 * The user must be logged into the application protected by this plugin.  Alternatively, they will be logged in
 on the next step since the `authorizationEndpointUrl` must be protected with Spring Security Core.  One way to accomplish this
 is to use the static rules in Config.groovy:
+
 ```groovy
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 	'/oauth/authorize.dispatch':['ROLE_ADMIN'],

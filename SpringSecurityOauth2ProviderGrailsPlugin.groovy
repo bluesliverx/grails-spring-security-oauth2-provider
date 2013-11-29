@@ -70,11 +70,11 @@ OAuth2 Provider support for the Spring Security plugin.
 		SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
 		// have to get again after overlaying DefaultOAuthProviderSecurityConfig
 		conf = SpringSecurityUtils.securityConfig
-		
+
 		if (!conf.oauthProvider.active)
 			return
 
-		log.debug 'Configuring Spring Security OAuth2 provider ...'
+		println 'Configuring Spring Security OAuth2 provider ...'
 
 		clientDetailsService(InMemoryClientDetailsService)
 		tokenStore(InMemoryTokenStore)
@@ -127,11 +127,18 @@ OAuth2 Provider support for the Spring Security plugin.
 					'token-services-ref':'tokenServices',
 		)
 
+		oauth.'expression-handler'(
+				'id':'oauth2ExpressionHandler'
+		)
+		oauth.'web-expression-handler'(
+				'id':'oauth2WebExpressionHandler'
+		)
+
 		// Register endpoint URL filter since we define the URLs above
 		SpringSecurityUtils.registerFilter 'oauth2ProviderFilter',
 				conf.oauthProvider.filterStartPosition + 1
-				
-		log.debug "... done configured Spring Security OAuth2 provider"
+
+		println "... done configured Spring Security OAuth2 provider"
 	}
 
     def doWithApplicationContext = { applicationContext ->
