@@ -13,3 +13,5 @@ web-app
 *.iml
 *.ipr
 .idea
+.project
+out
