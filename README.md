@@ -138,6 +138,11 @@ class BootStrap {
 	}
 ```
 
+## Examples
+
+The [examples](examples) directory may be very useful in implementing the flows below.  Especially note the
+[Scribe User Approval Script](examples/user-approval-scribe.groovy) for an example of the User Approval flow.
+
 ## Login Flows
 
 ### Client Login
@@ -190,11 +195,6 @@ http://localhost:8080/app/oauth/token?grant_type=authorization_code&client_id=cl
 This will then give a token to the client that can be used to access the application as the user (an example needs to go here).
 
 > WARNING: The redirect_uri in the `code` response and the `authorization_code` grant must match!  Otherwise, the authorization will fail.
-
-#### Examples
-
-The [examples](examples) directory may be very useful in implementing the flows above.  Especially note the
-[Scribe User Approval Script](examples/user-approval-scribe.groovy) for an example of the User Approval flow.
 
 ### Protecting Resources
 
