@@ -1,4 +1,7 @@
-This plugin is an OAuth2 Provider based on the Spring Security OAuth libraries.  It is partially based off of Burt Beckwith's OAuth 
+> **WARNING: This plugin requires Spring Security Core 2.0-RC2 or later to work properly.  It _WILL NOT_ work with older
+> versions due to dependency conflicts.**
+
+This plugin is an OAuth2 Provider based on the Spring Security OAuth libraries.  It is partially based off of Burt Beckwith's OAuth
 Provider plugin, which was never officially released.
 
 While this plugin works for certain use cases, not all OAuth2 flows have been tested.  In particular, the following works and has 
@@ -9,10 +12,33 @@ been tested:
 However, the following items have not been tested and may or may not work:
 
 * Grant types besides `authorization_code` and `client_credentials`
-* Protected resources via Spring OAuth2
-** This is currently done with the Spring Security core methods (ie request maps, annotations, intercept maps)
+* Protected resources via Spring OAuth2 - this is currently done with the Spring Security core methods (ie request maps, annotations, intercept maps)
 
 ## Setup
+
+> You MUST follow the steps below in order to get the plugin working correctly.
+
+### Configure Security Rules
+
+The `authorizationEndpointUrl` and the `tokenEndpointUrl` must both be protected by the Spring Security Core plugin.
+The configuration below will accomplish this using static rules in Config.groovy:
+
+```groovy
+grails.plugin.springsecurity.controllerAnnotations.staticRules = [
+	'/oauth/authorize.dispatch':['IS_AUTHENTICATED_REMEMBERED'],
+	'/oauth/token.dispatch':['IS_AUTHENTICATED_REMEMBERED'],
+]
+```
+
+> Note that the URLs are mapped with `.dispatch` at the end.  This is essential in order to correctly protect the resources.  For
+> example, an `authorizationEndpointUrl` of `/custom/authorize-oauth2` would need to be protected with `/custom/authorize-oauth2.dispatch`.
+
+### Add Client Provider
+
+Second, add the `clientCredentialsAuthenticationProvider` name to the `grails.plugin.springsecurity.providerNames` list.
+This is required in order to use the authentication/authorization flows listed below.
+
+### (Optional) Customize Confirm View
 
 On install, a view is created at `grails-app/views/oauth/confirm.gsp`.  This view may be modified as desired, but the
 location should match the `userApprovalEndpointUrl` setting discussed below.
@@ -138,18 +164,7 @@ The response from a login such as this is the following JSON.  The `access_token
 The following URLs or configuration options show a typical flow authorizing a client for a certain user.
 
 * The user must be logged into the application protected by this plugin.  Alternatively, they will be logged in
-on the next step since the `authorizationEndpointUrl` must be protected with Spring Security Core.  One way to accomplish this
-is to use the static rules in Config.groovy:
-
-```groovy
-grails.plugin.springsecurity.controllerAnnotations.staticRules = [
-	'/oauth/authorize.dispatch':['ROLE_ADMIN'],
-]
-```
-
-> Note that the URL is mapped with `.dispatch` at the end.  This is essential in order to correctly protect the resource.  For
-> example, a `authorizationEndpointUrl` of `/custom/authorize-oauth2` would need to be protected with `/custom/authorize-oauth2.dispatch`.
-
+on the next step since the `authorizationEndpointUrl` must be protected with Spring Security Core as noted above.
 * A client attempting to use a service provided by the OAuth protected application is reached by a user.  The
 client then redirects the user to the `authorizationEndpointUrl` setting (`/oauth/authorize` by default).  This will actually
 redirect the user to the `userApprovalEndpointUrl` setting which will present the user with an option to authorize or deny access
@@ -176,97 +191,10 @@ This will then give a token to the client that can be used to access the applica
 
 > WARNING: The redirect_uri in the `code` response and the `authorization_code` grant must match!  Otherwise, the authorization will fail.
 
-#### Scribe Example
+#### Examples
 
-The groovy script below may be very useful in implementing the User Approval of Clients flow above.
-
-```
-import org.scribe.builder.*;
-import org.scribe.builder.api.*;
-import org.scribe.model.*;
-import org.scribe.oauth.*;
-import org.scribe.extractors.*;
-import org.scribe.exceptions.*;
-import org.scribe.utils.*;
-
-@Grab(group='org.scribe', module='scribe', version='1.3.5')
-
-class GrailsOAuth20Api extends DefaultApi20 {
-    @Override
-    public String getAccessTokenEndpoint() {
-        return "http://localhost:8080/test-oauth/oauth/token?grant_type=authorization_code&redirect_uri=http://localhost:8081/test-oauth-client/test/verify";
-    }
-
-    @Override
-    public String getAuthorizationUrl(OAuthConfig oAuthConfig) {
-        return "http://localhost:8080/test-oauth/oauth/authorize?response_type=code&client_id=1&client_secret=secret&redirect_uri=http://localhost:8081/test-oauth-client/test/verify";
-    }
-	
-	@Override
-	public AccessTokenExtractor getAccessTokenExtractor() {
-		return new GrailsTokenExtractor();
-	}
-}
-
-public class GrailsTokenExtractor implements AccessTokenExtractor {
-  private static final TOKEN_REGEX = ~/"access_token":\s*"([^"]+)"/;
-  private static final String EMPTY_SECRET = '';
-
-  /**
-   * {@inheritDoc} 
-   */
-  public Token extract(String response) {
-    Preconditions.checkEmptyString(response, "Response body is incorrect. Can't extract a token from an empty string");
-
-	def matcher = TOKEN_REGEX.matcher(response);
-    if (matcher.find()) {
-      String token = OAuthEncoder.decode(matcher.group(1));
-      return new Token(token, EMPTY_SECRET, response);
-    } else {
-      throw new OAuthException("Response body is incorrect. Can't extract a token from this: '" + response + "'", null);
-    }
-  }
-}
-final String PROTECTED_RESOURCE_URL = "http://localhost:8080/test-oauth/book/list";
-final Token EMPTY_TOKEN = new Token('', '')
-
-// If you choose to use a callback, "oauth_verifier" will be the return value by Twitter (request param)
-OAuthService service = new ServiceBuilder()
-                            .provider(GrailsOAuth20Api.class)
-                            .apiKey("1")
-                            .apiSecret("secret")
-                            .build();
-Scanner in2 = new Scanner(System.in);
-
-System.out.println("=== Grails OAuth2 Provider Workflow ===");
-System.out.println();
-
-System.out.println("Now go and authorize Scribe here:");
-System.out.println(service.getAuthorizationUrl(EMPTY_TOKEN));
-System.out.println("And paste the verifier here");
-System.out.print(">>");
-Verifier verifier = new Verifier(in2.nextLine());
-System.out.println();
-
-// Trade the Verifier for the Access Token
-System.out.println("Trading the Verifier for an Access Token...");
-Token accessToken = service.getAccessToken(EMPTY_TOKEN, verifier);
-System.out.println("Got the Access Token!");
-System.out.println("(if you're curious it looks like this: " + accessToken + " )");
-System.out.println();
-
-// Now let's go and ask for a protected resource!
-System.out.println("Now we're going to access a protected resource...");
-OAuthRequest request = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE_URL);
-service.signRequest(accessToken, request);
-Response response = request.send();
-System.out.println("Got it! Lets see what we found...");
-System.out.println();
-System.out.println(response.getBody());
-
-System.out.println();
-System.out.println("Thats it! Go and build something awesome with Scribe!");
-```
+The [examples](examples) directory may be very useful in implementing the flows above.  Especially note the
+[Scribe User Approval Script](examples/user-approval-scribe.groovy) for an example of the User Approval flow.
 
 ### Protecting Resources
 
@@ -311,9 +239,16 @@ Here are some other configuration options that can be set and their default valu
 ```groovy
 grails.plugin.springsecurity.oauthProvider.active = true // Set to false to disable the provider, true in all environments but test where false is the default
 grails.plugin.springsecurity.oauthProvider.filterStartPosition = SecurityFilterPosition.X509_FILTER.order // The starting location of the filters registered
+grails.plugin.springsecurity.oauthProvider.clientFilterStartPosition = SecurityFilterPosition.DIGEST_AUTH_FILTER.order // The starting location of the client filters registered (should be before the basic auth filter)
 grails.plugin.springsecurity.oauthProvider.userApprovalParameterName = "user_oauth_approval" // Used on the user confirmation page (see userApprovalEndpointUrl)
 grails.plugin.springsecurity.oauthProvider.tokenServices.refreshTokenValiditySeconds = 60 * 10 //default 10 minutes
 grails.plugin.springsecurity.oauthProvider.tokenServices.accessTokenValiditySeconds = 60 * 60 * 12 //default 12 hours
 grails.plugin.springsecurity.oauthProvider.tokenServices.reuseRefreshToken = true
 grails.plugin.springsecurity.oauthProvider.tokenServices.supportRefreshToken = true
 ```
+
+## Release Notes
+
+### 1.0.5
+
+* Initial release of plugin compatible with spring security core 2.0-RC2

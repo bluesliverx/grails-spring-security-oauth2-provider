@@ -19,7 +19,8 @@ security {
 	oauthProvider {
 		active = true
 		filterStartPosition = SecurityFilterPosition.X509_FILTER.order
-		
+		clientFilterStartPosition = SecurityFilterPosition.DIGEST_AUTH_FILTER.order
+
 		tokenServices {
 			accessTokenValiditySeconds = 60 * 60 * 12 //default 12 hours
 			refreshTokenValiditySeconds = 60 * 10 //default 10 minutes

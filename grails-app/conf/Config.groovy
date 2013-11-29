@@ -3,12 +3,20 @@ grails.views.gsp.encoding="UTF-8"
 
 // Secure the oauth endpoints
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
-	'/oauth/authorize.dispatch':['ROLE_ADMIN'],
+	'/oauth/authorize.dispatch':['IS_AUTHENTICATED_REMEMBERED'],
+	'/oauth/token.dispatch':['IS_AUTHENTICATED_REMEMBERED'],
 ]
 // Added by the Spring Security Core plugin:
 grails.plugin.springsecurity.userLookup.userDomainClassName = 'test.User'
 grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'test.UserRole'
 grails.plugin.springsecurity.authority.className = 'test.Role'
+
+grails.plugin.springsecurity.providerNames = [
+		'daoAuthenticationProvider',
+		'anonymousAuthenticationProvider',
+		'rememberMeAuthenticationProvider',
+		'clientCredentialsAuthenticationProvider'
+]
 
 grails.plugin.springsecurity.oauthProvider.clients = [
 	[
@@ -18,7 +26,7 @@ grails.plugin.springsecurity.oauthProvider.clients = [
 	],
 ]
 
-grails.serverURL = "http://localhost:8080/oauth2"
+grails.serverURL = "http://localhost:8080/test-oauth-server"
 
 log4j = {
 	debug	'grails.app.bootstrap.BootStrap',

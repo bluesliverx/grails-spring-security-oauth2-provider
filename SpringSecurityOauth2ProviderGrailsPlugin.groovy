@@ -14,6 +14,14 @@
  */
 import org.apache.log4j.Logger;
 import grails.plugin.springsecurity.SpringSecurityUtils
+import org.springframework.http.converter.ByteArrayHttpMessageConverter
+import org.springframework.http.converter.FormHttpMessageConverter
+import org.springframework.http.converter.StringHttpMessageConverter
+import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter
+import org.springframework.http.converter.xml.SourceHttpMessageConverter
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter
+import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService
 import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices
 import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
 import org.springframework.security.oauth2.provider.token.InMemoryTokenStore
@@ -21,6 +29,7 @@ import org.springframework.security.oauth2.provider.token.InMemoryTokenStore
 import grails.plugin.springsecurity.oauthprovider.SpringSecurityOAuth2ProviderUtility
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
 import org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 
 class SpringSecurityOauth2ProviderGrailsPlugin {
 	static Logger log = Logger.getLogger('grails.app.bootstrap.BootStrap')
@@ -31,6 +40,7 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 	List pluginExcludes = [
 		'docs/**',
 		'src/docs/**',
+		'examples/**',
 		// Domains
 		'test/**',
 		// Controllers
@@ -42,6 +52,7 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 		'grails-app/views/login/**',
 		'grails-app/views/secured/**',
 		'grails-app/views/index.gsp',
+		'grails-app/views/error.gsp',
 	]
 
 	//Map dependsOn = [springSecurityCore: '1.0 > *']
@@ -94,7 +105,7 @@ OAuth2 Provider support for the Spring Security plugin.
 		
 		// Oauth namespace
 		xmlns oauth:"http://www.springframework.org/schema/security/oauth2"
-		
+
 		oauth.'authorization-server'(
 					'client-details-service-ref':"clientDetailsService",
 					'token-services-ref':"tokenServices",
@@ -127,6 +138,7 @@ OAuth2 Provider support for the Spring Security plugin.
 					'token-services-ref':'tokenServices',
 		)
 
+		// Expression handling
 		oauth.'expression-handler'(
 				'id':'oauth2ExpressionHandler'
 		)
@@ -134,9 +146,31 @@ OAuth2 Provider support for the Spring Security plugin.
 				'id':'oauth2WebExpressionHandler'
 		)
 
+		// Allow client log-ins
+		clientDetailsUserService(ClientDetailsUserDetailsService, ref('clientDetailsService'))
+		clientCredentialsAuthenticationProvider(DaoAuthenticationProvider) {
+			userDetailsService = ref('clientDetailsUserService')
+		}
+		clientCredentialsTokenEndpointFilter(ClientCredentialsTokenEndpointFilter) {
+			authenticationManager = ref('authenticationManager')
+		}
+
+		// Register jackson handler for token responses
+		annotationHandlerAdapter(RequestMappingHandlerAdapter){
+			messageConverters = [
+					new StringHttpMessageConverter(writeAcceptCharset: false),
+					new ByteArrayHttpMessageConverter(),
+					new FormHttpMessageConverter(),
+					new SourceHttpMessageConverter(),
+					new MappingJacksonHttpMessageConverter()
+			]
+		}
+
 		// Register endpoint URL filter since we define the URLs above
 		SpringSecurityUtils.registerFilter 'oauth2ProviderFilter',
 				conf.oauthProvider.filterStartPosition + 1
+		SpringSecurityUtils.registerFilter 'clientCredentialsTokenEndpointFilter',
+				conf.oauthProvider.clientFilterStartPosition + 1
 
 		println "... done configured Spring Security OAuth2 provider"
 	}

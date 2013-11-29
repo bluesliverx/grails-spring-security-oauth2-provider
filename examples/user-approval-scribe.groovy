@@ -11,12 +11,12 @@ import org.scribe.utils.*;
 class GrailsOAuth20Api extends DefaultApi20 {
 	@Override
 	public String getAccessTokenEndpoint() {
-		return "http://localhost:8080/spring-security-oauth2-provider/oauth/token?grant_type=authorization_code&redirect_uri=http://localhost:8081/test-oauth-client/test/verify";
+		return "http://localhost:8080/test-oauth-server/oauth/token?grant_type=authorization_code&redirect_uri=http://localhost:8081/test-oauth-client/test/verify";
 	}
 
 	@Override
 	public String getAuthorizationUrl(OAuthConfig oAuthConfig) {
-		return "http://localhost:8080/spring-security-oauth2-provider/oauth/authorize?response_type=code&client_id=1&client_secret=secret&redirect_uri=http://localhost:8081/test-oauth-client/test/verify";
+		return "http://localhost:8080/test-oauth-server/oauth/authorize?response_type=code&client_id=clientId&client_secret=clientSecret&redirect_uri=http://localhost:8081/test-oauth-client/test/verify";
 	}
 
 	@Override
@@ -44,14 +44,14 @@ public class GrailsTokenExtractor implements AccessTokenExtractor {
 		}
 	}
 }
-final String PROTECTED_RESOURCE_URL = "http://localhost:8080/test-oauth/book/list";
+final String PROTECTED_RESOURCE_URL = "http://localhost:8080/test-oauth-server/secured/index";
 final Token EMPTY_TOKEN = new Token('', '')
 
 // If you choose to use a callback, "oauth_verifier" will be the return value by Twitter (request param)
 OAuthService service = new ServiceBuilder()
 		.provider(GrailsOAuth20Api.class)
-		.apiKey("1")
-		.apiSecret("secret")
+		.apiKey("clientId")
+		.apiSecret("clientSecret")
 		.build();
 Scanner in2 = new Scanner(System.in);
 
