@@ -35,7 +35,7 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 	static Logger log = Logger.getLogger('grails.app.bootstrap.BootStrap')
 	
 	def version = "1.0.5-SNAPSHOT"
-	String grailsVersion = '1.2.2 > *'
+	String grailsVersion = '2.0 > *'
 	
 	List pluginExcludes = [
 		'docs/**',
