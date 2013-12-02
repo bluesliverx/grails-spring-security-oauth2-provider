@@ -1,12 +1,12 @@
 package grails.plugin.springsecurity.oauthprovider
 
-import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.provider.BaseClientDetails
-
-import org.apache.log4j.Logger
+import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
 
 class SpringSecurityOAuth2ProviderUtility {
-	private static final Logger log = Logger.getLogger(this)
+	private static final Logger log = LoggerFactory.getLogger(this)
 
 	static registerClients(ConfigObject config, InMemoryClientDetailsService clientDetailsService) {
 		// Reset client details

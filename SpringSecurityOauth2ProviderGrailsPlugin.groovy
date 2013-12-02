@@ -12,27 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.apache.log4j.Logger;
 import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.oauthprovider.SpringSecurityOAuth2ProviderUtility
+
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.converter.ByteArrayHttpMessageConverter
 import org.springframework.http.converter.FormHttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter
 import org.springframework.http.converter.xml.SourceHttpMessageConverter
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
+import org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService
 import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices
-import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
-import org.springframework.security.oauth2.provider.token.InMemoryTokenStore
-
-import grails.plugin.springsecurity.oauthprovider.SpringSecurityOAuth2ProviderUtility
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
-import org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler
+import org.springframework.security.oauth2.provider.token.InMemoryTokenStore
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 
 class SpringSecurityOauth2ProviderGrailsPlugin {
-	static final Logger log = Logger.getLogger(this)
+	static final Logger log = LoggerFactory.getLogger(this)
 
 	def version = "1.0.5-SNAPSHOT"
 	String grailsVersion = '2.0 > *'
