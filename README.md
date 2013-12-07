@@ -4,7 +4,7 @@
 This plugin is an OAuth2 Provider based on the Spring Security OAuth libraries.  It is partially based off of Burt Beckwith's OAuth
 Provider plugin, which was never officially released.
 
-While this plugin works for certain use cases, not all OAuth2 flows have been tested.  In particular, the following works and has 
+While this plugin works for certain use cases, not all OAuth2 flows have been tested.  In particular, the following works and has
 been tested:
 
 * The full flow of logging in with both users and clients using tokens and authorization codes
@@ -133,13 +133,13 @@ import org.springframework.security.oauth2.provider.BaseClientDetails;
 
 class BootStrap {
 	def clientDetailsService
-	
+
 	def init = { servletContext ->
 		def client = new BaseClientDetails()
 		client.clientId = "clientId"
 		client.clientSecret = "clientSecret"
 		client.authorizedGrantTypes = ["authorization_code", "refresh_token", "client_credentials", "password", "implicit"]
-		
+
 		// Set the full contents of the client details service store to the newly created client
 		clientDetailsService.clientDetailsStore = [
 			// Map of client ID to the client details instance
@@ -195,7 +195,7 @@ The user will then be redirected to the `redirect_uri` with the code appended as
 http://localhost:8080/app/?code=YjZOa8
 ```
 
-* The client captures this code and sends it to the application at the `tokenEndpointUrl` setting.  
+* The client captures this code and sends it to the application at the `tokenEndpointUrl` setting.
 This will allow the client to access the application as the user.  Notice the `grant_type` of `authorization_code` this time.
 
 ```
@@ -216,7 +216,7 @@ but is untested.  If you have tested this plugin in these configurations, please
 
 ### Endpoint URLs
 
-By default, three endpoint URLs have been defined.  Note that default URLMappings are provided for the 
+By default, three endpoint URLs have been defined.  Note that default URLMappings are provided for the
 `authorizationEndpointUrl` and the `tokenEndpointUrl`.  If these are modified, additional URLMappings will have to
 be set.  Their default values and how they would be set in Config.groovy are shown below:
 

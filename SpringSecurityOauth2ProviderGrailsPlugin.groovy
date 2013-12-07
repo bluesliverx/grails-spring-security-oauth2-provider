@@ -12,31 +12,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.apache.log4j.Logger;
 import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.oauthprovider.SpringSecurityOAuth2ProviderUtility
+
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.converter.ByteArrayHttpMessageConverter
 import org.springframework.http.converter.FormHttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter
 import org.springframework.http.converter.xml.SourceHttpMessageConverter
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
+import org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService
 import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices
-import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
-import org.springframework.security.oauth2.provider.token.InMemoryTokenStore
-
-import grails.plugin.springsecurity.oauthprovider.SpringSecurityOAuth2ProviderUtility
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
-import org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler
+import org.springframework.security.oauth2.provider.token.InMemoryTokenStore
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 
 class SpringSecurityOauth2ProviderGrailsPlugin {
-	static Logger log = Logger.getLogger('grails.app.bootstrap.BootStrap')
-	
+	static final Logger log = LoggerFactory.getLogger(this)
+
 	def version = "1.0.5-SNAPSHOT"
-	String grailsVersion = '1.2.2 > *'
-	
+	String grailsVersion = '2.0 > *'
+
 	List pluginExcludes = [
 		'docs/**',
 		'src/docs/**',
@@ -102,7 +103,7 @@ OAuth2 Provider support for the Spring Security plugin.
 			approvalParameter = conf.oauthProvider.userApprovalParameter
 			tokenServices = ref("tokenServices")
 		}
-		
+
 		// Oauth namespace
 		xmlns oauth:"http://www.springframework.org/schema/security/oauth2"
 
@@ -184,21 +185,21 @@ OAuth2 Provider support for the Spring Security plugin.
 		SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
 		// have to get again after overlaying DefaultOAuthProviderSecurityConfig
 		conf = SpringSecurityUtils.securityConfig
-		
+
 		if (!conf.oauthProvider.active || !conf.oauthProvider.clients)
 			return
 
 		log.debug 'Configuring OAuth2 clients ...'
-		
+
 		def clientDetailsService = applicationContext.getBean("clientDetailsService")
 		if (clientDetailsService instanceof InMemoryClientDetailsService)
 			SpringSecurityOAuth2ProviderUtility.registerClients(conf, clientDetailsService)
 		else
 			log.info("Client details service bean is not an in-memory implementation, ignoring client config")
-		
+
 		log.debug '... done configuring OAuth2 clients'
     }
-	
+
     def onConfigChange = { event ->
 		def conf = SpringSecurityUtils.securityConfig
 		if (!conf || !conf.active) {
@@ -208,18 +209,18 @@ OAuth2 Provider support for the Spring Security plugin.
 		SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
 		// have to get again after overlaying DefaultOAuthProviderSecurityConfig
 		conf = SpringSecurityUtils.securityConfig
-		
+
 		if (!conf.oauthProvider.active || !conf.oauthProvider.clients)
 			return
 
 		log.debug 'Reconfiguring OAuth2 clients ...'
-		
+
 		def clientDetailsService = applicationContext.getBean("clientDetailsService")
 		if (clientDetailsService instanceof InMemoryClientDetailsService)
 			SpringSecurityOAuth2ProviderUtility.registerClients(conf, clientDetailsService)
 		else
 			log.info("Client details service bean is not an in-memory implementation, ignoring config change")
-		
+
 		log.debug '... done reconfiguring OAuth2 clients'
 	}
 }

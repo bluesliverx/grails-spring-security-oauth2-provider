@@ -1,20 +1,20 @@
 package grails.plugin.springsecurity.oauthprovider
 
-import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.oauth2.provider.BaseClientDetails
-
-import org.apache.log4j.Logger
+import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
 
 class SpringSecurityOAuth2ProviderUtility {
-	private static Logger log = Logger.getLogger(this)
-	
+	private static final Logger log = LoggerFactory.getLogger(this)
+
 	static registerClients(ConfigObject config, InMemoryClientDetailsService clientDetailsService) {
 		// Reset client details
 		clientDetailsService.clientDetailsStore = [:]
-		
+
 		// Get default configuration
 		def defaultConfig = config.oauthProvider.defaultClientConfig
-		
+
 		// Iterate through clients
 		config.oauthProvider.clients.each { Map clientConfig ->
 			if (!clientConfig.clientId) {
@@ -25,11 +25,11 @@ class SpringSecurityOAuth2ProviderUtility {
 				log.error("Could not configure client ${clientConfig.clientId} without valid secret")
 				return
 			}
-			
+
 			// Make sure it's not a duplicate
 			if (clientDetailsService.clientDetailsStore[clientConfig.clientId])
 				log.warn("Duplicate client ${clientConfig.clientId} exists, it will be overwritten")
-				
+
 			// Configure client details
 			def client = new BaseClientDetails()
 			client.clientId = clientConfig.clientId

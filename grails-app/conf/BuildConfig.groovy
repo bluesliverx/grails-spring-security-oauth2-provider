@@ -1,10 +1,5 @@
-grails.work.dir = "target/workdir"
-grails.project.class.dir = 'target/classes'
-grails.project.test.class.dir = 'target/test-classes'
-grails.project.test.reports.dir	= 'target/test-reports'
+grails.project.work.dir = 'target'
 grails.project.docs.output.dir = 'target/docs' // for backwards-compatibility, the docs are checked into gh-pages branch
-
-grails.release.scm.enabled = false
 
 // Code Narc
 codenarc.reports = {
@@ -19,40 +14,35 @@ codenarc.reports = {
 }
 
 grails.project.dependency.resolution = {
+
 	inherits 'global'
 	log 'warn'
-	repositories {
-		grailsPlugins()
-		grailsHome()
-		grailsCentral()
 
-//		mavenLocal()
+	repositories {
+		grailsCentral()
+		mavenLocal()
 		mavenCentral()
 	}
 
 	dependencies {
 		compile 'org.springframework.security.oauth:spring-security-oauth2:1.0.5.RELEASE', {
 			excludes "spring-beans",
-					"spring-core",
-					"spring-context",
-					"spring-aop",
-					"spring-jdbc",
-					"spring-webmvc",
-					"spring-security-core",
-					"spring-security-config",
-					"spring-security-web",
-					"spring-tx",
-					"commons-codec"
+			         "spring-core",
+			         "spring-context",
+			         "spring-aop",
+			         "spring-jdbc",
+			         "spring-webmvc",
+			         "spring-security-core",
+			         "spring-security-config",
+			         "spring-security-web",
+			         "spring-tx",
+			         "commons-codec"
 		}
 	}
-	
+
 	plugins {
 		// Release
-		build (':release:2.2.1') {
-			export = false
-			excludes 'rest-client-builder'
-		}
-		build (':rest-client-builder:1.0.3') {
+		build ':release:2.2.1', ':rest-client-builder:1.0.3', {
 			export = false
 		}
 
@@ -63,6 +53,7 @@ grails.project.dependency.resolution = {
 		test ':codenarc:0.15', {
 			export = false
 		}
+
 		compile ':spring-security-core:2.0-RC2'
 	}
 }

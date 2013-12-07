@@ -1,6 +1,3 @@
-grails.views.default.codec="none" // none, html, base64
-grails.views.gsp.encoding="UTF-8"
-
 // Secure the oauth endpoints
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 	'/oauth/authorize.dispatch':['IS_AUTHENTICATED_REMEMBERED'],
@@ -34,15 +31,7 @@ log4j = {
 			'grails.plugin.springsecurity.oauthprovider'
 	info	'org.hibernate.SQL',
 			'org.springframework.security'
-	error	'org.codehaus.groovy.grails.web.servlet',	//	controllers
-			'org.codehaus.groovy.grails.web.pages', 	//	GSP
-			'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
-			'org.codehaus.groovy.grails.web.sitemesh',	//	layouts
+	error	'org.codehaus.groovy.grails',
 			'org.springframework',
-			'org.hibernate',
-			'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-			'org.codehaus.groovy.grails.web.mapping', // URL mapping
-			'org.codehaus.groovy.grails.plugins', // plugins
-			'org.codehaus.groovy.grails.commons' // core / classloading
-	warn	'org.mortbay.log'
+			'org.hibernate'
 }
