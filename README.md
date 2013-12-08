@@ -259,6 +259,12 @@ grails.plugin.springsecurity.oauthProvider.tokenServices.supportRefreshToken = t
 
 ## Release Notes
 
+### 1.0.5.1
+
+* Merge pull request #21 (Burt's cleanup)
+* Use log wrapper instead of log4j
+* Depends on Grails 2.0 or greater (consistent with core plugin)
+
 ### 1.0.5
 
 * Initial release of plugin compatible with spring security core 2.0-RC2
