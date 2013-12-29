@@ -173,7 +173,7 @@ OAuth2 Provider support for the Spring Security plugin.
 		SpringSecurityUtils.registerFilter 'clientCredentialsTokenEndpointFilter',
 				conf.oauthProvider.clientFilterStartPosition + 1
 
-		println "... done configured Spring Security OAuth2 provider"
+		println "... done configuring Spring Security OAuth2 provider"
 	}
 
     def doWithApplicationContext = { applicationContext ->
