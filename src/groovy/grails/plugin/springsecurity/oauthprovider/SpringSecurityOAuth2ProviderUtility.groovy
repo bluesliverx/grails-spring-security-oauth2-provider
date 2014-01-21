@@ -21,10 +21,6 @@ class SpringSecurityOAuth2ProviderUtility {
 				log.error("Could not configure client without valid ID")
 				return
 			}
-			if (!clientConfig.clientSecret) {
-				log.error("Could not configure client ${clientConfig.clientId} without valid secret")
-				return
-			}
 
 			// Make sure it's not a duplicate
 			if (clientDetailsService.clientDetailsStore[clientConfig.clientId])
