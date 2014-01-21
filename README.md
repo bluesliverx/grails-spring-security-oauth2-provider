@@ -287,6 +287,10 @@ grails.plugin.springsecurity.oauthProvider.tokenServices.supportRefreshToken = t
 
 ## Release Notes
 
+### 1.0.5.2
+
+* Fix #13 - Make clientSecret optional in client configuration structure
+
 ### 1.0.5.1
 
 * Merge pull request #21 (Burt's cleanup)
