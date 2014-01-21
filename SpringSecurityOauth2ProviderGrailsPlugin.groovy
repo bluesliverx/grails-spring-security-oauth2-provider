@@ -35,7 +35,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 class SpringSecurityOauth2ProviderGrailsPlugin {
 	static final Logger log = LoggerFactory.getLogger(this)
 
-	def version = "1.0.5.2"
+	def version = "1.0.5-SNAPSHOT"
 	String grailsVersion = '2.0 > *'
 
 	List pluginExcludes = [
