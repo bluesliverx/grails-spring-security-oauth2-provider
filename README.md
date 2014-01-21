@@ -164,7 +164,7 @@ Notice the `grant_type` of `client_credentials` and that the client credentials 
 http://localhost:8080/app/oauth/token?grant_type=client_credentials&client_id=clientId&client_secret=clientSecret
 ```
 
-The response from a login such as this is the following JSON.  The `access_token` is the important piece here.
+The response from a login such as this is the following JSON.  The `access_token` may then be used to access resources while the refresh token may be used at a later time to get a new access token (see section on refresh tokens below for more information).
 
 ```javascript
 {
@@ -199,12 +199,40 @@ http://localhost:8080/app/?code=YjZOa8
 This will allow the client to access the application as the user.  Notice the `grant_type` of `authorization_code` this time.
 
 ```
-http://localhost:8080/app/oauth/token?grant_type=authorization_code&client_id=clientId&code=OVD8SZ&redirect_uri=http://localhost:8080/app/
+http://localhost:8080/app/oauth/token?grant_type=authorization_code&client_id=clientId&client_secret=clientSecret&code=OVD8SZ&redirect_uri=http://localhost:8080/app/
 ```
 
-This will then give a token to the client that can be used to access the application as the user (an example needs to go here).
+This will then give an access token and a refresh token to the client along with an expiration date for the access token.  The access token is used to access the application as the user, while the refresh token can be used to obtain another access token (see section on refresh tokens below for more information).  In other words, the access token is a temporary grant to the resources the user can access, while the refresh token is a permanent token that may be used to update the access token.
+
+```
+{
+  "access_token":"4b3f8efb-c919-4bcf-a430-266e5cede8e9",
+  "token_type":"bearer",
+  "refresh_token":"1333e0d5-f885-4f71-86ea-f90a081b1a21",
+  "expires_in":43199
+}
+```
 
 > WARNING: The redirect_uri in the `code` response and the `authorization_code` grant must match!  Otherwise, the authorization will fail.
+
+### Refreshing Tokens
+
+After receiving the access and refresh tokens, the client may optionally be granted a new access token using the refresh token combined with their client ID and secret.  They simply need to go to the following URL:
+
+```
+http://localhost:8080/app/oauth/token?grant_type=refresh_token&client_id=clientId&client_secret=clientSecret&refresh_token=1333e0d5-f885-4f71-86ea-f90a081b1a21&redirect_uri=http://localhost:8080/app/
+```
+
+This will give a response similar to the first grant of the tokens but will contain a new access token:
+
+```
+{
+  "access_token":"3d6f4bd6-48ea-4512-bf02-9724a23f7882",
+  "token_type":"bearer",
+  "refresh_token":"1333e0d5-f885-4f71-86ea-f90a081b1a21",
+  "expires_in":43199
+}
+```
 
 ### Protecting Resources
 
