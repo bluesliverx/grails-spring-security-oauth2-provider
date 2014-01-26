@@ -52,9 +52,3 @@ security {
 		clients = []
 	}
 }
-
-environments {
-	test {
-		security.oauthProvider.active = false
-	}
-}
