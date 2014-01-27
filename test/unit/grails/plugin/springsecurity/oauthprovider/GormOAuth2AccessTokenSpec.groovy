@@ -36,6 +36,26 @@ class GormOAuth2AccessTokenSpec extends Specification {
         accessToken.scope.contains('read')
     }
 
+    void "username is optional to support flows that don't require it"() {
+        when:
+        def token = new GormOAuth2AccessToken(username: null)
+
+        then:
+        token.validate(['username'])
+    }
+
+    @Unroll
+    void "clientId is required -- test invalid [#clientId]"() {
+        when:
+        def token = new GormOAuth2AccessToken(clientId: clientId)
+
+        then:
+        !token.validate(['clientId'])
+
+        where:
+        clientId << [null, '']
+    }
+
     @Unroll
     void "value is required -- test invalid [#value]"() {
         when:

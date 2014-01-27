@@ -5,18 +5,23 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken
 
 class GormOAuth2AccessToken {
 
+    byte[] authentication
+
+    String username
+    String clientId
+
     String value
     String tokenType
 
     Date expiration
     Date dateCreated
 
-    byte[] authentication
-
     static hasOne = [refreshToken: GormOAuth2RefreshToken]
     static hasMany = [scope: String]
 
     static constraints = {
+        username nullable: true
+        clientId blank: false
         value blank: false, unique: true
         tokenType blank: false
         expiration nullable: true

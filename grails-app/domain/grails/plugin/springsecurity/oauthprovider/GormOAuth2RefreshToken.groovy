@@ -5,12 +5,12 @@ import org.springframework.security.oauth2.common.ExpiringOAuth2RefreshToken
 
 class GormOAuth2RefreshToken {
 
+    byte[] authentication
+
     String value
     Date expiration
 
     Date dateCreated
-
-    byte[] authentication
 
     static constraints = {
         value blank: false, unique: true
