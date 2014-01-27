@@ -55,12 +55,4 @@ class GormOAuth2RefreshTokenSpec extends Specification {
         then:
         !token.validate(['expiration'])
     }
-
-    void "must belong to an access token"() {
-        when:
-        def token = new GormOAuth2RefreshToken(accessToken: null)
-
-        then:
-        !token.validate(['accessToken'])
-    }
 }

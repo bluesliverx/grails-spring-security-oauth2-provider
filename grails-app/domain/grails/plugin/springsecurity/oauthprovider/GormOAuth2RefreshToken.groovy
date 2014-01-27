@@ -8,8 +8,6 @@ class GormOAuth2RefreshToken {
     String value
     Date expiration
 
-    static belongsTo = [accessToken: GormOAuth2AccessToken]
-
     static constraints = {
         value blank: false, unique: true
     }
