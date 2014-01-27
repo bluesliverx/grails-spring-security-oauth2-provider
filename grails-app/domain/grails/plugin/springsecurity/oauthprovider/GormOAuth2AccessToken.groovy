@@ -11,6 +11,8 @@ class GormOAuth2AccessToken {
     Date expiration
     Date dateCreated
 
+    byte[] authentication
+
     static hasOne = [refreshToken: GormOAuth2RefreshToken]
     static hasMany = [scope: String]
 

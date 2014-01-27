@@ -10,6 +10,8 @@ class GormOAuth2RefreshToken {
 
     Date dateCreated
 
+    byte[] authentication
+
     static constraints = {
         value blank: false, unique: true
     }
