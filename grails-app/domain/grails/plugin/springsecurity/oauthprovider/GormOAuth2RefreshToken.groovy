@@ -8,6 +8,8 @@ class GormOAuth2RefreshToken {
     String value
     Date expiration
 
+    Date dateCreated
+
     static constraints = {
         value blank: false, unique: true
     }

@@ -9,6 +9,7 @@ class GormOAuth2AccessToken {
     String tokenType
 
     Date expiration
+    Date dateCreated
 
     static hasOne = [refreshToken: GormOAuth2RefreshToken]
     static hasMany = [scope: String]
