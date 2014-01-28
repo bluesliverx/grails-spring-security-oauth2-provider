@@ -14,9 +14,8 @@ class GormOAuth2AccessToken {
     String tokenType
 
     Date expiration
-    Date dateCreated
 
-    static hasOne = [refreshToken: GormOAuth2RefreshToken]
+    static hasOne = [refreshToken: String]
     static hasMany = [scope: String]
 
     static constraints = {
@@ -26,6 +25,7 @@ class GormOAuth2AccessToken {
         tokenType blank: false
         expiration nullable: true
         scope nullable: false
+        refreshToken nullable: true
     }
 
     static mapping = {
@@ -34,7 +34,7 @@ class GormOAuth2AccessToken {
 
     OAuth2AccessToken toAccessToken() {
         def token = new DefaultOAuth2AccessToken(value)
-        token.refreshToken = refreshToken ? refreshToken.toRefreshToken() : null
+        token.refreshToken = refreshToken ? GormOAuth2RefreshToken.findByValue(refreshToken)?.toRefreshToken() : null
         token.tokenType = tokenType
         token.expiration = expiration
         token.scope = scope

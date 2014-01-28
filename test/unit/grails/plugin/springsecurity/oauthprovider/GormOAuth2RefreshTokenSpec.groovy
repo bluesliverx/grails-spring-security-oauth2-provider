@@ -10,8 +10,7 @@ class GormOAuth2RefreshTokenSpec extends Specification {
 
     void "test toRefreshToken"() {
         given:
-        def expiration = new Date()
-        def token = new GormOAuth2RefreshToken(value: 'gormRefreshToken', expiration: expiration)
+        def token = new GormOAuth2RefreshToken(value: 'gormRefreshToken')
 
         when:
         def refreshToken = token.toRefreshToken()
@@ -21,7 +20,6 @@ class GormOAuth2RefreshTokenSpec extends Specification {
 
         and:
         refreshToken.value == 'gormRefreshToken'
-        refreshToken.expiration == expiration
     }
 
     void "value must be unique"() {
@@ -46,13 +44,5 @@ class GormOAuth2RefreshTokenSpec extends Specification {
 
         where:
         value << [null, '']
-    }
-
-    void "expiration is required"() {
-        when:
-        def token = new GormOAuth2RefreshToken(expiration: null)
-
-        then:
-        !token.validate(['expiration'])
     }
 }

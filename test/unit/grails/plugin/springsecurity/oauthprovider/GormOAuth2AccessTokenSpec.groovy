@@ -1,21 +1,26 @@
 package grails.plugin.springsecurity.oauthprovider
 
+import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import org.springframework.security.oauth2.common.OAuth2AccessToken
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(GormOAuth2AccessToken)
+@Mock([GormOAuth2RefreshToken])
 class GormOAuth2AccessTokenSpec extends Specification {
 
-    void "test toAccessToken"() {
+    @Unroll
+    void "test toAccessToken with refresh token [#useRefreshToken]"() {
         given:
-        def refreshToken = new GormOAuth2RefreshToken(value: 'gormRefreshToken')
+        if(useRefreshToken)
+            new GormOAuth2RefreshToken(value: refreshTokenValue).save(validate: false)
+
         def expiration = new Date()
 
         def token = new GormOAuth2AccessToken(
                 value: 'gormAccessToken',
-                refreshToken: refreshToken,
+                refreshToken: refreshTokenValue,
                 tokenType: 'bearer',
                 expiration: expiration,
                 scope: ['read'] as Set
@@ -29,11 +34,22 @@ class GormOAuth2AccessTokenSpec extends Specification {
 
         and:
         accessToken.value == 'gormAccessToken'
-        accessToken.refreshToken.value == 'gormRefreshToken'
         accessToken.tokenType == 'bearer'
         accessToken.expiration == expiration
         accessToken.scope.size() == 1
         accessToken.scope.contains('read')
+
+        and:
+        if(useRefreshToken)
+            accessToken.refreshToken.value == refreshTokenValue
+        else
+            accessToken.refreshToken == null
+
+
+        where:
+        useRefreshToken     |   refreshTokenValue
+        true                |   'gormRefreshToken'
+        false               |   null
     }
 
     void "username is optional to support flows that don't require it"() {
@@ -106,5 +122,13 @@ class GormOAuth2AccessTokenSpec extends Specification {
 
         then:
         !token.validate(['scope'])
+    }
+
+    void "refresh token can be null"() {
+        when:
+        def token = new GormOAuth2AccessToken(refreshToken: null)
+
+        then:
+        token.validate(['refreshToken'])
     }
 }
