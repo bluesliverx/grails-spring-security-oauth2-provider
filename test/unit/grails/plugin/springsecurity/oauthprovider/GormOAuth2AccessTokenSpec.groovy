@@ -131,4 +131,19 @@ class GormOAuth2AccessTokenSpec extends Specification {
         then:
         token.validate(['refreshToken'])
     }
+
+    @Unroll
+    void "test authentication constraints [#auth] is valid [#valid]"() {
+        when:
+        def token = new GormOAuth2AccessToken(authentication: auth as byte[])
+
+        then:
+        token.validate(['authentication']) == valid
+
+        where:
+        auth        |   valid
+        [0x1]       |   true
+        []          |   false
+        null        |   false
+    }
 }

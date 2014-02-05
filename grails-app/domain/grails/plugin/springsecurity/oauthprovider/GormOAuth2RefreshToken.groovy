@@ -9,7 +9,8 @@ class GormOAuth2RefreshToken {
     String value
 
     static constraints = {
-        value blank: false, unique: true
+        value nullable: false, blank: false, unique: true
+        authentication nullable: false, validator: { val, obj -> val.size() > 0 }
     }
 
     static mapping = {

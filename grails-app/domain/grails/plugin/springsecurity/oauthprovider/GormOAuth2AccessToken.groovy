@@ -20,12 +20,13 @@ class GormOAuth2AccessToken {
 
     static constraints = {
         username nullable: true
-        clientId blank: false
-        value blank: false, unique: true
-        tokenType blank: false
+        clientId nullable: false, blank: false
+        value nullable: false, blank: false, unique: true
+        tokenType nullable: false, blank: false
         expiration nullable: true
         scope nullable: false
         refreshToken nullable: true
+        authentication nullable: false, validator: { val, obj -> val.size() > 0 }
     }
 
     static mapping = {
