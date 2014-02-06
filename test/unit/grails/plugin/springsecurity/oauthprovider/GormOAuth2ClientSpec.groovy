@@ -16,7 +16,7 @@ class GormOAuth2ClientSpec extends Specification {
                 accessTokenValiditySeconds: 1234,
                 refreshTokenValiditySeconds: 5678,
                 authorities: ['ROLE_CLIENT'] as Set,
-                grantTypes: ['implicit'] as Set,
+                authorizedGrantTypes: ['implicit'] as Set,
                 resourceIds: ['someResource'] as Set,
                 scopes: ['kaleidoscope'] as Set,
                 redirectUris: ['http://anywhereButHere'] as Set
@@ -174,10 +174,10 @@ class GormOAuth2ClientSpec extends Specification {
 
     void "grant types not required -- default to refresh_token and authorization_code"() {
         when:
-        def client = new GormOAuth2Client(grantTypes: null)
+        def client = new GormOAuth2Client(authorizedGrantTypes: null)
 
         then:
-        client.validate(['grantTypes'])
+        client.validate(['authorizedGrantTypes'])
 
         when:
         def details = client.toClientDetails()
@@ -190,10 +190,10 @@ class GormOAuth2ClientSpec extends Specification {
 
     void "multiple grant types"() {
         when:
-        def client = new GormOAuth2Client(grantTypes: ['password','authorization_code', 'refresh_token', 'implicit'] as Set)
+        def client = new GormOAuth2Client(authorizedGrantTypes: ['password','authorization_code', 'refresh_token', 'implicit'] as Set)
 
         then:
-        client.validate(['grantTypes'])
+        client.validate(['authorizedGrantTypes'])
 
         when:
         def details = client.toClientDetails()

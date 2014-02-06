@@ -13,7 +13,7 @@ class GormOAuth2Client {
 
     static hasMany = [
             authorities: String,
-            grantTypes: String,
+            authorizedGrantTypes: String,
             resourceIds: String,
             scopes: String,
             redirectUris: String
@@ -27,7 +27,7 @@ class GormOAuth2Client {
         refreshTokenValiditySeconds nullable: true
 
         authorities nullable: true
-        grantTypes nullable: true
+        authorizedGrantTypes nullable: true
 
         resourceIds nullable: true
         scopes nullable: true
@@ -40,7 +40,7 @@ class GormOAuth2Client {
     }
 
     ClientDetails toClientDetails() {
-        def details = new BaseClientDetails(clientId, csv(resourceIds), csv(scopes), csv(grantTypes), csv(authorities), csv(redirectUris))
+        def details = new BaseClientDetails(clientId, csv(resourceIds), csv(scopes), csv(authorizedGrantTypes), csv(authorities), csv(redirectUris))
         details.clientSecret = clientSecret
         details.accessTokenValiditySeconds  = accessTokenValiditySeconds ?: null
         details.refreshTokenValiditySeconds = refreshTokenValiditySeconds ?: 0
