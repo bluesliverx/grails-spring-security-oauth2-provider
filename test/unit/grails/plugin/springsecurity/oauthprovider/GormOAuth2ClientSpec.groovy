@@ -1,5 +1,6 @@
 package grails.plugin.springsecurity.oauthprovider
 
+import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.test.mixin.*
 import org.springframework.security.oauth2.provider.ClientDetails
 import spock.lang.Specification
@@ -7,6 +8,23 @@ import spock.lang.Unroll
 
 @TestFor(GormOAuth2Client)
 class GormOAuth2ClientSpec extends Specification {
+
+    void setup() {
+        setUpSecurityConfig()
+    }
+
+    private void setUpSecurityConfig(Map overrides = [:]) {
+        def clientConfig = [
+                resourceIds: [],
+                authorizedGrantTypes: [],
+                scope: [],
+                registeredRedirectUri: null,
+                authorities: [],
+                accessTokenValiditySeconds: null,
+                refreshTokenValiditySeconds: null
+        ] << overrides
+        SpringSecurityUtils.securityConfig = [oauthProvider: [defaultClientConfig: clientConfig]] as ConfigObject
+    }
 
     void "test toClientDetails"() {
         given:
@@ -96,20 +114,32 @@ class GormOAuth2ClientSpec extends Specification {
     }
 
     @Unroll
-    void "[#type] token validity can be null"() {
+    void "[#type] token validity can be null -- honor default if not specified"() {
+        given:
+        setUpSecurityConfig([(name): 13490])
+
         when:
         def client = new GormOAuth2Client()
 
         then:
         client.validate([name])
 
+        when:
+        def details = client.toClientDetails()
+
+        then:
+        details."$detailsMethodName"() == 13490
+
         where:
-        type        |   name
-        'access'    |   'accessTokenValiditySeconds'
-        'refresh'   |   'refreshTokenValiditySeconds'
+        type        |   name                            |   detailsMethodName
+        'access'    |   'accessTokenValiditySeconds'    |   'getAccessTokenValiditySeconds'
+        'refresh'   |   'refreshTokenValiditySeconds'   |   'getRefreshTokenValiditySeconds'
     }
 
-    void "scopes can be optional"() {
+    void "scopes can be optional -- honor default if not specified"() {
+        given:
+        setUpSecurityConfig([scope: ['read']])
+
         when:
         def client = new GormOAuth2Client(scopes: null)
 
@@ -120,7 +150,9 @@ class GormOAuth2ClientSpec extends Specification {
         def details = client.toClientDetails()
 
         then:
-        !details.isScoped()
+        details.scoped
+        details.scope.size() == 1
+        details.scope.contains('read')
     }
 
     void "multiple scopes"() {
@@ -172,7 +204,10 @@ class GormOAuth2ClientSpec extends Specification {
         details.authorities.find { it.authority == 'ROLE_TRUSTED_CLIENT' }
     }
 
-    void "grant types not required -- default to refresh_token and authorization_code"() {
+    void "grant types not required -- honor default if not specified"() {
+        given:
+        setUpSecurityConfig([authorizedGrantTypes: ['foo', 'bar']])
+
         when:
         def client = new GormOAuth2Client(authorizedGrantTypes: null)
 
@@ -184,8 +219,8 @@ class GormOAuth2ClientSpec extends Specification {
 
         then:
         details.authorizedGrantTypes.size() == 2
-        details.authorizedGrantTypes.contains('refresh_token')
-        details.authorizedGrantTypes.contains('authorization_code')
+        details.authorizedGrantTypes.contains('foo')
+        details.authorizedGrantTypes.contains('bar')
     }
 
     void "multiple grant types"() {
@@ -206,7 +241,10 @@ class GormOAuth2ClientSpec extends Specification {
         details.authorizedGrantTypes.contains('implicit')
     }
 
-    void "redirect uris are not required"() {
+    void "redirect uris are not required -- honor default if not specified"() {
+        given:
+        setUpSecurityConfig([registeredRedirectUri: 'http://somewhere.com'])
+
         when:
         def client = new GormOAuth2Client(redirectUris: null)
 
@@ -217,7 +255,8 @@ class GormOAuth2ClientSpec extends Specification {
         def details = client.toClientDetails()
 
         then:
-        details.registeredRedirectUri == null
+        details.registeredRedirectUri.size() == 1
+        details.registeredRedirectUri.contains('http://somewhere.com')
     }
 
     void "multiple redirect uris"() {
@@ -236,7 +275,10 @@ class GormOAuth2ClientSpec extends Specification {
         details.registeredRedirectUri.contains('http://nowhere')
     }
 
-    void "resource ids are optional"() {
+    void "resource ids are optional -- honor default if not specified"() {
+        given:
+        setUpSecurityConfig([resourceIds: ['someResource']])
+
         when:
         def client = new GormOAuth2Client(resourceIds: null)
 
@@ -247,6 +289,7 @@ class GormOAuth2ClientSpec extends Specification {
         def details = client.toClientDetails()
 
         then:
-        details.resourceIds.empty
+        details.resourceIds.size() == 1
+        details.resourceIds.contains('someResource')
     }
 }

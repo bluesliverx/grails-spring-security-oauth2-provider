@@ -1,5 +1,6 @@
 package grails.plugin.springsecurity.oauthprovider
 
+import grails.plugin.springsecurity.SpringSecurityUtils
 import org.springframework.security.oauth2.provider.BaseClientDetails
 import org.springframework.security.oauth2.provider.ClientDetails
 
@@ -40,10 +41,18 @@ class GormOAuth2Client {
     }
 
     ClientDetails toClientDetails() {
+
+        def defaultClientConfig = SpringSecurityUtils.securityConfig.oauthProvider.defaultClientConfig
+
+        def resourceIds = this.resourceIds ?: defaultClientConfig.resourceIds
+        def scopes = this.scopes ?: defaultClientConfig.scope
+        def authorizedGrantTypes = this.authorizedGrantTypes ?: defaultClientConfig.authorizedGrantTypes
+        def redirectUris = this.redirectUris ?: [defaultClientConfig.registeredRedirectUri] as Set<String>
+
         def details = new BaseClientDetails(clientId, csv(resourceIds), csv(scopes), csv(authorizedGrantTypes), csv(authorities), csv(redirectUris))
         details.clientSecret = clientSecret
-        details.accessTokenValiditySeconds  = accessTokenValiditySeconds ?: null
-        details.refreshTokenValiditySeconds = refreshTokenValiditySeconds ?: 0
+        details.accessTokenValiditySeconds  = accessTokenValiditySeconds ?: defaultClientConfig.accessTokenValiditySeconds
+        details.refreshTokenValiditySeconds = refreshTokenValiditySeconds ?: defaultClientConfig.refreshTokenValiditySeconds
         return details
     }
 
