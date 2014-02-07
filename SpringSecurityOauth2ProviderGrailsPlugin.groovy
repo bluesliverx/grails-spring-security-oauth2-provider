@@ -13,6 +13,11 @@
  * limitations under the License.
  */
 import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.oauthprovider.AuthorizationRequestHolderSerializer
+import grails.plugin.springsecurity.oauthprovider.GormAuthorizationCodeServices
+import grails.plugin.springsecurity.oauthprovider.GormClientDetailsService
+import grails.plugin.springsecurity.oauthprovider.GormTokenStore
+import grails.plugin.springsecurity.oauthprovider.OAuth2AuthenticationSerializer
 import grails.plugin.springsecurity.oauthprovider.SpringSecurityOAuth2ProviderUtility
 
 import org.slf4j.Logger
@@ -27,9 +32,7 @@ import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
 import org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService
-import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
-import org.springframework.security.oauth2.provider.token.InMemoryTokenStore
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 
 class SpringSecurityOauth2ProviderGrailsPlugin {
@@ -88,8 +91,13 @@ OAuth2 Provider support for the Spring Security plugin.
 
 		println 'Configuring Spring Security OAuth2 provider ...'
 
-		clientDetailsService(InMemoryClientDetailsService)
-		tokenStore(InMemoryTokenStore)
+		clientDetailsService(GormClientDetailsService)
+
+        oAuth2AuthenticationSerializer(OAuth2AuthenticationSerializer)
+        tokenStore(GormTokenStore) {
+            oAuth2AuthenticationSerializer = ref("oAuth2AuthenticationSerializer")
+        }
+
 		tokenServices(DefaultTokenServices) {
 			tokenStore = ref("tokenStore")
 			clientDetailsService = ref("clientDetailsService")
@@ -98,8 +106,13 @@ OAuth2 Provider support for the Spring Security plugin.
 			reuseRefreshToken = conf.oauthProvider.tokenServices.reuseRefreshToken
 			supportRefreshToken = conf.oauthProvider.tokenServices.supportRefreshToken
 		}
-		authorizationCodeServices(InMemoryAuthorizationCodeServices)
-		userApprovalHandler(TokenServicesUserApprovalHandler) {
+
+        authorizationRequestHolderSerializer(AuthorizationRequestHolderSerializer)
+		authorizationCodeServices(GormAuthorizationCodeServices) {
+            authorizationRequestHolderSerializer = ref("authorizationRequestHolderSerializer")
+        }
+
+        userApprovalHandler(TokenServicesUserApprovalHandler) {
 			approvalParameter = conf.oauthProvider.userApprovalParameter
 			tokenServices = ref("tokenServices")
 		}
