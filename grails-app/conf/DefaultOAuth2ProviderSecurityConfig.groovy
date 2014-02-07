@@ -49,6 +49,5 @@ security {
 			accessTokenValiditySeconds = null
 			refreshTokenValiditySeconds = null
 		}
-		clients = []
 	}
 }

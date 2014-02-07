@@ -18,7 +18,6 @@ import grails.plugin.springsecurity.oauthprovider.GormAuthorizationCodeServices
 import grails.plugin.springsecurity.oauthprovider.GormClientDetailsService
 import grails.plugin.springsecurity.oauthprovider.GormTokenStore
 import grails.plugin.springsecurity.oauthprovider.OAuth2AuthenticationSerializer
-import grails.plugin.springsecurity.oauthprovider.SpringSecurityOAuth2ProviderUtility
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -187,53 +186,5 @@ OAuth2 Provider support for the Spring Security plugin.
 				conf.oauthProvider.clientFilterStartPosition + 1
 
 		println "... done configuring Spring Security OAuth2 provider"
-	}
-
-    def doWithApplicationContext = { applicationContext ->
-		def conf = SpringSecurityUtils.securityConfig
-		if (!conf || !conf.active) {
-			return
-		}
-
-		SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
-		// have to get again after overlaying DefaultOAuthProviderSecurityConfig
-		conf = SpringSecurityUtils.securityConfig
-
-		if (!conf.oauthProvider.active || !conf.oauthProvider.clients)
-			return
-
-		log.debug 'Configuring OAuth2 clients ...'
-
-		def clientDetailsService = applicationContext.getBean("clientDetailsService")
-		if (clientDetailsService instanceof InMemoryClientDetailsService)
-			SpringSecurityOAuth2ProviderUtility.registerClients(conf, clientDetailsService)
-		else
-			log.info("Client details service bean is not an in-memory implementation, ignoring client config")
-
-		log.debug '... done configuring OAuth2 clients'
-    }
-
-    def onConfigChange = { event ->
-		def conf = SpringSecurityUtils.securityConfig
-		if (!conf || !conf.active) {
-			return
-		}
-
-		SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
-		// have to get again after overlaying DefaultOAuthProviderSecurityConfig
-		conf = SpringSecurityUtils.securityConfig
-
-		if (!conf.oauthProvider.active || !conf.oauthProvider.clients)
-			return
-
-		log.debug 'Reconfiguring OAuth2 clients ...'
-
-		def clientDetailsService = applicationContext.getBean("clientDetailsService")
-		if (clientDetailsService instanceof InMemoryClientDetailsService)
-			SpringSecurityOAuth2ProviderUtility.registerClients(conf, clientDetailsService)
-		else
-			log.info("Client details service bean is not an in-memory implementation, ignoring config change")
-
-		log.debug '... done reconfiguring OAuth2 clients'
 	}
 }
