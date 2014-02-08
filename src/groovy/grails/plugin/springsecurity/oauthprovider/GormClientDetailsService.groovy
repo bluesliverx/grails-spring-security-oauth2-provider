@@ -4,7 +4,9 @@ import org.springframework.security.oauth2.provider.ClientDetails
 import org.springframework.security.oauth2.provider.ClientDetailsService
 import org.springframework.security.oauth2.provider.ClientRegistrationException
 import org.springframework.security.oauth2.provider.NoSuchClientException
+import org.springframework.transaction.annotation.Transactional
 
+@Transactional
 class GormClientDetailsService implements ClientDetailsService {
 
     @Override
