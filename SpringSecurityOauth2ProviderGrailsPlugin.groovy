@@ -31,6 +31,7 @@ import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
 import org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService
+import org.springframework.security.oauth2.provider.error.DefaultWebResponseExceptionTranslator
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 
@@ -184,6 +185,9 @@ OAuth2 Provider support for the Spring Security plugin.
 				conf.oauthProvider.filterStartPosition + 1
 		SpringSecurityUtils.registerFilter 'clientCredentialsTokenEndpointFilter',
 				conf.oauthProvider.clientFilterStartPosition + 1
+
+        // So the exception controller can extract the thrown OAuth2Exception
+        webResponseExceptionTranslator(DefaultWebResponseExceptionTranslator)
 
 		println "... done configuring Spring Security OAuth2 provider"
 	}
