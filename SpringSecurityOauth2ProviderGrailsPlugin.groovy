@@ -32,7 +32,9 @@ import org.springframework.security.oauth2.provider.approval.TokenServicesUserAp
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService
 import org.springframework.security.oauth2.provider.error.DefaultWebResponseExceptionTranslator
+import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurityExpressionHandler
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
+import org.springframework.security.web.context.NullSecurityContextRepository
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 
 class SpringSecurityOauth2ProviderGrailsPlugin {
@@ -179,6 +181,17 @@ OAuth2 Provider support for the Spring Security plugin.
 					new MappingJacksonHttpMessageConverter()
 			]
 		}
+
+        // Do not persist security context
+        securityContextRepository(NullSecurityContextRepository)
+
+        // Override expression handler provided by Spring Security core plugin
+        // TODO: See if there is a more stable way to do this, e.g. config option
+        webExpressionHandler(OAuth2WebSecurityExpressionHandler) {
+            roleHierarchy = ref('roleHierarchy')
+            expressionParser = ref('voterExpressionParser')
+            permissionEvaluator = ref('permissionEvaluator')
+        }
 
 		// Register endpoint URL filter since we define the URLs above
 		SpringSecurityUtils.registerFilter 'oauth2ProviderFilter',
