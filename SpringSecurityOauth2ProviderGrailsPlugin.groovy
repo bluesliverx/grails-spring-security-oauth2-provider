@@ -129,6 +129,7 @@ OAuth2 Provider support for the Spring Security plugin.
 					'user-approval-page':conf.oauthProvider.userApprovalEndpointUrl,
 					'authorization-endpoint-url':conf.oauthProvider.authorizationEndpointUrl,
 					'token-endpoint-url':conf.oauthProvider.tokenEndpointUrl,
+                    'error-page':conf.oauthProvider.errorEndpointUrl,
 					'approval-parameter-name':conf.oauthProvider.userApprovalParameter) {
 			oauth.'authorization-code'(
 				'authorization-code-services-ref':"authorizationCodeServices",

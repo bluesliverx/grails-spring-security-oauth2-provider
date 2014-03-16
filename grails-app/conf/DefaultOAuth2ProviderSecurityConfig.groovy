@@ -31,8 +31,9 @@ security {
 		tokenEndpointUrl = "/oauth/token"
 		userApprovalEndpointUrl = "/oauth/confirm_access"
 		userApprovalParameter = "user_oauth_approval"
+        errorEndpointUrl = "/oauth/error"
 
-		// Decides which grant types are enabled or not
+        // Decides which grant types are enabled or not
 		grantTypes {
 			authorizationCode = true
 			implicit = true
