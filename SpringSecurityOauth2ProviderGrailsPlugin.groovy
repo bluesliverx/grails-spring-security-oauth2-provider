@@ -18,7 +18,7 @@ import grails.plugin.springsecurity.oauthprovider.GormAuthorizationCodeServices
 import grails.plugin.springsecurity.oauthprovider.GormClientDetailsService
 import grails.plugin.springsecurity.oauthprovider.GormTokenStore
 import grails.plugin.springsecurity.oauthprovider.OAuth2AuthenticationSerializer
-
+import grails.plugin.springsecurity.web.authentication.AjaxAwareAuthenticationEntryPoint
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.converter.ByteArrayHttpMessageConverter
@@ -34,7 +34,11 @@ import org.springframework.security.oauth2.provider.client.ClientDetailsUserDeta
 import org.springframework.security.oauth2.provider.error.DefaultWebResponseExceptionTranslator
 import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurityExpressionHandler
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
+import org.springframework.security.web.AuthenticationEntryPoint
+import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint
 import org.springframework.security.web.context.NullSecurityContextRepository
+import org.springframework.security.web.util.AntPathRequestMatcher
+import org.springframework.security.web.util.RequestMatcher
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 
 class SpringSecurityOauth2ProviderGrailsPlugin {
@@ -183,8 +187,26 @@ OAuth2 Provider support for the Spring Security plugin.
 			]
 		}
 
-        // Do not persist security context
-        securityContextRepository(NullSecurityContextRepository)
+        // Configure multiple authentication entry points
+        // http://jdevdiary.blogspot.com/2013/03/grails-spring-security-and-multiple.html
+        oAuth2RequestMatcher(AntPathRequestMatcher, '/oauth/token/**')
+        oAuth2AuthenticationEntryPoint(OAuth2AuthenticationEntryPoint)
+
+        Map<RequestMatcher, AuthenticationEntryPoint> authenticationEntryPointMap = [
+                (oAuth2RequestMatcher): oAuth2AuthenticationEntryPoint
+        ]
+
+        // This is identical to the authenticationEntryPoint bean configured by core plugin
+        defaultAuthenticationEntryPoint(AjaxAwareAuthenticationEntryPoint, conf.auth.loginFormUrl) {
+            ajaxLoginFormUrl = conf.auth.ajaxLoginFormUrl
+            forceHttps = conf.auth.forceHttps
+            useForward = conf.auth.useForward
+            portMapper = ref('portMapper')
+            portResolver = ref('portResolver')
+        }
+        authenticationEntryPoint(DelegatingAuthenticationEntryPoint, authenticationEntryPointMap) {
+            defaultEntryPoint = ref('defaultAuthenticationEntryPoint')
+        }
 
         // Override expression handler provided by Spring Security core plugin
         // TODO: See if there is a more stable way to do this, e.g. config option
