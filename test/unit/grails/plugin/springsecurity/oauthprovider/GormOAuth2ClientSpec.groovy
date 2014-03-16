@@ -243,7 +243,7 @@ class GormOAuth2ClientSpec extends Specification {
 
     void "redirect uris are not required -- honor default if not specified"() {
         given:
-        setUpSecurityConfig([registeredRedirectUri: 'http://somewhere.com'])
+        setUpSecurityConfig([registeredRedirectUri: ['http://somewhere.com']])
 
         when:
         def client = new GormOAuth2Client(redirectUris: null)

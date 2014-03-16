@@ -47,7 +47,7 @@ class GormOAuth2Client {
         def resourceIds = this.resourceIds ?: defaultClientConfig.resourceIds
         def scopes = this.scopes ?: defaultClientConfig.scope
         def authorizedGrantTypes = this.authorizedGrantTypes ?: defaultClientConfig.authorizedGrantTypes
-        def redirectUris = this.redirectUris ?: [defaultClientConfig.registeredRedirectUri] as Set<String>
+        def redirectUris = this.redirectUris ?: defaultClientConfig.registeredRedirectUri as Set<String>
 
         def details = new BaseClientDetails(clientId, csv(resourceIds), csv(scopes), csv(authorizedGrantTypes), csv(authorities), csv(redirectUris))
         details.clientSecret = clientSecret
