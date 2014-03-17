@@ -18,6 +18,8 @@ import grails.plugin.springsecurity.oauthprovider.GormAuthorizationCodeServices
 import grails.plugin.springsecurity.oauthprovider.GormClientDetailsService
 import grails.plugin.springsecurity.oauthprovider.GormTokenStore
 import grails.plugin.springsecurity.oauthprovider.OAuth2AuthenticationSerializer
+import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationEndpoint
+import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedTokenEndpoint
 import grails.plugin.springsecurity.web.authentication.AjaxAwareAuthenticationEntryPoint
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -27,16 +29,23 @@ import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter
 import org.springframework.http.converter.xml.SourceHttpMessageConverter
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
-import org.springframework.security.oauth2.provider.InMemoryClientDetailsService
+import org.springframework.security.oauth2.provider.CompositeTokenGranter
+import org.springframework.security.oauth2.provider.DefaultAuthorizationRequestManager
 import org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter
+import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenGranter
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService
+import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter
+import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpointHandlerMapping
 import org.springframework.security.oauth2.provider.error.DefaultWebResponseExceptionTranslator
+import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint
 import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurityExpressionHandler
+import org.springframework.security.oauth2.provider.implicit.ImplicitTokenGranter
+import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter
+import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
 import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint
-import org.springframework.security.web.context.NullSecurityContextRepository
 import org.springframework.security.web.util.AntPathRequestMatcher
 import org.springframework.security.web.util.RequestMatcher
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
@@ -123,49 +132,71 @@ OAuth2 Provider support for the Spring Security plugin.
 			tokenServices = ref("tokenServices")
 		}
 
-		// Oauth namespace
-		xmlns oauth:"http://www.springframework.org/schema/security/oauth2"
+        /* Register authorization request manager */
+        oauth2AuthorizationRequestManager(DefaultAuthorizationRequestManager, ref('clientDetailsService'))
 
-		oauth.'authorization-server'(
-					'client-details-service-ref':"clientDetailsService",
-					'token-services-ref':"tokenServices",
-					'user-approval-handler-ref':'userApprovalHandler',
-					'user-approval-page':conf.oauthProvider.userApprovalEndpointUrl,
-					'authorization-endpoint-url':conf.oauthProvider.authorizationEndpointUrl,
-					'token-endpoint-url':conf.oauthProvider.tokenEndpointUrl,
-                    'error-page':conf.oauthProvider.errorEndpointUrl,
-					'approval-parameter-name':conf.oauthProvider.userApprovalParameter) {
-			oauth.'authorization-code'(
-				'authorization-code-services-ref':"authorizationCodeServices",
-				'disabled':!conf.oauthProvider.grantTypes.authorizationCode
-			)
-			oauth.'implicit'(
-				'disabled':!conf.oauthProvider.grantTypes.implicit
-			)
-			oauth.'refresh-token'(
-				'disabled':!conf.oauthProvider.grantTypes.refreshToken
-			)
-			oauth.'client-credentials'(
-				'disabled':!conf.oauthProvider.grantTypes.clientCredentials
-			)
-			oauth.'password'(
-				'authentication-manager-ref':'authenticationManager',
-				'disabled':!conf.oauthProvider.grantTypes.password
-			)
-		}
+        /* Register token granters */
+        def grantTypes = conf.oauthProvider.grantTypes
+        def availableGranters = []
 
-		oauth.'resource-server'(
-					'id':'oauth2ProviderFilter',
-					'token-services-ref':'tokenServices',
-		)
+        /* authorization-code */
+        if(grantTypes.authorizationCode) {
+            authorizationCodeTokenGranter(AuthorizationCodeTokenGranter,
+                    ref('tokenServices'), ref('authorizationCodeServices'), ref('clientDetailsService'))
+            availableGranters << ref('authorizationCodeTokenGranter')
+        }
 
-		// Expression handling
-		oauth.'expression-handler'(
-				'id':'oauth2ExpressionHandler'
-		)
-		oauth.'web-expression-handler'(
-				'id':'oauth2WebExpressionHandler'
-		)
+        /* refresh-token */
+        if(grantTypes.refreshToken) {
+            refreshTokenGranter(RefreshTokenGranter, ref('tokenServices'), ref('clientDetailsService'))
+            availableGranters << ref('refreshTokenGranter')
+        }
+
+        /* implicit */
+        if(grantTypes.implicit) {
+            implicitGranter(ImplicitTokenGranter, ref('tokenServices'), ref('clientDetailsService'))
+            availableGranters << ref('implicitGranter')
+        }
+
+        /* client-credentials */
+        if(grantTypes.clientCredentials) {
+            clientCredentialsGranter(ClientCredentialsTokenGranter, ref('tokenServices'), ref('clientDetailsService'))
+            availableGranters << ref('clientCredentialsGranter')
+        }
+
+        /* password */
+        if(grantTypes.password) {
+            resourceOwnerPasswordGranter(ResourceOwnerPasswordTokenGranter,
+                ref('authenticationManager'), ref('tokenServices'), ref('clientDetailsService'))
+            availableGranters << ref('resourceOwnerPasswordGranter')
+        }
+
+        oauth2TokenGranter(CompositeTokenGranter, availableGranters)
+
+        /* Register authorization endpoint */
+        oauth2AuthorizationEndpoint(WrappedAuthorizationEndpoint) {
+            tokenGranter = ref('oauth2TokenGranter')
+            authorizationCodeServices = ref('authorizationCodeServices')
+            clientDetailsService = ref('clientDetailsService')
+            userApprovalHandler = ref('userApprovalHandler')
+            userApprovalPage = conf.oauthProvider.userApprovalEndpointUrl
+            errorPage = conf.oauthProvider.errorEndpointUrl
+        }
+
+        /* Register token endpoint */
+        oauth2TokenEndpoint(WrappedTokenEndpoint) {
+            clientDetailsService = ref('clientDetailsService')
+            tokenGranter = ref('oauth2TokenGranter')
+
+        }
+
+        /* Register handler mapping for token and authorization endpoints */
+        oauth2HandlerMapping(FrameworkEndpointHandlerMapping) {
+            mappings = [
+                    "/oauth/token": conf.oauthProvider.tokenEndpointUrl,
+                    "/oauth/authorize": conf.oauthProvider.authorizationEndpointUrl
+            ]
+        }
 
 		// Allow client log-ins
 		clientDetailsUserService(ClientDetailsUserDetailsService, ref('clientDetailsService'))
@@ -217,8 +248,6 @@ OAuth2 Provider support for the Spring Security plugin.
         }
 
 		// Register endpoint URL filter since we define the URLs above
-		SpringSecurityUtils.registerFilter 'oauth2ProviderFilter',
-				conf.oauthProvider.filterStartPosition + 1
 		SpringSecurityUtils.registerFilter 'clientCredentialsTokenEndpointFilter',
 				conf.oauthProvider.clientFilterStartPosition + 1
 
