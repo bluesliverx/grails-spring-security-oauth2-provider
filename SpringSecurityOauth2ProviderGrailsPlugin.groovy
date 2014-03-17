@@ -251,9 +251,6 @@ OAuth2 Provider support for the Spring Security plugin.
 		SpringSecurityUtils.registerFilter 'clientCredentialsTokenEndpointFilter',
 				conf.oauthProvider.clientFilterStartPosition + 1
 
-        // So the exception controller can extract the thrown OAuth2Exception
-        webResponseExceptionTranslator(DefaultWebResponseExceptionTranslator)
-
 		println "... done configuring Spring Security OAuth2 provider"
 	}
 }
