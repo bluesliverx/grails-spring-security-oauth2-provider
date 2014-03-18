@@ -63,6 +63,8 @@ grails.project.dependency.resolution = {
             exclude "spock-grails-support"
         }
 
-		compile ':spring-security-core:2.0-RC2'
+        test ":hibernate:$grailsVersion"
+
+        compile ':spring-security-core:2.0-RC2'
 	}
 }

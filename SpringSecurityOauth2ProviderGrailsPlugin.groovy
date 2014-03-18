@@ -14,9 +14,9 @@
  */
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugin.springsecurity.oauthprovider.AuthorizationRequestHolderSerializer
-import grails.plugin.springsecurity.oauthprovider.GormAuthorizationCodeServices
+import grails.plugin.springsecurity.oauthprovider.GormAuthorizationCodeService
 import grails.plugin.springsecurity.oauthprovider.GormClientDetailsService
-import grails.plugin.springsecurity.oauthprovider.GormTokenStore
+import grails.plugin.springsecurity.oauthprovider.GormTokenStoreService
 import grails.plugin.springsecurity.oauthprovider.OAuth2AuthenticationSerializer
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationEndpoint
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedTokenEndpoint
@@ -37,7 +37,6 @@ import org.springframework.security.oauth2.provider.client.ClientCredentialsToke
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter
 import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpointHandlerMapping
-import org.springframework.security.oauth2.provider.error.DefaultWebResponseExceptionTranslator
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint
 import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurityExpressionHandler
 import org.springframework.security.oauth2.provider.implicit.ImplicitTokenGranter
@@ -106,12 +105,14 @@ OAuth2 Provider support for the Spring Security plugin.
 
 		println 'Configuring Spring Security OAuth2 provider ...'
 
-		clientDetailsService(GormClientDetailsService)
+        /* Gorm backed beans */
+        springConfig.addAlias 'clientDetailsService', 'gormClientDetailsService'
+        springConfig.addAlias 'tokenStore', 'gormTokenStoreService'
+        springConfig.addAlias 'authorizationCodeServices', 'gormAuthorizationCodeService'
 
+        /* Helper classes for Gorm support */
         oAuth2AuthenticationSerializer(OAuth2AuthenticationSerializer)
-        tokenStore(GormTokenStore) {
-            oAuth2AuthenticationSerializer = ref("oAuth2AuthenticationSerializer")
-        }
+        authorizationRequestHolderSerializer(AuthorizationRequestHolderSerializer)
 
 		tokenServices(DefaultTokenServices) {
 			tokenStore = ref("tokenStore")
@@ -121,11 +122,6 @@ OAuth2 Provider support for the Spring Security plugin.
 			reuseRefreshToken = conf.oauthProvider.tokenServices.reuseRefreshToken
 			supportRefreshToken = conf.oauthProvider.tokenServices.supportRefreshToken
 		}
-
-        authorizationRequestHolderSerializer(AuthorizationRequestHolderSerializer)
-		authorizationCodeServices(GormAuthorizationCodeServices) {
-            authorizationRequestHolderSerializer = ref("authorizationRequestHolderSerializer")
-        }
 
         userApprovalHandler(TokenServicesUserApprovalHandler) {
 			approvalParameter = conf.oauthProvider.userApprovalParameter

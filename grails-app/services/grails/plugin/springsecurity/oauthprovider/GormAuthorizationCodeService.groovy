@@ -1,13 +1,9 @@
 package grails.plugin.springsecurity.oauthprovider
 
-import groovy.util.logging.Slf4j
 import org.springframework.security.oauth2.provider.code.AuthorizationRequestHolder
 import org.springframework.security.oauth2.provider.code.RandomValueAuthorizationCodeServices
-import org.springframework.transaction.annotation.Transactional
 
-@Slf4j
-@Transactional
-class GormAuthorizationCodeServices extends RandomValueAuthorizationCodeServices {
+class GormAuthorizationCodeService extends RandomValueAuthorizationCodeServices {
 
     AuthorizationRequestHolderSerializer authorizationRequestHolderSerializer
 

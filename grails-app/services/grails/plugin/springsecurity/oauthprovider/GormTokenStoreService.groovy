@@ -1,15 +1,11 @@
 package grails.plugin.springsecurity.oauthprovider
 
-import groovy.util.logging.Slf4j
 import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.security.oauth2.common.OAuth2RefreshToken
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.token.TokenStore
-import org.springframework.transaction.annotation.Transactional
 
-@Slf4j
-@Transactional
-class GormTokenStore implements TokenStore {
+class GormTokenStoreService implements TokenStore {
 
     OAuth2AuthenticationSerializer oAuth2AuthenticationSerializer
 
@@ -128,7 +124,7 @@ class GormTokenStore implements TokenStore {
         collectAccessTokensFromGormAccessTokens(gormAccessTokens, "clientId [$clientId]")
     }
 
-    private static Collection<OAuth2AccessToken> collectAccessTokensFromGormAccessTokens(List<GormOAuth2AccessToken> gormAccessTokens, String searchArg) {
+    private Collection<OAuth2AccessToken> collectAccessTokensFromGormAccessTokens(List<GormOAuth2AccessToken> gormAccessTokens, String searchArg) {
         if(!gormAccessTokens)
             log.debug("Failed to find access tokens for $searchArg")
         gormAccessTokens.collect { it.toAccessToken() } ?: Collections.emptyList()
