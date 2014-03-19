@@ -23,6 +23,7 @@ import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedTokenEndpoint
 import grails.plugin.springsecurity.web.authentication.AjaxAwareAuthenticationEntryPoint
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationContext
 import org.springframework.http.converter.ByteArrayHttpMessageConverter
 import org.springframework.http.converter.FormHttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
@@ -44,10 +45,15 @@ import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswo
 import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
 import org.springframework.security.web.AuthenticationEntryPoint
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint
+import org.springframework.security.web.context.NullSecurityContextRepository
+import org.springframework.security.web.context.SecurityContextPersistenceFilter
 import org.springframework.security.web.util.AntPathRequestMatcher
 import org.springframework.security.web.util.RequestMatcher
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
+
+import javax.servlet.Filter
 
 class SpringSecurityOauth2ProviderGrailsPlugin {
 	static final Logger log = LoggerFactory.getLogger(this)
@@ -231,6 +237,7 @@ OAuth2 Provider support for the Spring Security plugin.
             portMapper = ref('portMapper')
             portResolver = ref('portResolver')
         }
+
         authenticationEntryPoint(DelegatingAuthenticationEntryPoint, authenticationEntryPointMap) {
             defaultEntryPoint = ref('defaultAuthenticationEntryPoint')
         }
@@ -243,10 +250,78 @@ OAuth2 Provider support for the Spring Security plugin.
             permissionEvaluator = ref('permissionEvaluator')
         }
 
+        // Register the token endpoint as stateless
+        // This is added to the filter chain
+        nullContextRepository(NullSecurityContextRepository)
+        statelessSecurityContextPersistenceFilter(SecurityContextPersistenceFilter, ref('nullContextRepository'))
+
 		// Register endpoint URL filter since we define the URLs above
 		SpringSecurityUtils.registerFilter 'clientCredentialsTokenEndpointFilter',
 				conf.oauthProvider.clientFilterStartPosition + 1
 
 		println "... done configuring Spring Security OAuth2 provider"
 	}
+
+    def doWithApplicationContext = { ctx ->
+        def conf = SpringSecurityUtils.securityConfig
+        if(conf.oauthProvider.tokenEndpointFilterChain.disabled) {
+            log.debug("Skipping token endpoint filter chain configuration")
+            return
+        }
+
+        def springSecurityFilterChain = ctx.springSecurityFilterChain
+        def originalFilterChainMap = springSecurityFilterChain.filterChainMap
+
+        def tokenEndpointUrl =  conf.oauthProvider.tokenEndpointUrl
+        def statelessUrlPattern = conf.oauthProvider.tokenEndpointFilterChain.baseUrlPattern
+
+        // Inherit the filter chain specified by another end point
+        def allFilters = findFilterChainForUrl(statelessUrlPattern, originalFilterChainMap).value as List
+        if(allFilters == null) {
+            log.warn("Could not find base filter chain for pattern [${statelessUrlPattern}] to use for token endpoint [${tokenEndpointUrl}]")
+            return
+        }
+
+        // Locate the securityContextPersistenceFilter bean to replace
+        def scpfIdx = allFilters.findIndexOf { it instanceof SecurityContextPersistenceFilter }
+        def scpfBean = ctx.getBean('securityContextPersistenceFilter')
+
+        // Skip if the securityContextPersistenceFilter is not present
+        def filterPresent = (scpfIdx != -1) && allFilters[scpfIdx].is(scpfBean)
+        if(filterPresent) {
+            // Replace default securityContextPersistenceFilter bean with one that is stateless
+            def tokenEndpointFilters = replaceSecurityContextPersistenceFilterWithStateless(allFilters, scpfIdx, ctx)
+
+            // Rebuild the filterChainMap with the the token endpoint filter at the beginning
+            def filterChainMap = injectFilterChain(tokenEndpointUrl, tokenEndpointFilters, originalFilterChainMap)
+            springSecurityFilterChain.filterChainMap = filterChainMap
+        }
+    }
+
+    private Map injectFilterChain(String url, List filters, Map oldFilterChainMap) {
+        Map<RequestMatcher, List<Filter>> filterChainMap = [:]
+        filterChainMap[new AntPathRequestMatcher(url)] = filters
+        filterChainMap << oldFilterChainMap
+        return filterChainMap
+    }
+
+    private List replaceSecurityContextPersistenceFilterWithStateless(List allFilters, int scpfIdx, ApplicationContext ctx) {
+        def tokenEndpointFilters = []
+        allFilters.eachWithIndex { filter, idx ->
+            if (idx == scpfIdx) {
+                def statelessFilter = ctx.getBean('statelessSecurityContextPersistenceFilter')
+                tokenEndpointFilters << statelessFilter
+            } else {
+                tokenEndpointFilters << filter
+            }
+
+        }
+        return tokenEndpointFilters
+    }
+
+    private def findFilterChainForUrl(String url, Map filterChainMap) {
+        filterChainMap.find { AntPathRequestMatcher urlPattern, filters ->
+            urlPattern.pattern == url
+        }
+    }
 }

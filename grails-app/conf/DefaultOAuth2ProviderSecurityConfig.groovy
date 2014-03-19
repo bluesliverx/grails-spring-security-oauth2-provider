@@ -21,6 +21,14 @@ security {
 		filterStartPosition = SecurityFilterPosition.X509_FILTER.order
 		clientFilterStartPosition = SecurityFilterPosition.DIGEST_AUTH_FILTER.order
 
+        // Configuration for the token endpoint's filter chain
+        tokenEndpointFilterChain {
+            // Defines the URL pattern for the filter chain to "inherit" as the base
+            baseUrlPattern = '/**'
+            // Should the stateless filter be injected
+            disabled = false
+        }
+
 		tokenServices {
 			accessTokenValiditySeconds = 60 * 60 * 12 //default 12 hours
 			refreshTokenValiditySeconds = 60 * 10 //default 10 minutes
