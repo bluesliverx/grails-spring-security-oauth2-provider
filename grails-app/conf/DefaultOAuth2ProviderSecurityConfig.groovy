@@ -49,6 +49,13 @@ security {
 			clientCredentials = true
 			password = true
 		}
+
+        authorization {
+            // Should the authorization endpoint allow unregistered redirect_uri
+            // to be specified in request if client has none registered
+            requireRegisteredRedirectUri = true
+        }
+
 		defaultClientConfig {
 			resourceIds = []
 			authorizedGrantTypes = ["authorization_code", "refresh_token"]

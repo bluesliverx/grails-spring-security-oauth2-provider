@@ -18,6 +18,7 @@ import grails.plugin.springsecurity.oauthprovider.GormAuthorizationCodeService
 import grails.plugin.springsecurity.oauthprovider.GormClientDetailsService
 import grails.plugin.springsecurity.oauthprovider.GormTokenStoreService
 import grails.plugin.springsecurity.oauthprovider.OAuth2AuthenticationSerializer
+import grails.plugin.springsecurity.oauthprovider.endpoint.RequiredRedirectResolver
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationEndpoint
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedTokenEndpoint
 import grails.plugin.springsecurity.web.authentication.AjaxAwareAuthenticationEntryPoint
@@ -37,6 +38,7 @@ import org.springframework.security.oauth2.provider.client.ClientCredentialsToke
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenGranter
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter
+import org.springframework.security.oauth2.provider.endpoint.DefaultRedirectResolver
 import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpointHandlerMapping
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint
 import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurityExpressionHandler
@@ -175,11 +177,21 @@ OAuth2 Provider support for the Spring Security plugin.
 
         oauth2TokenGranter(CompositeTokenGranter, availableGranters)
 
+        if(conf.oauthProvider.authorization.requireRegisteredRedirectUri) {
+            /* Require clients to have registered redirect URIs */
+            redirectResolver(RequiredRedirectResolver)
+        }
+        else {
+            /* This resolver will use the requested redirect URI if client does not have one registered */
+            redirectResolver(DefaultRedirectResolver)
+        }
+
         /* Register authorization endpoint */
         oauth2AuthorizationEndpoint(WrappedAuthorizationEndpoint) {
             tokenGranter = ref('oauth2TokenGranter')
             authorizationCodeServices = ref('authorizationCodeServices')
             clientDetailsService = ref('clientDetailsService')
+            redirectResolver = ref('redirectResolver')
             userApprovalHandler = ref('userApprovalHandler')
             userApprovalPage = conf.oauthProvider.userApprovalEndpointUrl
             errorPage = conf.oauthProvider.errorEndpointUrl
