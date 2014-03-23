@@ -65,5 +65,42 @@ security {
 			accessTokenValiditySeconds = null
 			refreshTokenValiditySeconds = null
 		}
+
+        authorizationCodeLookup {
+            className = null
+            authenticationPropertyName = 'authentication'
+            codePropertyName = 'code'
+        }
+
+        accessTokenLookup {
+            className = null
+            authenticationPropertyName = 'authentication'
+            usernamePropertyName = 'username'
+            clientIdPropertyName = 'clientId'
+            valuePropertyName = 'value'
+            tokenTypePropertyName = 'tokenType'
+            expirationPropertyName = 'expiration'
+            refreshTokenPropertyName = 'refreshToken'
+            scopePropertyName = 'scope'
+        }
+
+        refreshTokenLookup {
+            className = null
+            authenticationPropertyName = 'authentication'
+            valuePropertyName = 'value'
+        }
+
+        clientLookup {
+            className = null
+            clientIdPropertyName = 'clientId'
+            clientSecretPropertyName = 'clientSecret'
+            accessTokenValiditySecondsPropertyName = 'accessTokenValiditySeconds'
+            refreshTokenValiditySecondsPropertyName = 'refreshTokenValiditySeconds'
+            authoritiesPropertyName = 'authorities'
+            authorizedGrantTypesPropertyName = 'authorizedGrantTypes'
+            resourceIdsPropertyName = 'resourceIds'
+            scopesPropertyName = 'scopes'
+            redirectUrisPropertyName = 'redirectUris'
+        }
 	}
 }

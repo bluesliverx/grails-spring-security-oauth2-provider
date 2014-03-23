@@ -8,20 +8,6 @@ import spock.lang.Unroll
 @TestFor(GormOAuth2RefreshToken)
 class GormOAuth2RefreshTokenSpec extends Specification {
 
-    void "test toRefreshToken"() {
-        given:
-        def token = new GormOAuth2RefreshToken(value: 'gormRefreshToken')
-
-        when:
-        def refreshToken = token.toRefreshToken()
-
-        then:
-        refreshToken instanceof OAuth2RefreshToken
-
-        and:
-        refreshToken.value == 'gormRefreshToken'
-    }
-
     void "value must be unique"() {
         given:
         def existingToken = new GormOAuth2RefreshToken(value: 'gormRefreshToken')

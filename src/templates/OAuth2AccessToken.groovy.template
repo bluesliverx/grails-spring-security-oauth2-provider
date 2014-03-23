@@ -1,6 +1,6 @@
-package grails.plugin.springsecurity.oauthprovider
+package ${packageName}
 
-class GormOAuth2AccessToken {
+class ${OAuth2AccessTokenClassName} {
 
     byte[] authentication
 

@@ -10,48 +10,6 @@ import spock.lang.Unroll
 @Mock([GormOAuth2RefreshToken])
 class GormOAuth2AccessTokenSpec extends Specification {
 
-    @Unroll
-    void "test toAccessToken with refresh token [#useRefreshToken]"() {
-        given:
-        if(useRefreshToken)
-            new GormOAuth2RefreshToken(value: refreshTokenValue).save(validate: false)
-
-        def expiration = new Date()
-
-        def token = new GormOAuth2AccessToken(
-                value: 'gormAccessToken',
-                refreshToken: refreshTokenValue,
-                tokenType: 'bearer',
-                expiration: expiration,
-                scope: ['read'] as Set
-        )
-
-        when:
-        def accessToken = token.toAccessToken()
-
-        then:
-        accessToken instanceof OAuth2AccessToken
-
-        and:
-        accessToken.value == 'gormAccessToken'
-        accessToken.tokenType == 'bearer'
-        accessToken.expiration == expiration
-        accessToken.scope.size() == 1
-        accessToken.scope.contains('read')
-
-        and:
-        if(useRefreshToken)
-            accessToken.refreshToken.value == refreshTokenValue
-        else
-            accessToken.refreshToken == null
-
-
-        where:
-        useRefreshToken     |   refreshTokenValue
-        true                |   'gormRefreshToken'
-        false               |   null
-    }
-
     void "username is optional to support flows that don't require it"() {
         when:
         def token = new GormOAuth2AccessToken(username: null)

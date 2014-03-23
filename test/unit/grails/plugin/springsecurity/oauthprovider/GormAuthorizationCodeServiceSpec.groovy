@@ -1,5 +1,6 @@
 package grails.plugin.springsecurity.oauthprovider
 
+import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices
@@ -11,12 +12,23 @@ import spock.lang.Specification
 class GormAuthorizationCodeServiceSpec extends Specification {
 
     String code = 'testAuthCode'
-
     byte[] serializedAuthentication = [0x42]
     AuthorizationRequestHolder authorizationRequestHolder = Mock(AuthorizationRequestHolder)
 
     void setup() {
+        service.grailsApplication = grailsApplication
         service.authorizationRequestHolderSerializer = Mock(AuthorizationRequestHolderSerializer)
+
+        setAuthorizationCodeClassName('grails.plugin.springsecurity.oauthprovider.GormOAuth2AuthorizationCode')
+    }
+
+    private void setAuthorizationCodeClassName(String authorizationCodeClassName) {
+        def authorizationCodeLookup = [
+                className: authorizationCodeClassName,
+                authenticationPropertyName: 'authentication',
+                codePropertyName: 'code'
+        ]
+        SpringSecurityUtils.securityConfig = [oauthProvider: [authorizationCodeLookup: authorizationCodeLookup]] as ConfigObject
     }
 
     void "must be an AuthorizationCodeServices"() {
@@ -77,5 +89,29 @@ class GormAuthorizationCodeServiceSpec extends Specification {
         1 * service.authorizationRequestHolderSerializer.deserialize(serializedAuthentication) >> {
             throw new IllegalArgumentException('UH OH')
         }
+    }
+
+    void "store invalid authorization code domain class name"() {
+        given:
+        setAuthorizationCodeClassName('invalidAuthCodeClass')
+
+        when:
+        service.store(code, authorizationRequestHolder)
+
+        then:
+        def e = thrown(IllegalArgumentException)
+        e.message == "The specified authorization code domain class 'invalidAuthCodeClass' is not a domain class"
+    }
+
+    void "remove invalid authorization code domain class name"() {
+        given:
+        setAuthorizationCodeClassName('invalidAuthCodeClass')
+
+        when:
+        service.remove(code)
+
+        then:
+        def e = thrown(IllegalArgumentException)
+        e.message == "The specified authorization code domain class 'invalidAuthCodeClass' is not a domain class"
     }
 }

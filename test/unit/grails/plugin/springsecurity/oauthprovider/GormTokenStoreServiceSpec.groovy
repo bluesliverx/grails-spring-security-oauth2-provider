@@ -1,7 +1,10 @@
 package grails.plugin.springsecurity.oauthprovider
 
+import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken
+import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken
 import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.security.oauth2.common.OAuth2RefreshToken
 import org.springframework.security.oauth2.provider.AuthorizationRequest
@@ -27,6 +30,34 @@ class GormTokenStoreServiceSpec extends Specification {
 
         tokenValue = 'TEST'
         refreshValue = 'REFRESH'
+
+        SpringSecurityUtils.securityConfig = [oauthProvider: [:]] as ConfigObject
+        setAccessTokenClassName('grails.plugin.springsecurity.oauthprovider.GormOAuth2AccessToken')
+        setRefreshTokenClassName('grails.plugin.springsecurity.oauthprovider.GormOAuth2RefreshToken')
+    }
+
+    private void setAccessTokenClassName(accessTokenClassName) {
+        def accessTokenLookup = [
+                className: accessTokenClassName,
+                authenticationPropertyName: 'authentication',
+                usernamePropertyName: 'username',
+                clientIdPropertyName: 'clientId',
+                valuePropertyName: 'value',
+                tokenTypePropertyName: 'tokenType',
+                expirationPropertyName: 'expiration',
+                refreshTokenPropertyName: 'refreshToken',
+                scopePropertyName: 'scope'
+        ]
+        SpringSecurityUtils.securityConfig.oauthProvider.accessTokenLookup = accessTokenLookup
+    }
+
+    private void setRefreshTokenClassName(refreshTokenClassName) {
+        def refreshTokenLookup = [
+                className: refreshTokenClassName,
+                authenticationPropertyName: 'authentication',
+                valuePropertyName: 'value',
+        ]
+        SpringSecurityUtils.securityConfig.oauthProvider.refreshTokenLookup = refreshTokenLookup
     }
 
     private void expectAuthenticationSerialization() {
@@ -42,7 +73,7 @@ class GormTokenStoreServiceSpec extends Specification {
         expectAuthenticationDeserialization()
 
         def gormAccessToken = new GormOAuth2AccessToken(value: tokenValue, authentication: serializedAuthentication).save(validate: false)
-        def oauth2AccessToken = gormAccessToken.toAccessToken()
+        def oauth2AccessToken = service.createOAuth2AccessToken(gormAccessToken)
 
         when:
         def authentication = service.readAuthentication(oauth2AccessToken)
@@ -54,7 +85,7 @@ class GormTokenStoreServiceSpec extends Specification {
     void "read authentication removes access token if deserialization throws"() {
         given:
         def gormAccessToken = new GormOAuth2AccessToken(value: tokenValue, authentication: serializedAuthentication).save(validate: false)
-        def oauth2AccessToken = gormAccessToken.toAccessToken()
+        def oauth2AccessToken = service.createOAuth2AccessToken(gormAccessToken)
 
         assert GormOAuth2AccessToken.findByValue(tokenValue)
 
@@ -140,7 +171,7 @@ class GormTokenStoreServiceSpec extends Specification {
     void "remove access token"() {
         given:
         def gormAccessToken = new GormOAuth2AccessToken(value: tokenValue).save(validate: false)
-        def oauth2AccessToken = gormAccessToken.toAccessToken()
+        def oauth2AccessToken = service.createOAuth2AccessToken(gormAccessToken)
 
         assert GormOAuth2AccessToken.findByValue(tokenValue)
 
@@ -205,7 +236,7 @@ class GormTokenStoreServiceSpec extends Specification {
         expectAuthenticationDeserialization()
 
         def gormRefreshToken = new GormOAuth2RefreshToken(value: refreshValue, authentication: serializedAuthentication).save()
-        def oAuth2RefreshToken = gormRefreshToken.toRefreshToken()
+        def oAuth2RefreshToken = service.createOAuth2RefreshToken(gormRefreshToken)
 
         assert GormOAuth2RefreshToken.findByValue(refreshValue)
 
@@ -216,7 +247,7 @@ class GormTokenStoreServiceSpec extends Specification {
     void "read authentication removes refresh token if deserialization throws"() {
         given:
         def gormRefreshToken = new GormOAuth2RefreshToken(value: refreshValue, authentication: serializedAuthentication).save()
-        def oAuth2RefreshToken = gormRefreshToken.toRefreshToken()
+        def oAuth2RefreshToken = service.createOAuth2RefreshToken(gormRefreshToken)
 
         assert GormOAuth2RefreshToken.findByValue(refreshValue)
 
@@ -235,7 +266,7 @@ class GormTokenStoreServiceSpec extends Specification {
     void "remove refresh token"() {
         given:
         def gormRefreshToken = new GormOAuth2RefreshToken(value: refreshValue).save(validate: false)
-        def oAuth2RefreshToken = gormRefreshToken.toRefreshToken()
+        def oAuth2RefreshToken = service.createOAuth2RefreshToken(gormRefreshToken)
 
         assert GormOAuth2RefreshToken.findByValue(refreshValue)
 
@@ -348,5 +379,107 @@ class GormTokenStoreServiceSpec extends Specification {
         tokens.size() == 2
         tokens[0].value == '1234'
         tokens[1].value == '5678'
+    }
+
+    @Unroll
+    void "invalid access token code domain class name for method [#methodName] with args #args"() {
+        given:
+        setAccessTokenClassName('invalidAccessTokenClass')
+
+        when:
+        service."$methodName"(*args)
+
+        then:
+        def e = thrown(IllegalArgumentException)
+        e.message == "The specified access token domain class 'invalidAccessTokenClass' is not a domain class"
+
+        where:
+        _   |   methodName                              |   args
+        _   |   'readAuthentication'                    |   ['token']
+        _   |   'storeAccessToken'                      |   [null, null]
+        _   |   'readAccessToken'                       |   ['token']
+        _   |   'removeAccessToken'                     |   [new DefaultOAuth2AccessToken('token')]
+        _   |   'removeAccessToken'                     |   ['token']
+        _   |   'getAccessToken'                        |   [null]
+        _   |   'removeAccessTokenUsingRefreshToken'    |   [null]
+        _   |   'findTokensByUserName'                  |   ['user']
+        _   |   'findTokensByClientId'                  |   ['client']
+    }
+
+    @Unroll
+    void "invalid refresh token code domain class name for method [#methodName] with args #args"() {
+        given:
+        setRefreshTokenClassName('invalidRefreshTokenClass')
+
+        when:
+        service."$methodName"(*args)
+
+        then:
+        def e = thrown(IllegalArgumentException)
+        e.message == "The specified refresh token domain class 'invalidRefreshTokenClass' is not a domain class"
+
+        where:
+        _   |   methodName                          |   args
+        _   |   'storeRefreshToken'                 |   [null, null]
+        _   |   'readRefreshToken'                  |   ['token']
+        _   |   'readAuthenticationForRefreshToken' |   [new DefaultOAuth2RefreshToken('token')]
+        _   |   'removeRefreshToken'                |   [new DefaultOAuth2RefreshToken('token')]
+        _   |   'removeRefreshToken'                |   ['token']
+    }
+
+    @Unroll
+    void "test createOAuth2AccessToken with refresh token [#useRefreshToken]"() {
+        given:
+        if(useRefreshToken)
+            new GormOAuth2RefreshToken(value: refreshTokenValue).save(validate: false)
+
+        def expiration = new Date()
+
+        def gormAccessToken = new GormOAuth2AccessToken(
+                value: 'gormAccessToken',
+                refreshToken: refreshTokenValue,
+                tokenType: 'bearer',
+                expiration: expiration,
+                scope: ['read'] as Set
+        )
+
+        when:
+        def accessToken = service.createOAuth2AccessToken(gormAccessToken)
+
+        then:
+        accessToken instanceof OAuth2AccessToken
+
+        and:
+        accessToken.value == 'gormAccessToken'
+        accessToken.tokenType == 'bearer'
+        accessToken.expiration == expiration
+        accessToken.scope.size() == 1
+        accessToken.scope.contains('read')
+
+        and:
+        if(useRefreshToken)
+            accessToken.refreshToken.value == refreshTokenValue
+        else
+            accessToken.refreshToken == null
+
+
+        where:
+        useRefreshToken     |   refreshTokenValue
+        true                |   'gormRefreshToken'
+        false               |   null
+    }
+
+    void "test createOAuth2RefreshToken"() {
+        given:
+        def gormRefreshToken = new GormOAuth2RefreshToken(value: 'gormRefreshToken')
+
+        when:
+        def refreshToken = service.createOAuth2RefreshToken(gormRefreshToken)
+
+        then:
+        refreshToken instanceof OAuth2RefreshToken
+
+        and:
+        refreshToken.value == 'gormRefreshToken'
     }
 }

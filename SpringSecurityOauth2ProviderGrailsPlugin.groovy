@@ -71,7 +71,7 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 		'test/**',
 		// Controllers
 		'grails-app/controllers/**',
-		'grails-app/domain/test/**',
+		'grails-app/domain/**',
 		'grails-app/i18n/**',
 		// Views
 		'web-app/**',

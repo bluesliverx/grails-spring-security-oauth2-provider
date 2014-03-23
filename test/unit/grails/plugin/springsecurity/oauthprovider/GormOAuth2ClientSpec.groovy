@@ -1,79 +1,11 @@
 package grails.plugin.springsecurity.oauthprovider
 
-import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.test.mixin.*
-import org.springframework.security.oauth2.provider.ClientDetails
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @TestFor(GormOAuth2Client)
 class GormOAuth2ClientSpec extends Specification {
-
-    void setup() {
-        setUpSecurityConfig()
-    }
-
-    private void setUpSecurityConfig(Map overrides = [:]) {
-        def clientConfig = [
-                resourceIds: [],
-                authorizedGrantTypes: [],
-                scope: [],
-                registeredRedirectUri: null,
-                authorities: [],
-                accessTokenValiditySeconds: null,
-                refreshTokenValiditySeconds: null
-        ] << overrides
-        SpringSecurityUtils.securityConfig = [oauthProvider: [defaultClientConfig: clientConfig]] as ConfigObject
-    }
-
-    void "test toClientDetails"() {
-        given:
-        def client = new GormOAuth2Client(
-                clientId: 'gormClient',
-                clientSecret: 'grails',
-                accessTokenValiditySeconds: 1234,
-                refreshTokenValiditySeconds: 5678,
-                authorities: ['ROLE_CLIENT'] as Set,
-                authorizedGrantTypes: ['implicit'] as Set,
-                resourceIds: ['someResource'] as Set,
-                scopes: ['kaleidoscope'] as Set,
-                redirectUris: ['http://anywhereButHere'] as Set
-        )
-
-        when:
-        def details = client.toClientDetails()
-
-        then:
-        details instanceof ClientDetails
-
-        and:
-        details.clientId == 'gormClient'
-        details.clientSecret == 'grails'
-
-        and:
-        details.accessTokenValiditySeconds == 1234
-        details.refreshTokenValiditySeconds == 5678
-
-        and:
-        details.authorities.size() == 1
-        details.authorities.find { it.authority == 'ROLE_CLIENT' }
-
-        and:
-        details.authorizedGrantTypes.size() == 1
-        details.authorizedGrantTypes.contains('implicit')
-
-        and:
-        details.resourceIds.size() == 1
-        details.resourceIds.contains('someResource')
-
-        and:
-        details.scope.size() == 1
-        details.scope.contains('kaleidoscope')
-
-        and:
-        details.registeredRedirectUri.size() == 1
-        details.registeredRedirectUri.contains('http://anywhereButHere')
-    }
 
     @Unroll
     void "client id is required -- check invalid id [#clientId]"() {
@@ -105,30 +37,15 @@ class GormOAuth2ClientSpec extends Specification {
 
         then:
         client.validate(['clientSecret'])
-
-        when:
-        def details = client.toClientDetails()
-
-        then:
-        !details.isSecretRequired()
     }
 
     @Unroll
-    void "[#type] token validity can be null -- honor default if not specified"() {
-        given:
-        setUpSecurityConfig([(name): 13490])
-
+    void "[#type] token validity can be null"() {
         when:
         def client = new GormOAuth2Client()
 
         then:
         client.validate([name])
-
-        when:
-        def details = client.toClientDetails()
-
-        then:
-        details."$detailsMethodName"() == 13490
 
         where:
         type        |   name                            |   detailsMethodName
@@ -136,160 +53,80 @@ class GormOAuth2ClientSpec extends Specification {
         'refresh'   |   'refreshTokenValiditySeconds'   |   'getRefreshTokenValiditySeconds'
     }
 
-    void "scopes can be optional -- honor default if not specified"() {
-        given:
-        setUpSecurityConfig([scope: ['read']])
-
+    @Unroll
+    void "valid scopes [#scopes]"() {
         when:
-        def client = new GormOAuth2Client(scopes: null)
+        def client = new GormOAuth2Client(scopes: scopes)
 
         then:
         client.validate(['scopes'])
 
-        when:
-        def details = client.toClientDetails()
-
-        then:
-        details.scoped
-        details.scope.size() == 1
-        details.scope.contains('read')
-    }
-
-    void "multiple scopes"() {
-        when:
-        def client = new GormOAuth2Client(scopes: ['read', 'write', 'trust'] as Set)
-
-        then:
-        client.validate(['scopes'])
-
-        when:
-        def details = client.toClientDetails()
-
-        then:
-        details.scoped
-        details.scope.size() == 3
-        details.scope.contains('read')
-        details.scope.contains('write')
-        details.scope.contains('trust')
+        where:
+        _   |   scopes
+        _   |   null
+        _   |   [] as Set
+        _   |   ['read', 'write', 'trust'] as Set
     }
 
     @Unroll
-    void "authorities default to nothing"() {
+    void "valid authorities [#authorities]"() {
         when:
-        def client = new GormOAuth2Client()
+        def client = new GormOAuth2Client(authorities: authorities)
 
         then:
         client.validate(['authorities'])
 
-        when:
-        def details = client.toClientDetails()
-
-        then:
-        details.authorities.empty
+        where:
+        _   |   authorities
+        _   |   null
+        _   |   [] as Set
+        _   |   ['ROLE_CLIENT', 'ROLE_TRUSTED_CLIENT'] as Set
     }
 
-    void "multiple authorities"() {
+    @Unroll
+    void "valid grant types [#grantTypes]"() {
         when:
-        def client = new GormOAuth2Client(authorities: ['ROLE_CLIENT', 'ROLE_TRUSTED_CLIENT'] as Set)
-
-        then:
-        client.validate(['authorities'])
-
-        when:
-        def details = client.toClientDetails()
-
-        then:
-        details.authorities.size() == 2
-        details.authorities.find { it.authority == 'ROLE_CLIENT' }
-        details.authorities.find { it.authority == 'ROLE_TRUSTED_CLIENT' }
-    }
-
-    void "grant types not required -- honor default if not specified"() {
-        given:
-        setUpSecurityConfig([authorizedGrantTypes: ['foo', 'bar']])
-
-        when:
-        def client = new GormOAuth2Client(authorizedGrantTypes: null)
+        def client = new GormOAuth2Client(authorizedGrantTypes: grantTypes)
 
         then:
         client.validate(['authorizedGrantTypes'])
 
-        when:
-        def details = client.toClientDetails()
-
-        then:
-        details.authorizedGrantTypes.size() == 2
-        details.authorizedGrantTypes.contains('foo')
-        details.authorizedGrantTypes.contains('bar')
+        where:
+        _   |   grantTypes
+        _   |   null
+        _   |   [] as Set
+        _   |   ['password','authorization_code', 'refresh_token', 'implicit'] as Set
     }
 
-    void "multiple grant types"() {
+    @Unroll
+    void "valid redirect uris [#redirectUris]"() {
         when:
-        def client = new GormOAuth2Client(authorizedGrantTypes: ['password','authorization_code', 'refresh_token', 'implicit'] as Set)
-
-        then:
-        client.validate(['authorizedGrantTypes'])
-
-        when:
-        def details = client.toClientDetails()
-
-        then:
-        details.authorizedGrantTypes.size() == 4
-        details.authorizedGrantTypes.contains('password')
-        details.authorizedGrantTypes.contains('authorization_code')
-        details.authorizedGrantTypes.contains('refresh_token')
-        details.authorizedGrantTypes.contains('implicit')
-    }
-
-    void "redirect uris are not required -- honor default if not specified"() {
-        given:
-        setUpSecurityConfig([registeredRedirectUri: ['http://somewhere.com']])
-
-        when:
-        def client = new GormOAuth2Client(redirectUris: null)
+        def client = new GormOAuth2Client(redirectUris: redirectUris)
 
         then:
         client.validate(['redirectUris'])
 
-        when:
-        def details = client.toClientDetails()
-
-        then:
-        details.registeredRedirectUri.size() == 1
-        details.registeredRedirectUri.contains('http://somewhere.com')
+        where:
+        _   |   redirectUris
+        _   |   null
+        _   |   [] as Set
+        _   |   ['http://anywhere'] as Set
+        _   |   ['http://somewhere', 'http://nowhere'] as Set
     }
 
-    void "multiple redirect uris"() {
+    @Unroll
+    void "valid resource ids [#resourceIds]"() {
         when:
-        def client = new GormOAuth2Client(redirectUris: ['http://somewhere', 'http://nowhere'] as Set)
-
-        then:
-        client.validate(['redirectUris'])
-
-        when:
-        def details = client.toClientDetails()
-
-        then:
-        details.registeredRedirectUri.size() == 2
-        details.registeredRedirectUri.contains('http://somewhere')
-        details.registeredRedirectUri.contains('http://nowhere')
-    }
-
-    void "resource ids are optional -- honor default if not specified"() {
-        given:
-        setUpSecurityConfig([resourceIds: ['someResource']])
-
-        when:
-        def client = new GormOAuth2Client(resourceIds: null)
+        def client = new GormOAuth2Client(resourceIds: resourceIds)
 
         then:
         client.validate(['resourceIds'])
 
-        when:
-        def details = client.toClientDetails()
-
-        then:
-        details.resourceIds.size() == 1
-        details.resourceIds.contains('someResource')
+        where:
+        _   |   resourceIds
+        _   |   null
+        _   |   [] as Set
+        _   |   ['something'] as Set
+        _   |   ['something', 'more'] as Set
     }
 }

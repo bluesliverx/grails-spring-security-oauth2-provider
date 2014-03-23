@@ -1,6 +1,6 @@
-package grails.plugin.springsecurity.oauthprovider
+package ${packageName}
 
-class GormOAuth2Client {
+class ${OAuth2ClientClassName} {
 
     String clientId
     String clientSecret
