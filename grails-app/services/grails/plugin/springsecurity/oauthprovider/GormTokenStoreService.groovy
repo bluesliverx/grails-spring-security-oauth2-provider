@@ -269,7 +269,7 @@ class GormTokenStoreService implements TokenStore {
     }
 
     private Class getTokenClass(String tokenType, String className) {
-        def tokenClass = grailsApplication.getDomainClass(className)
+        def tokenClass = className ? grailsApplication.getDomainClass(className) : null
         if(!tokenClass) {
             def message = String.format(INVALID_DOMAIN_CLASS_FORMAT, tokenType, className)
             throw new IllegalArgumentException(message)

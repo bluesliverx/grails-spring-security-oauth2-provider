@@ -37,7 +37,7 @@ class GormClientDetailsService implements ClientDetailsService {
     }
 
     private Class getClientClass(String clientClassName) {
-        def clientClass = grailsApplication.getDomainClass(clientClassName)
+        def clientClass = clientClassName ? grailsApplication.getDomainClass(clientClassName) : null
         if(!clientClass) {
             throw new IllegalArgumentException("The specified client domain class '$clientClassName' is not a domain class")
         }

@@ -116,16 +116,21 @@ class GormClientDetailsServiceSpec extends Specification {
         e.message == 'No client with requested id: gormClient'
     }
 
-    void "invalid client domain class name"() {
+    void "invalid client domain class name [#className]"() {
         given:
-        setClientClassName('invalidClientClass')
+        setClientClassName(className)
 
         when:
         service.loadClientByClientId('gormClient')
 
         then:
         def e = thrown(IllegalArgumentException)
-        e.message == "The specified client domain class 'invalidClientClass' is not a domain class"
+        e.message == "The specified client domain class '$className' is not a domain class"
+
+        where:
+        _   |   className
+        _   |   'invalidClientClass'
+        _   |   null
     }
 
     void "client secret can be optional"() {

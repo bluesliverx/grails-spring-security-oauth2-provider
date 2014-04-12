@@ -57,7 +57,7 @@ class GormAuthorizationCodeService extends RandomValueAuthorizationCodeServices 
     }
 
     private Class getAuthorizationCodeClass(String authorizationCodeClassName) {
-        def authorizationCodeClass = grailsApplication.getDomainClass(authorizationCodeClassName)
+        def authorizationCodeClass = authorizationCodeClassName ? grailsApplication.getDomainClass(authorizationCodeClassName) : null
         if(!authorizationCodeClass) {
             throw new IllegalArgumentException("The specified authorization code domain class '$authorizationCodeClassName' is not a domain class")
         }

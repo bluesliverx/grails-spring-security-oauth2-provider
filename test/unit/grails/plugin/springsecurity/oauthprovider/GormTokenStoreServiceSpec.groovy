@@ -381,6 +381,15 @@ class GormTokenStoreServiceSpec extends Specification {
         tokens[1].value == '5678'
     }
 
+    void "null token domain class name"() {
+        when:
+        service.getTokenClass('test', null)
+
+        then:
+        def e = thrown(IllegalArgumentException)
+        e.message == "The specified test token domain class 'null' is not a domain class"
+    }
+
     @Unroll
     void "invalid access token code domain class name for method [#methodName] with args #args"() {
         given:

@@ -91,27 +91,37 @@ class GormAuthorizationCodeServiceSpec extends Specification {
         }
     }
 
-    void "store invalid authorization code domain class name"() {
+    void "store invalid authorization code domain class name: [#className]"() {
         given:
-        setAuthorizationCodeClassName('invalidAuthCodeClass')
+        setAuthorizationCodeClassName(className)
 
         when:
         service.store(code, authorizationRequestHolder)
 
         then:
         def e = thrown(IllegalArgumentException)
-        e.message == "The specified authorization code domain class 'invalidAuthCodeClass' is not a domain class"
+        e.message == "The specified authorization code domain class '$className' is not a domain class"
+
+        where:
+        _   |   className
+        _   |   'invalidAuthCodeClass'
+        _   |   null
     }
 
-    void "remove invalid authorization code domain class name"() {
+    void "remove invalid authorization code domain class name: [#className]"() {
         given:
-        setAuthorizationCodeClassName('invalidAuthCodeClass')
+        setAuthorizationCodeClassName(className)
 
         when:
         service.remove(code)
 
         then:
         def e = thrown(IllegalArgumentException)
-        e.message == "The specified authorization code domain class 'invalidAuthCodeClass' is not a domain class"
+        e.message == "The specified authorization code domain class '$className' is not a domain class"
+
+        where:
+        _   |   className
+        _   |   'invalidAuthCodeClass'
+        _   |   null
     }
 }
