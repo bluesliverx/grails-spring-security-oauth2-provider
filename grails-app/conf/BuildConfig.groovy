@@ -39,10 +39,17 @@ grails.project.dependency.resolution = {
 			         "commons-codec"
 		}
 
-        test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
+        test "org.spockframework:spock-grails-support:0.7-groovy-2.0", {
+            export = false
+        }
 
-        test 'cglib:cglib-nodep:2.2.2'
-        test 'org.objenesis:objenesis:1.4'
+        test 'cglib:cglib-nodep:2.2.2', {
+            export = false
+        }
+
+        test 'org.objenesis:objenesis:1.4', {
+            export = false
+        }
 	}
 
 	plugins {
@@ -61,9 +68,12 @@ grails.project.dependency.resolution = {
 
         test(":spock:0.7") {
             exclude "spock-grails-support"
+            export = false
         }
 
-        test ":hibernate:$grailsVersion"
+        test ":hibernate:$grailsVersion", {
+            export = false
+        }
 
         compile ':spring-security-core:2.0-RC2'
 	}
