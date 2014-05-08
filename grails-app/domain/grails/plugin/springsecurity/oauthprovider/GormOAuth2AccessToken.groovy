@@ -28,5 +28,6 @@ class GormOAuth2AccessToken {
 
     static mapping = {
         version false
+        scope lazy: false
     }
 }

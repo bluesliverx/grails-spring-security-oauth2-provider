@@ -28,5 +28,6 @@ class ${OAuth2AccessTokenClassName} {
 
     static mapping = {
         version false
+        scope lazy: false
     }
 }
