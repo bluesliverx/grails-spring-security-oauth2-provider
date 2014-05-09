@@ -220,6 +220,20 @@ class GormClientDetailsServiceSpec extends Specification {
         details.authorities.find { it.authority == 'ROLE_TRUSTED_CLIENT' }
     }
 
+    void "no grant types specified for client or in default config"() {
+        given:
+        setUpDefaultClientConfig([authorizedGrantTypes: []])
+
+        and:
+        def client = new GormOAuth2Client(authorizedGrantTypes: null)
+
+        when:
+        def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
+
+        then:
+        details.authorizedGrantTypes.size() == 0
+    }
+
     void "grant types not required -- honor default if not specified"() {
         given:
         setUpDefaultClientConfig([authorizedGrantTypes: ['foo', 'bar']])

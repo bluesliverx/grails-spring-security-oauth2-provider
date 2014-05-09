@@ -70,7 +70,18 @@ class GormClientDetailsService implements ClientDetailsService {
         details.clientSecret = client."$clientSecretPropertyName"
         details.accessTokenValiditySeconds  = client."$accessTokenValiditySecondsPropertyName" ?: defaultClientConfig.accessTokenValiditySeconds
         details.refreshTokenValiditySeconds = client."$refreshTokenValiditySecondsPropertyName" ?: defaultClientConfig.refreshTokenValiditySeconds
+        correctAuthorizedGrantTypes(details, authorizedGrantTypes)
         return details
+    }
+
+    /*
+        The constructor for BaseClientDetails defaults the authorized grant types to authorization_code
+        and refresh_token. We want the developer to have final say on what grant types a client should have.
+        Thus we need to ensure that the ClientDetails we return only contain the authorized grant types that
+        either the client or the default config allows.
+      */
+    private void correctAuthorizedGrantTypes(BaseClientDetails clientDetails, Collection<String> authorizedGrantTypes) {
+        clientDetails.authorizedGrantTypes = authorizedGrantTypes
     }
 
     private static String csv(Collection collection) {
