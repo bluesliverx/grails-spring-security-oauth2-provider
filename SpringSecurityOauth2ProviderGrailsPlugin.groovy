@@ -21,6 +21,7 @@ import grails.plugin.springsecurity.oauthprovider.OAuth2AuthenticationSerializer
 import grails.plugin.springsecurity.oauthprovider.endpoint.RequiredRedirectResolver
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationEndpoint
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedTokenEndpoint
+import grails.plugin.springsecurity.oauthprovider.token.StrictTokenGranter
 import grails.plugin.springsecurity.web.authentication.AjaxAwareAuthenticationEntryPoint
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -164,14 +165,23 @@ OAuth2 Provider support for the Spring Security plugin.
 
         /* client-credentials */
         if(grantTypes.clientCredentials) {
-            clientCredentialsGranter(ClientCredentialsTokenGranter, ref('tokenServices'), ref('clientDetailsService'))
+            delegateClientCredentialsGranter(ClientCredentialsTokenGranter,
+                    ref('tokenServices'), ref('clientDetailsService'))
+
+            clientCredentialsGranter(StrictTokenGranter,
+                    ref('delegateClientCredentialsGranter'), ref('clientDetailsService'))
+
             availableGranters << ref('clientCredentialsGranter')
         }
 
         /* password */
         if(grantTypes.password) {
-            resourceOwnerPasswordGranter(ResourceOwnerPasswordTokenGranter,
+            delegateResourceOwnerPasswordTokenGranter(ResourceOwnerPasswordTokenGranter,
                 ref('authenticationManager'), ref('tokenServices'), ref('clientDetailsService'))
+
+            resourceOwnerPasswordGranter(StrictTokenGranter,
+                ref('delegateResourceOwnerPasswordTokenGranter'), ref('clientDetailsService'))
+
             availableGranters << ref('resourceOwnerPasswordGranter')
         }
 

@@ -58,7 +58,7 @@ security {
 
 		defaultClientConfig {
 			resourceIds = []
-			authorizedGrantTypes = ["authorization_code", "refresh_token"]
+			authorizedGrantTypes = []
 			scope = []
 			registeredRedirectUri = null
 			authorities = []
