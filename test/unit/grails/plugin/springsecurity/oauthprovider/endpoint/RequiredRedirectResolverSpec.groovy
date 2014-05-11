@@ -46,6 +46,22 @@ class RequiredRedirectResolverSpec extends Specification {
         'http://invalid'    |   ['http://somewhere'] as Set<String>
     }
 
+    void "requested redirect uri must match registered redirect uri exactly"() {
+        given:
+        client.getRegisteredRedirectUri() >> registered
+
+        when:
+        resolver.resolveRedirect(requested, client)
+
+        then:
+        thrown(RedirectMismatchException)
+
+        where:
+        requested                       |   registered
+        'http://somewhere1'             |   ['http://somewhere'] as Set<String>
+        'http://somewhere?key=value'    |   ['http://somewhere'] as Set<String>
+    }
+
     void "client must have a registered redirect uri"() {
         given:
         client.getRegisteredRedirectUri() >> registered
