@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.common.exceptions.InsufficientScopeEx
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception
 import org.springframework.security.oauth2.provider.ClientRegistrationException
 import org.springframework.web.context.request.ServletWebRequest
+import org.springframework.web.servlet.view.RedirectView
 
 import static org.codehaus.groovy.grails.web.servlet.HttpHeaders.*
 
@@ -68,7 +69,13 @@ class OAuth2ExceptionController {
             throw new IllegalStateException("Invalid wrapped authorization endpoint exception")
         }
 
-        render(view: modelAndView.viewName, model: modelAndView.model)
+        if(modelAndView.view instanceof RedirectView) {
+            def redirectView = modelAndView.view as RedirectView
+            redirect(url: redirectView.url)
+        }
+        else {
+            render(view: modelAndView.viewName, model: modelAndView.model)
+        }
     }
 
     /*
