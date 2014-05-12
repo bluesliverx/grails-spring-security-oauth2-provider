@@ -12,6 +12,8 @@ class AuthorizationRequestHolderSerializer {
     }
 
     AuthorizationRequestHolder deserialize(byte[] authentication) {
-        deserialize(authentication)
+        new ByteArrayInputStream(authentication).withObjectInputStream(getClass().classLoader) { ois ->
+            ois.readObject() as AuthorizationRequestHolder
+        }
     }
 }
