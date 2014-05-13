@@ -142,25 +142,30 @@ OAuth2 Provider support for the Spring Security plugin.
 
         /* Register token granters */
         def grantTypes = conf.oauthProvider.grantTypes
-        def availableGranters = []
+
+        /* Must enforce restrictions on which grants, e.g. implicit, are available to each each endpoint */
+        def authorizationEndpointTokenGranters = []
+        def tokenEndpointTokenGranters = []
 
         /* authorization-code */
         if(grantTypes.authorizationCode) {
             authorizationCodeTokenGranter(AuthorizationCodeTokenGranter,
                     ref('tokenServices'), ref('authorizationCodeServices'), ref('clientDetailsService'))
-            availableGranters << ref('authorizationCodeTokenGranter')
+
+            authorizationEndpointTokenGranters << ref('authorizationCodeTokenGranter')
+            tokenEndpointTokenGranters << ref('authorizationCodeTokenGranter')
         }
 
         /* refresh-token */
         if(grantTypes.refreshToken) {
             refreshTokenGranter(RefreshTokenGranter, ref('tokenServices'), ref('clientDetailsService'))
-            availableGranters << ref('refreshTokenGranter')
+            tokenEndpointTokenGranters << ref('refreshTokenGranter')
         }
 
         /* implicit */
         if(grantTypes.implicit) {
             implicitGranter(ImplicitTokenGranter, ref('tokenServices'), ref('clientDetailsService'))
-            availableGranters << ref('implicitGranter')
+            authorizationEndpointTokenGranters << ref('implicitGranter')
         }
 
         /* client-credentials */
@@ -171,7 +176,7 @@ OAuth2 Provider support for the Spring Security plugin.
             clientCredentialsGranter(StrictTokenGranter,
                     ref('delegateClientCredentialsGranter'), ref('clientDetailsService'))
 
-            availableGranters << ref('clientCredentialsGranter')
+            tokenEndpointTokenGranters << ref('clientCredentialsGranter')
         }
 
         /* password */
@@ -182,10 +187,11 @@ OAuth2 Provider support for the Spring Security plugin.
             resourceOwnerPasswordGranter(StrictTokenGranter,
                 ref('delegateResourceOwnerPasswordTokenGranter'), ref('clientDetailsService'))
 
-            availableGranters << ref('resourceOwnerPasswordGranter')
+            tokenEndpointTokenGranters << ref('resourceOwnerPasswordGranter')
         }
 
-        oauth2TokenGranter(CompositeTokenGranter, availableGranters)
+        oauth2AuthorizationEndpointTokenGranter(CompositeTokenGranter, authorizationEndpointTokenGranters)
+        oauth2TokenEndpointTokenGranter(CompositeTokenGranter, tokenEndpointTokenGranters)
 
         if(conf.oauthProvider.authorization.requireRegisteredRedirectUri) {
             /* Require clients to have registered redirect URIs */
@@ -198,7 +204,7 @@ OAuth2 Provider support for the Spring Security plugin.
 
         /* Register authorization endpoint */
         oauth2AuthorizationEndpoint(WrappedAuthorizationEndpoint) {
-            tokenGranter = ref('oauth2TokenGranter')
+            tokenGranter = ref('oauth2AuthorizationEndpointTokenGranter')
             authorizationCodeServices = ref('authorizationCodeServices')
             clientDetailsService = ref('clientDetailsService')
             redirectResolver = ref('redirectResolver')
@@ -210,7 +216,7 @@ OAuth2 Provider support for the Spring Security plugin.
         /* Register token endpoint */
         oauth2TokenEndpoint(WrappedTokenEndpoint) {
             clientDetailsService = ref('clientDetailsService')
-            tokenGranter = ref('oauth2TokenGranter')
+            tokenGranter = ref('oauth2TokenEndpointTokenGranter')
 
         }
 
