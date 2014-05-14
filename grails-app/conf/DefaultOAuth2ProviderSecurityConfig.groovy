@@ -54,6 +54,9 @@ security {
             // Should the authorization endpoint allow unregistered redirect_uri
             // to be specified in request if client has none registered
             requireRegisteredRedirectUri = true
+
+            // Should each request be required to include the scope param
+            requireScope = true
         }
 
 		defaultClientConfig {

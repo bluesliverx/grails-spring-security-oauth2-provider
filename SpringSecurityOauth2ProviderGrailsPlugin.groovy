@@ -21,6 +21,7 @@ import grails.plugin.springsecurity.oauthprovider.OAuth2AuthenticationSerializer
 import grails.plugin.springsecurity.oauthprovider.endpoint.RequiredRedirectResolver
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationEndpoint
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedTokenEndpoint
+import grails.plugin.springsecurity.oauthprovider.provider.ScopeRequiredAuthorizationRequestManager
 import grails.plugin.springsecurity.oauthprovider.token.StrictTokenGranter
 import grails.plugin.springsecurity.web.authentication.AjaxAwareAuthenticationEntryPoint
 import org.slf4j.Logger
@@ -202,9 +203,19 @@ OAuth2 Provider support for the Spring Security plugin.
             redirectResolver(DefaultRedirectResolver)
         }
 
+        if(conf.oauthProvider.authorization.requireScope) {
+            /* Require every request to include requested scope */
+            authorizationRequestManager(ScopeRequiredAuthorizationRequestManager, ref('clientDetailsService'))
+        }
+        else {
+            /* Default implementation does not require scope */
+            authorizationRequestManager(DefaultAuthorizationRequestManager, ref('clientDetailsService'))
+        }
+
         /* Register authorization endpoint */
         oauth2AuthorizationEndpoint(WrappedAuthorizationEndpoint) {
             tokenGranter = ref('oauth2AuthorizationEndpointTokenGranter')
+            authorizationRequestManager = ref('authorizationRequestManager')
             authorizationCodeServices = ref('authorizationCodeServices')
             clientDetailsService = ref('clientDetailsService')
             redirectResolver = ref('redirectResolver')
@@ -217,7 +228,7 @@ OAuth2 Provider support for the Spring Security plugin.
         oauth2TokenEndpoint(WrappedTokenEndpoint) {
             clientDetailsService = ref('clientDetailsService')
             tokenGranter = ref('oauth2TokenEndpointTokenGranter')
-
+            authorizationRequestManager = ref('authorizationRequestManager')
         }
 
         /* Register handler mapping for token and authorization endpoints */
