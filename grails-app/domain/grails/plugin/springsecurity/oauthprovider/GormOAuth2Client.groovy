@@ -2,6 +2,10 @@ package grails.plugin.springsecurity.oauthprovider
 
 class GormOAuth2Client {
 
+    private static final String NO_CLIENT_SECRET = ''
+
+    transient springSecurityService
+
     String clientId
     String clientSecret
 
@@ -15,6 +19,8 @@ class GormOAuth2Client {
             scopes: String,
             redirectUris: String
     ]
+
+    static transients = ['springSecurityService']
 
     static constraints = {
         clientId blank: false, unique: true
@@ -34,5 +40,20 @@ class GormOAuth2Client {
 
     static mapping = {
         version false
+    }
+
+    def beforeInsert() {
+        encodeClientSecret()
+    }
+
+    def beforeUpdate() {
+        if(isDirty('clientSecret')) {
+            encodeClientSecret()
+        }
+    }
+
+    protected void encodeClientSecret() {
+        clientSecret = clientSecret ?: NO_CLIENT_SECRET
+        clientSecret = springSecurityService.encodePassword(clientSecret)
     }
 }

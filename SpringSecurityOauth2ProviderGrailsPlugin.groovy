@@ -14,9 +14,6 @@
  */
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugin.springsecurity.oauthprovider.AuthorizationRequestHolderSerializer
-import grails.plugin.springsecurity.oauthprovider.GormAuthorizationCodeService
-import grails.plugin.springsecurity.oauthprovider.GormClientDetailsService
-import grails.plugin.springsecurity.oauthprovider.GormTokenStoreService
 import grails.plugin.springsecurity.oauthprovider.OAuth2AuthenticationSerializer
 import grails.plugin.springsecurity.oauthprovider.endpoint.RequiredRedirectResolver
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationEndpoint
@@ -49,7 +46,6 @@ import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswo
 import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
 import org.springframework.security.web.AuthenticationEntryPoint
-import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint
 import org.springframework.security.web.context.NullSecurityContextRepository
 import org.springframework.security.web.context.SecurityContextPersistenceFilter
@@ -241,9 +237,14 @@ OAuth2 Provider support for the Spring Security plugin.
 
 		// Allow client log-ins
 		clientDetailsUserService(ClientDetailsUserDetailsService, ref('clientDetailsService'))
-		clientCredentialsAuthenticationProvider(DaoAuthenticationProvider) {
+
+        // Use the password encoder configured for the core plugin for encoding client secrets
+        clientCredentialsAuthenticationProvider(DaoAuthenticationProvider) {
 			userDetailsService = ref('clientDetailsUserService')
-		}
+            passwordEncoder = ref('passwordEncoder')
+            saltSource = ref('saltSource')
+        }
+
 		clientCredentialsTokenEndpointFilter(ClientCredentialsTokenEndpointFilter) {
 			authenticationManager = ref('authenticationManager')
 		}

@@ -72,11 +72,18 @@ class GormClientDetailsServiceSpec extends Specification {
                 redirectUris: ['http://anywhereButHere'] as Set
         ).save()
 
+        and:
+        boolean encodeCalled = false
+        GormOAuth2Client.metaClass.encodeClientSecret { -> encodeCalled = true }
+
         when:
         def details = service.loadClientByClientId('gormClient')
 
         then:
         details instanceof ClientDetails
+
+        and:
+        encodeCalled
 
         and:
         details.clientId == 'gormClient'
@@ -105,6 +112,9 @@ class GormClientDetailsServiceSpec extends Specification {
         and:
         details.registeredRedirectUri.size() == 1
         details.registeredRedirectUri.contains('http://anywhereButHere')
+
+        cleanup:
+        GormOAuth2Client.metaClass = null
     }
 
     void "requested client not found"() {
