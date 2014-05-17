@@ -23,7 +23,7 @@ class GormTokenStoreServiceSpec extends Specification {
     byte[] serializedAuthentication
 
     void setup() {
-        service.oAuth2AuthenticationSerializer = Mock(OAuth2AuthenticationSerializer)
+        service.oauth2AuthenticationSerializer = Mock(OAuth2AuthenticationSerializer)
 
         oAuth2Authentication = Stub(OAuth2Authentication)
         serializedAuthentication = [0x13, 0x37]
@@ -61,11 +61,11 @@ class GormTokenStoreServiceSpec extends Specification {
     }
 
     private void expectAuthenticationSerialization() {
-        1 * service.oAuth2AuthenticationSerializer.serialize(oAuth2Authentication as OAuth2Authentication) >> serializedAuthentication
+        1 * service.oauth2AuthenticationSerializer.serialize(oAuth2Authentication as OAuth2Authentication) >> serializedAuthentication
     }
 
     private void expectAuthenticationDeserialization() {
-        1 * service.oAuth2AuthenticationSerializer.deserialize(serializedAuthentication) >> oAuth2Authentication
+        1 * service.oauth2AuthenticationSerializer.deserialize(serializedAuthentication) >> oAuth2Authentication
     }
 
     void "read authentication for access token"() {
@@ -96,7 +96,7 @@ class GormTokenStoreServiceSpec extends Specification {
         !GormOAuth2AccessToken.findByValue(tokenValue)
 
         and:
-        1 * service.oAuth2AuthenticationSerializer.deserialize(serializedAuthentication) >> {
+        1 * service.oauth2AuthenticationSerializer.deserialize(serializedAuthentication) >> {
             throw new IllegalArgumentException('BAD NEWS')
         }
     }
@@ -258,7 +258,7 @@ class GormTokenStoreServiceSpec extends Specification {
         !GormOAuth2RefreshToken.findByValue(refreshValue)
 
         and:
-        1 * service.oAuth2AuthenticationSerializer.deserialize(serializedAuthentication) >> {
+        1 * service.oauth2AuthenticationSerializer.deserialize(serializedAuthentication) >> {
             throw new IllegalArgumentException('BAD NEWS')
         }
     }

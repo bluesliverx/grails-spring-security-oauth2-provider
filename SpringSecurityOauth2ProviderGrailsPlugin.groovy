@@ -119,7 +119,7 @@ OAuth2 Provider support for the Spring Security plugin.
         springConfig.addAlias 'authorizationCodeServices', 'gormAuthorizationCodeService'
 
         /* Helper classes for Gorm support */
-        oAuth2AuthenticationSerializer(OAuth2AuthenticationSerializer)
+        oauth2AuthenticationSerializer(OAuth2AuthenticationSerializer)
         authorizationRequestHolderSerializer(AuthorizationRequestHolderSerializer)
 
 		tokenServices(DefaultTokenServices) {
@@ -264,11 +264,11 @@ OAuth2 Provider support for the Spring Security plugin.
 
         // Configure multiple authentication entry points
         // http://jdevdiary.blogspot.com/2013/03/grails-spring-security-and-multiple.html
-        oAuth2RequestMatcher(AntPathRequestMatcher, conf.oauthProvider.tokenEndpointUrl + '**')
-        oAuth2AuthenticationEntryPoint(OAuth2AuthenticationEntryPoint)
+        oauth2RequestMatcher(AntPathRequestMatcher, conf.oauthProvider.tokenEndpointUrl + '**')
+        oauth2AuthenticationEntryPoint(OAuth2AuthenticationEntryPoint)
 
         Map<RequestMatcher, AuthenticationEntryPoint> authenticationEntryPointMap = [
-                (oAuth2RequestMatcher): oAuth2AuthenticationEntryPoint
+                (oauth2RequestMatcher): oauth2AuthenticationEntryPoint
         ]
 
         // This is identical to the authenticationEntryPoint bean configured by core plugin
@@ -289,7 +289,7 @@ OAuth2 Provider support for the Spring Security plugin.
         }
 
         oauth2ProviderFilter(OAuth2AuthenticationProcessingFilter) {
-            authenticationEntryPoint = ref('oAuth2AuthenticationEntryPoint')
+            authenticationEntryPoint = ref('oauth2AuthenticationEntryPoint')
             authenticationManager = ref('oauth2AuthenticationManager')
         }
 

@@ -11,7 +11,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore
 
 class GormTokenStoreService implements TokenStore {
 
-    OAuth2AuthenticationSerializer oAuth2AuthenticationSerializer
+    OAuth2AuthenticationSerializer oauth2AuthenticationSerializer
     GrailsApplication grailsApplication
 
     private static final String INVALID_DOMAIN_CLASS_FORMAT = "The specified %s token domain class '%s' is not a domain class"
@@ -32,7 +32,7 @@ class GormTokenStoreService implements TokenStore {
             def gormAccessToken = GormAccessToken.findWhere((valuePropertyName): token)
             def serializedAuthentication = gormAccessToken."$authenticationPropertyName"
 
-            authentication = oAuth2AuthenticationSerializer.deserialize(serializedAuthentication)
+            authentication = oauth2AuthenticationSerializer.deserialize(serializedAuthentication)
         }
         catch (IllegalArgumentException e) {
             checkForDomainConfigurationRelatedException(e, 'access', accessTokenLookup.className)
@@ -57,7 +57,7 @@ class GormTokenStoreService implements TokenStore {
         def scopePropertyName = accessTokenLookup.scopePropertyName
 
         def ctorArgs = [
-                (authenticationPropertyName): oAuth2AuthenticationSerializer.serialize(authentication),
+                (authenticationPropertyName): oauth2AuthenticationSerializer.serialize(authentication),
                 (usernamePropertyName): authentication.isClientOnly() ? null : authentication.name,
                 (clientIdPropertyName): authentication.authorizationRequest.clientId,
                 (valuePropertyName): token.value,
@@ -101,7 +101,7 @@ class GormTokenStoreService implements TokenStore {
         def valuePropertyName = refreshTokenLookup.valuePropertyName
 
         def ctorArgs = [
-                (authenticationPropertyName): oAuth2AuthenticationSerializer.serialize(authentication),
+                (authenticationPropertyName): oauth2AuthenticationSerializer.serialize(authentication),
                 (valuePropertyName): refreshToken.value,
         ]
         GormRefreshToken.newInstance(ctorArgs).save()
@@ -131,7 +131,7 @@ class GormTokenStoreService implements TokenStore {
             def gormRefreshToken = GormRefreshToken.findWhere((valuePropertyName): tokenValue)
             def serializedAuthentication = gormRefreshToken."$authenticationPropertyName"
 
-            authentication = oAuth2AuthenticationSerializer.deserialize(serializedAuthentication)
+            authentication = oauth2AuthenticationSerializer.deserialize(serializedAuthentication)
         }
         catch (IllegalArgumentException e) {
             checkForDomainConfigurationRelatedException(e, 'refresh', refreshTokenLookup.className)
@@ -168,7 +168,7 @@ class GormTokenStoreService implements TokenStore {
 
     @Override
     OAuth2AccessToken getAccessToken(OAuth2Authentication authentication) {
-        def serializedAuthentication = oAuth2AuthenticationSerializer.serialize(authentication)
+        def serializedAuthentication = oauth2AuthenticationSerializer.serialize(authentication)
         def (accessTokenLookup, GormAccessToken) = getAccessTokenLookupAndClass()
 
         def authenticationPropertyName = accessTokenLookup.authenticationPropertyName
