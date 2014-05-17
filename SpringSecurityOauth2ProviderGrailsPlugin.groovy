@@ -33,6 +33,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.oauth2.provider.CompositeTokenGranter
 import org.springframework.security.oauth2.provider.DefaultAuthorizationRequestManager
 import org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenGranter
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService
@@ -282,6 +284,15 @@ OAuth2 Provider support for the Spring Security plugin.
             defaultEntryPoint = ref('defaultAuthenticationEntryPoint')
         }
 
+        oauth2AuthenticationManager(OAuth2AuthenticationManager) {
+            tokenServices = ref('tokenServices')
+        }
+
+        oauth2ProviderFilter(OAuth2AuthenticationProcessingFilter) {
+            authenticationEntryPoint = ref('oAuth2AuthenticationEntryPoint')
+            authenticationManager = ref('oauth2AuthenticationManager')
+        }
+
         // Override expression handler provided by Spring Security core plugin
         // TODO: See if there is a more stable way to do this, e.g. config option
         webExpressionHandler(OAuth2WebSecurityExpressionHandler) {
@@ -296,6 +307,8 @@ OAuth2 Provider support for the Spring Security plugin.
         statelessSecurityContextPersistenceFilter(SecurityContextPersistenceFilter, ref('nullContextRepository'))
 
 		// Register endpoint URL filter since we define the URLs above
+        SpringSecurityUtils.registerFilter 'oauth2ProviderFilter',
+                conf.oauthProvider.filterStartPosition + 1
 		SpringSecurityUtils.registerFilter 'clientCredentialsTokenEndpointFilter',
 				conf.oauthProvider.clientFilterStartPosition + 1
 
