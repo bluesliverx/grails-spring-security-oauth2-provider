@@ -1,0 +1,32 @@
+The endpoint URLs used by the underlying Spring Security OAuth 2.0 implementation can be changed using the following properties:
+
+{table}
+*Property*                  |   *Default Value*             |   *Meaning*
+authorizationEndpointUrl    |   @'/oauth/authorize'@        |   Authorization endpoint URL.
+tokenEndpointUrl            |   @'/oauth/token'@            |   Token endpoint URL.
+userApprovalEndpointUrl     |   @'/oauth/confirm_access'@   |   URL of the view to display for confirming access to protected resources.
+userApprovalParameter       |   @'user_oauth_approval'@     |   The name of the parameter submitted in the confirmation request. The value of this parameter is used to determine whether a user has confirmed (@true@) or denied (@false@) access.
+errorEndpointUrl            |   @'/oauth/error'@            |   URL of the view to display if an error occurs while interacting with the authorization endpoint and the error cannot be returned as part of the query or fragment of the client's redirect URI. This is usually the case when there is a problem with the requesting client's redirect URI.
+{table}
+
+When changing the URL for the @authorizationEndpointUrl@ or @tokenEndpointUrl@, you *must* update Spring Security Core's configuration. Using the @staticRules@ configuration and the default configuration as an example, your @grails-app/conf/Config.groovy@ will look like this:
+
+{code}
+grails.plugin.springsecurity.controllerAnnotations.staticRules = [
+        '/oauth/authorize.dispatch':      ["isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"],
+        '/oauth/token.dispatch':          ["isFullyAuthenticated() and request.getMethod().equals('POST')"],
+        ...
+{code}
+
+To change the @authorizationEndpointUrl@ to @/authorize@, you will need to make the following changes in @grails-app/conf/Config.groovy@:
+
+{code}
+grails.plugin.springsecurity.oauthProvider.authorizationEndpointUrl = '/authorize'
+
+grails.plugin.springsecurity.controllerAnnotations.staticRules = [
+        '/authorize.dispatch':            ["isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"],
+        '/oauth/token.dispatch':          ["isFullyAuthenticated() and request.getMethod().equals('POST')"],
+        ...
+{code}
+
+The URL mapping must include the @.dispatch@ suffix in order integrate with the underlying Spring MVC controller.

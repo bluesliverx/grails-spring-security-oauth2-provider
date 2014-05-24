@@ -1,0 +1,10 @@
+Next you will need to add the @clientCredentialsAuthenticationProvider@ to the list of providers recognized by the Core plugin in @grails-app/conf/Config.groovy@:
+
+{code}
+grails.plugin.springsecurity.providerNames = [
+        'daoAuthenticationProvider',
+        'anonymousAuthenticationProvider',
+        'rememberMeAuthenticationProvider',
+        'clientCredentialsAuthenticationProvider'
+]
+{code}

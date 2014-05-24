@@ -46,3 +46,6 @@ grails.plugin.springsecurity.oauthProvider.authorizationCodeLookup.className = '
 grails.plugin.springsecurity.oauthProvider.accessTokenLookup.className = 'test.oauth2.AccessToken'
 grails.plugin.springsecurity.oauthProvider.refreshTokenLookup.className = 'test.oauth2.RefreshToken'
 
+// Documentation properties
+grails.doc.license = 'Apache License 2.0'
+grails.doc.title = 'Spring Security OAuth2 Plugin'
