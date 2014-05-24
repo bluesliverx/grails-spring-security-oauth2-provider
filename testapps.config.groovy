@@ -1,3 +1,21 @@
+// *********************************************
+// * Limitations of automated functional tests *
+// *********************************************
+//
+// Test apps for Grails version 2.3.0 cannot be tested due to Geb plugin incompatibility
+//
+// Test apps for Grails version 2.3.1 - 2.3.4 cannot be tested due to a malformed
+// FUNCTIONAL_BASE_URL_PROPERTY being set to http://null:8080 rendering token endpoint tests invalid.
+//
+// This appears to be related to GRAILS-10661:
+// https://jira.grails.org/browse/GRAILS-10661
+//
+// Test apps for Grails version 2.4.0 require and update of the Spring Security Core
+// plugin dependency to version 2.0-RC3, which introduces issues due to changes in the
+// underlying Spring Security library.
+//
+// TODO: Find a solution to the 2.0-RC3 incompatibility
+
 v20 {
 	grailsVersion = '2.0.4'
 	pluginVersion = version
@@ -20,46 +38,6 @@ v22 {
 	dotGrails = dotGrailsCommon
 	projectDir = projectDirCommon
 	grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
-}
-
-v230 {
-    grailsVersion = '2.3.0'
-    pluginVersion = version
-    dotGrails = dotGrailsCommon
-    projectDir = projectDirCommon
-    grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
-}
-
-v231 {
-    grailsVersion = '2.3.1'
-    pluginVersion = version
-    dotGrails = dotGrailsCommon
-    projectDir = projectDirCommon
-    grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
-}
-
-v232 {
-    grailsVersion = '2.3.2'
-    pluginVersion = version
-    dotGrails = dotGrailsCommon
-    projectDir = projectDirCommon
-    grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
-}
-
-v233 {
-	grailsVersion = '2.3.3'
-	pluginVersion = version
-	dotGrails = dotGrailsCommon
-	projectDir = projectDirCommon
-	grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
-}
-
-v234 {
-    grailsVersion = '2.3.4'
-    pluginVersion = version
-    dotGrails = dotGrailsCommon
-    projectDir = projectDirCommon
-    grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
 }
 
 v235 {
@@ -88,14 +66,6 @@ v237 {
 
 v238 {
     grailsVersion = '2.3.8'
-    pluginVersion = version
-    dotGrails = dotGrailsCommon
-    projectDir = projectDirCommon
-    grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
-}
-
-v240 {
-    grailsVersion = '2.4.0'
     pluginVersion = version
     dotGrails = dotGrailsCommon
     projectDir = projectDirCommon
