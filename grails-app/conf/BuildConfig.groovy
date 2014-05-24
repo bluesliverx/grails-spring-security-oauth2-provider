@@ -39,6 +39,11 @@ grails.project.dependency.resolution = {
 			         "commons-codec"
 		}
 
+        test 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1', {
+            export = false
+            excludes "commons-logging", "xml-apis", "groovy"
+        }
+
         test "org.spockframework:spock-grails-support:0.7-groovy-2.0", {
             export = false
         }
@@ -50,11 +55,24 @@ grails.project.dependency.resolution = {
         test 'org.objenesis:objenesis:1.4', {
             export = false
         }
-	}
+
+        test "org.gebish:geb-spock:0.9.2", {
+            export = false
+        }
+
+        test "org.seleniumhq.selenium:selenium-chrome-driver:2.41.0", {
+            export = false
+        }
+
+        test 'com.github.detro.ghostdriver:phantomjsdriver:1.1.0', {
+            transitive = false
+            export = false
+        }
+    }
 
 	plugins {
 		// Release
-		build ':release:2.2.1', ':rest-client-builder:1.0.3', {
+		build ":tomcat:$grailsVersion", ':release:2.2.1', ':rest-client-builder:2.0.1', {
 			export = false
 		}
 
@@ -71,7 +89,11 @@ grails.project.dependency.resolution = {
             export = false
         }
 
-        test ":hibernate:$grailsVersion", {
+        runtime ":hibernate:$grailsVersion", {
+            export = false
+        }
+
+        test ":geb:0.9.2", {
             export = false
         }
 
