@@ -19,6 +19,8 @@ import grails.plugin.springsecurity.oauthprovider.endpoint.RequiredRedirectResol
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationEndpoint
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedTokenEndpoint
 import grails.plugin.springsecurity.oauthprovider.provider.ScopeRequiredAuthorizationRequestManager
+import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2AuthorizationEndpointExceptionResolver
+import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2TokenEndpointExceptionResolver
 import grails.plugin.springsecurity.oauthprovider.token.StrictTokenGranter
 import grails.plugin.springsecurity.web.authentication.AjaxAwareAuthenticationEntryPoint
 import org.slf4j.Logger
@@ -41,13 +43,13 @@ import org.springframework.security.oauth2.provider.client.ClientDetailsUserDeta
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter
 import org.springframework.security.oauth2.provider.endpoint.DefaultRedirectResolver
 import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpointHandlerMapping
+import org.springframework.security.oauth2.provider.error.DefaultOAuth2ExceptionRenderer
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint
 import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurityExpressionHandler
 import org.springframework.security.oauth2.provider.implicit.ImplicitTokenGranter
 import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter
 import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
-import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint
 import org.springframework.security.web.context.NullSecurityContextRepository
 import org.springframework.security.web.context.SecurityContextPersistenceFilter
@@ -252,6 +254,29 @@ OAuth2 Provider support for the Spring Security plugin.
             ]
         }
 
+        List availableMessageConverters = [
+                new StringHttpMessageConverter(writeAcceptCharset: false),
+                new ByteArrayHttpMessageConverter(),
+                new FormHttpMessageConverter(),
+                new SourceHttpMessageConverter(),
+                new MappingJacksonHttpMessageConverter()
+        ]
+
+        oauth2ExceptionRenderer(DefaultOAuth2ExceptionRenderer) {
+            messageConverters = availableMessageConverters
+        }
+
+        oauth2TokenEndpointExceptionResolver(OAuth2TokenEndpointExceptionResolver) {
+            order = 0
+            tokenEndpoint = ref('oauth2TokenEndpoint')
+            exceptionRenderer = ref('oauth2ExceptionRenderer')
+        }
+
+        oauth2AuthorizationEndpointExceptionResolver(OAuth2AuthorizationEndpointExceptionResolver) {
+            order = 0
+            authorizationEndpoint = ref('oauth2AuthorizationEndpoint')
+        }
+
 		// Allow client log-ins
 		clientDetailsUserService(ClientDetailsUserDetailsService, ref('clientDetailsService'))
 
@@ -268,13 +293,7 @@ OAuth2 Provider support for the Spring Security plugin.
 
 		// Register jackson handler for token responses
 		annotationHandlerAdapter(RequestMappingHandlerAdapter){
-			messageConverters = [
-					new StringHttpMessageConverter(writeAcceptCharset: false),
-					new ByteArrayHttpMessageConverter(),
-					new FormHttpMessageConverter(),
-					new SourceHttpMessageConverter(),
-					new MappingJacksonHttpMessageConverter()
-			]
+			messageConverters = availableMessageConverters
 		}
 
         // Configure multiple authentication entry points
