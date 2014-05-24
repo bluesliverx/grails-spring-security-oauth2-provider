@@ -1,7 +1,7 @@
 <%@ page import="org.springframework.security.oauth2.common.exceptions.UnapprovedClientAuthenticationException" %>
 <head>
 <meta name='layout' content='main' />
-<title>Login</title>
+<title>Confirm Access</title>
 <style type='text/css' media='screen'>
 #login {
 	margin:15px 0px; padding:0px;
