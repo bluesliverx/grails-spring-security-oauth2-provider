@@ -334,6 +334,13 @@ OAuth2 Provider support for the Spring Security plugin.
 
     def doWithApplicationContext = { ctx ->
         def conf = SpringSecurityUtils.securityConfig
+        if(!conf || !conf.active) {
+            return
+        }
+
+        SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
+        conf = SpringSecurityUtils.securityConfig
+
         if(conf.oauthProvider.tokenEndpointFilterChain.disabled) {
             log.debug("Skipping token endpoint filter chain configuration")
             return
