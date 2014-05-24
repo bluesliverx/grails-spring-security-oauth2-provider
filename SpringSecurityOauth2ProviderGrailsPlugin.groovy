@@ -103,7 +103,11 @@ OAuth2 Provider support for the Spring Security plugin.
 			return
 		}
 
-		SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
+        // Required for list constructor arguments for versions < 2.2-RC1
+        // GRAILS-4995: https://jira.grails.org/browse/GRAILS-4995
+        xmlns util:"http://www.springframework.org/schema/util"
+
+        SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
 		// have to get again after overlaying DefaultOAuthProviderSecurityConfig
 		conf = SpringSecurityUtils.securityConfig
 
@@ -142,28 +146,28 @@ OAuth2 Provider support for the Spring Security plugin.
         def grantTypes = conf.oauthProvider.grantTypes
 
         /* Must enforce restrictions on which grants, e.g. implicit, are available to each each endpoint */
-        def authorizationEndpointTokenGranters = []
-        def tokenEndpointTokenGranters = []
+        def authorizationEndpointTokenGrantersBeanNames = []
+        def tokenEndpointTokenGrantersBeanNames = []
 
         /* authorization-code */
         if(grantTypes.authorizationCode) {
             authorizationCodeTokenGranter(AuthorizationCodeTokenGranter,
                     ref('tokenServices'), ref('authorizationCodeServices'), ref('clientDetailsService'))
 
-            authorizationEndpointTokenGranters << ref('authorizationCodeTokenGranter')
-            tokenEndpointTokenGranters << ref('authorizationCodeTokenGranter')
+            authorizationEndpointTokenGrantersBeanNames << 'authorizationCodeTokenGranter'
+            tokenEndpointTokenGrantersBeanNames << 'authorizationCodeTokenGranter'
         }
 
         /* refresh-token */
         if(grantTypes.refreshToken) {
             refreshTokenGranter(RefreshTokenGranter, ref('tokenServices'), ref('clientDetailsService'))
-            tokenEndpointTokenGranters << ref('refreshTokenGranter')
+            tokenEndpointTokenGrantersBeanNames << 'refreshTokenGranter'
         }
 
         /* implicit */
         if(grantTypes.implicit) {
             implicitGranter(ImplicitTokenGranter, ref('tokenServices'), ref('clientDetailsService'))
-            authorizationEndpointTokenGranters << ref('implicitGranter')
+            authorizationEndpointTokenGrantersBeanNames << 'implicitGranter'
         }
 
         /* client-credentials */
@@ -174,7 +178,7 @@ OAuth2 Provider support for the Spring Security plugin.
             clientCredentialsGranter(StrictTokenGranter,
                     ref('delegateClientCredentialsGranter'), ref('clientDetailsService'))
 
-            tokenEndpointTokenGranters << ref('clientCredentialsGranter')
+            tokenEndpointTokenGrantersBeanNames << 'clientCredentialsGranter'
         }
 
         /* password */
@@ -185,11 +189,23 @@ OAuth2 Provider support for the Spring Security plugin.
             resourceOwnerPasswordGranter(StrictTokenGranter,
                 ref('delegateResourceOwnerPasswordTokenGranter'), ref('clientDetailsService'))
 
-            tokenEndpointTokenGranters << ref('resourceOwnerPasswordGranter')
+            tokenEndpointTokenGrantersBeanNames << 'resourceOwnerPasswordGranter'
         }
 
-        oauth2AuthorizationEndpointTokenGranter(CompositeTokenGranter, authorizationEndpointTokenGranters)
-        oauth2TokenEndpointTokenGranter(CompositeTokenGranter, tokenEndpointTokenGranters)
+        util.list(id: 'authorizationEndpointTokenGranters') {
+            authorizationEndpointTokenGrantersBeanNames.each {
+                ref(bean: it)
+            }
+        }
+
+        util.list(id: 'tokenEndpointTokenGranters') {
+            tokenEndpointTokenGrantersBeanNames.each {
+                ref(bean: it)
+            }
+        }
+
+        oauth2AuthorizationEndpointTokenGranter(CompositeTokenGranter, ref('authorizationEndpointTokenGranters'))
+        oauth2TokenEndpointTokenGranter(CompositeTokenGranter, ref('tokenEndpointTokenGranters'))
 
         if(conf.oauthProvider.authorization.requireRegisteredRedirectUri) {
             /* Require clients to have registered redirect URIs */
@@ -266,9 +282,11 @@ OAuth2 Provider support for the Spring Security plugin.
         oauth2RequestMatcher(AntPathRequestMatcher, conf.oauthProvider.tokenEndpointUrl + '**')
         oauth2AuthenticationEntryPoint(OAuth2AuthenticationEntryPoint)
 
-        Map<RequestMatcher, AuthenticationEntryPoint> authenticationEntryPointMap = [
-                (oauth2RequestMatcher): oauth2AuthenticationEntryPoint
-        ]
+        util.map(id: 'authenticationEntryPointMap') {
+            entry('key-ref': 'oauth2RequestMatcher') {
+                ref(bean: 'oauth2AuthenticationEntryPoint')
+            }
+        }
 
         // This is identical to the authenticationEntryPoint bean configured by core plugin
         defaultAuthenticationEntryPoint(AjaxAwareAuthenticationEntryPoint, conf.auth.loginFormUrl) {
@@ -279,7 +297,7 @@ OAuth2 Provider support for the Spring Security plugin.
             portResolver = ref('portResolver')
         }
 
-        authenticationEntryPoint(DelegatingAuthenticationEntryPoint, authenticationEntryPointMap) {
+        authenticationEntryPoint(DelegatingAuthenticationEntryPoint, ref('authenticationEntryPointMap')) {
             defaultEntryPoint = ref('defaultAuthenticationEntryPoint')
         }
 
