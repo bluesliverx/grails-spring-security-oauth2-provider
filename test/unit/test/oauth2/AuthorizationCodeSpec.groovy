@@ -1,18 +1,19 @@
-package grails.plugin.springsecurity.oauthprovider
+package test.oauth2
 
 import grails.test.mixin.TestFor
 import spock.lang.Specification
 import spock.lang.Unroll
+import test.oauth2.AuthorizationCode
 
-@TestFor(GormOAuth2AuthorizationCode)
-class GormOAuth2AuthorizationCodeSpec extends Specification {
+@TestFor(AuthorizationCode)
+class AuthorizationCodeSpec extends Specification {
 
     void "require code and authentication"() {
         given:
         def serializedAuthentication = [0x1] as byte[]
 
         when:
-        def authorizationCode = new GormOAuth2AuthorizationCode(code: 'foo', authentication: serializedAuthentication)
+        def authorizationCode = new AuthorizationCode(code: 'foo', authentication: serializedAuthentication)
 
         then:
         authorizationCode.validate()
@@ -24,11 +25,11 @@ class GormOAuth2AuthorizationCodeSpec extends Specification {
 
     void "code must be unique"() {
         given:
-        def existingCode = new GormOAuth2AuthorizationCode(code: 'foo')
-        mockForConstraintsTests(GormOAuth2AuthorizationCode, [existingCode])
+        def existingCode = new AuthorizationCode(code: 'foo')
+        mockForConstraintsTests(AuthorizationCode, [existingCode])
 
         when:
-        def newCode = new GormOAuth2AuthorizationCode(code: 'foo')
+        def newCode = new AuthorizationCode(code: 'foo')
 
         then:
         !newCode.validate(['code'])
@@ -37,7 +38,7 @@ class GormOAuth2AuthorizationCodeSpec extends Specification {
     @Unroll
     void "invalid code [#code]"() {
         when:
-        def authorizationCode = new GormOAuth2AuthorizationCode(code: code)
+        def authorizationCode = new AuthorizationCode(code: code)
 
         then:
         !authorizationCode.validate(['code'])
@@ -49,7 +50,7 @@ class GormOAuth2AuthorizationCodeSpec extends Specification {
     @Unroll
     void "authentication must not be [#auth]"() {
         when:
-        def authorizationCode = new GormOAuth2AuthorizationCode(authentication: auth as byte[])
+        def authorizationCode = new AuthorizationCode(authentication: auth as byte[])
 
         then:
         !authorizationCode.validate(['authentication'])

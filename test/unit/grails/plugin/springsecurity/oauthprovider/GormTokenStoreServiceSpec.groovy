@@ -11,9 +11,11 @@ import org.springframework.security.oauth2.provider.AuthorizationRequest
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import spock.lang.Specification
 import spock.lang.Unroll
+import test.oauth2.AccessToken
+import test.oauth2.RefreshToken
 
 @TestFor(GormTokenStoreService)
-@Mock([GormOAuth2AccessToken, GormOAuth2RefreshToken])
+@Mock([AccessToken, RefreshToken])
 class GormTokenStoreServiceSpec extends Specification {
 
     String tokenValue
@@ -32,8 +34,8 @@ class GormTokenStoreServiceSpec extends Specification {
         refreshValue = 'REFRESH'
 
         SpringSecurityUtils.securityConfig = [oauthProvider: [:]] as ConfigObject
-        setAccessTokenClassName('grails.plugin.springsecurity.oauthprovider.GormOAuth2AccessToken')
-        setRefreshTokenClassName('grails.plugin.springsecurity.oauthprovider.GormOAuth2RefreshToken')
+        setAccessTokenClassName('test.oauth2.AccessToken')
+        setRefreshTokenClassName('test.oauth2.RefreshToken')
     }
 
     private void setAccessTokenClassName(accessTokenClassName) {
@@ -72,7 +74,7 @@ class GormTokenStoreServiceSpec extends Specification {
         given:
         expectAuthenticationDeserialization()
 
-        def gormAccessToken = new GormOAuth2AccessToken(value: tokenValue, authentication: serializedAuthentication).save(validate: false)
+        def gormAccessToken = new AccessToken(value: tokenValue, authentication: serializedAuthentication).save(validate: false)
         def oauth2AccessToken = service.createOAuth2AccessToken(gormAccessToken)
 
         when:
@@ -84,16 +86,16 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "read authentication removes access token if deserialization throws"() {
         given:
-        def gormAccessToken = new GormOAuth2AccessToken(value: tokenValue, authentication: serializedAuthentication).save(validate: false)
+        def gormAccessToken = new AccessToken(value: tokenValue, authentication: serializedAuthentication).save(validate: false)
         def oauth2AccessToken = service.createOAuth2AccessToken(gormAccessToken)
 
-        assert GormOAuth2AccessToken.findByValue(tokenValue)
+        assert AccessToken.findByValue(tokenValue)
 
         when:
         service.readAuthentication(oauth2AccessToken)
 
         then:
-        !GormOAuth2AccessToken.findByValue(tokenValue)
+        !AccessToken.findByValue(tokenValue)
 
         and:
         1 * service.oauth2AuthenticationSerializer.deserialize(serializedAuthentication) >> {
@@ -134,7 +136,7 @@ class GormTokenStoreServiceSpec extends Specification {
         service.storeAccessToken(oauth2AccessToken, oAuth2Authentication)
 
         then:
-        def gormToken = GormOAuth2AccessToken.findByValue('TEST')
+        def gormToken = AccessToken.findByValue('TEST')
         gormToken != null
 
         and:
@@ -158,7 +160,7 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "read access token"() {
         given:
-        new GormOAuth2AccessToken(value: 'gormAccessToken', tokenType: 'bearer').save(validate: false)
+        new AccessToken(value: 'gormAccessToken', tokenType: 'bearer').save(validate: false)
 
         when:
         def accessToken = service.readAccessToken('gormAccessToken')
@@ -170,16 +172,16 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "remove access token"() {
         given:
-        def gormAccessToken = new GormOAuth2AccessToken(value: tokenValue).save(validate: false)
+        def gormAccessToken = new AccessToken(value: tokenValue).save(validate: false)
         def oauth2AccessToken = service.createOAuth2AccessToken(gormAccessToken)
 
-        assert GormOAuth2AccessToken.findByValue(tokenValue)
+        assert AccessToken.findByValue(tokenValue)
 
         when:
         service.removeAccessToken(oauth2AccessToken)
 
         then:
-        !GormOAuth2AccessToken.findByValue(tokenValue)
+        !AccessToken.findByValue(tokenValue)
     }
 
     void "store refresh token"() {
@@ -195,7 +197,7 @@ class GormTokenStoreServiceSpec extends Specification {
         service.storeRefreshToken(oAuth2RefreshToken, oAuth2Authentication)
 
         then:
-        def gormToken = GormOAuth2RefreshToken.findByValue(refreshValue)
+        def gormToken = RefreshToken.findByValue(refreshValue)
         gormToken != null
 
         and:
@@ -205,8 +207,8 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "read refresh token by value"() {
         given:
-        new GormOAuth2RefreshToken(authentication: serializedAuthentication, value: refreshValue).save()
-        assert GormOAuth2RefreshToken.findByValue(refreshValue)
+        new RefreshToken(authentication: serializedAuthentication, value: refreshValue).save()
+        assert RefreshToken.findByValue(refreshValue)
 
         when:
         def oAuthRefreshToken = service.readRefreshToken(refreshValue)
@@ -235,10 +237,10 @@ class GormTokenStoreServiceSpec extends Specification {
         given:
         expectAuthenticationDeserialization()
 
-        def gormRefreshToken = new GormOAuth2RefreshToken(value: refreshValue, authentication: serializedAuthentication).save()
+        def gormRefreshToken = new RefreshToken(value: refreshValue, authentication: serializedAuthentication).save()
         def oAuth2RefreshToken = service.createOAuth2RefreshToken(gormRefreshToken)
 
-        assert GormOAuth2RefreshToken.findByValue(refreshValue)
+        assert RefreshToken.findByValue(refreshValue)
 
         expect:
         service.readAuthenticationForRefreshToken(oAuth2RefreshToken) == oAuth2Authentication
@@ -246,16 +248,16 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "read authentication removes refresh token if deserialization throws"() {
         given:
-        def gormRefreshToken = new GormOAuth2RefreshToken(value: refreshValue, authentication: serializedAuthentication).save()
+        def gormRefreshToken = new RefreshToken(value: refreshValue, authentication: serializedAuthentication).save()
         def oAuth2RefreshToken = service.createOAuth2RefreshToken(gormRefreshToken)
 
-        assert GormOAuth2RefreshToken.findByValue(refreshValue)
+        assert RefreshToken.findByValue(refreshValue)
 
         when:
         service.readAuthenticationForRefreshToken(oAuth2RefreshToken)
 
         then:
-        !GormOAuth2RefreshToken.findByValue(refreshValue)
+        !RefreshToken.findByValue(refreshValue)
 
         and:
         1 * service.oauth2AuthenticationSerializer.deserialize(serializedAuthentication) >> {
@@ -265,30 +267,30 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "remove refresh token"() {
         given:
-        def gormRefreshToken = new GormOAuth2RefreshToken(value: refreshValue).save(validate: false)
+        def gormRefreshToken = new RefreshToken(value: refreshValue).save(validate: false)
         def oAuth2RefreshToken = service.createOAuth2RefreshToken(gormRefreshToken)
 
-        assert GormOAuth2RefreshToken.findByValue(refreshValue)
+        assert RefreshToken.findByValue(refreshValue)
 
         when:
         service.removeRefreshToken(oAuth2RefreshToken)
 
         then:
-        !GormOAuth2RefreshToken.findByValue(refreshValue)
+        !RefreshToken.findByValue(refreshValue)
     }
 
     void "remove access token by using refresh token"() {
         given:
         def oAuth2RefreshToken = Stub(OAuth2RefreshToken) { getValue() >> refreshValue }
 
-        new GormOAuth2AccessToken(value: tokenValue, refreshToken: refreshValue).save(validate: false)
-        assert GormOAuth2AccessToken.findByValue(tokenValue)
+        new AccessToken(value: tokenValue, refreshToken: refreshValue).save(validate: false)
+        assert AccessToken.findByValue(tokenValue)
 
         when:
         service.removeAccessTokenUsingRefreshToken(oAuth2RefreshToken)
 
         then:
-        !GormOAuth2AccessToken.findByValue(tokenValue)
+        !AccessToken.findByValue(tokenValue)
     }
 
     void "get access token by authentication"() {
@@ -296,7 +298,7 @@ class GormTokenStoreServiceSpec extends Specification {
         expectAuthenticationSerialization()
 
         and:
-        new GormOAuth2AccessToken(authentication: serializedAuthentication, value: tokenValue).save(validate: false)
+        new AccessToken(authentication: serializedAuthentication, value: tokenValue).save(validate: false)
 
         when:
         def token = service.getAccessToken(oAuth2Authentication)
@@ -322,7 +324,7 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "find single token by username"() {
         given:
-        new GormOAuth2AccessToken(username: 'test', value: '1234').save(validate: false)
+        new AccessToken(username: 'test', value: '1234').save(validate: false)
 
         when:
         def tokens = service.findTokensByUserName('test')
@@ -334,8 +336,8 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "find multiple tokens by username"() {
         given:
-        new GormOAuth2AccessToken(username: 'test', value: '1234').save(validate: false)
-        new GormOAuth2AccessToken(username: 'test', value: '5678').save(validate: false)
+        new AccessToken(username: 'test', value: '1234').save(validate: false)
+        new AccessToken(username: 'test', value: '5678').save(validate: false)
 
         when:
         def tokens = service.findTokensByUserName('test')
@@ -357,7 +359,7 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "find single token by clientId"() {
         given:
-        new GormOAuth2AccessToken(clientId: 'test', value: '1234').save(validate: false)
+        new AccessToken(clientId: 'test', value: '1234').save(validate: false)
 
         when:
         def tokens = service.findTokensByClientId('test')
@@ -369,8 +371,8 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "find multiple tokens by clientId"() {
         given:
-        new GormOAuth2AccessToken(clientId: 'test', value: '1234').save(validate: false)
-        new GormOAuth2AccessToken(clientId: 'test', value: '5678').save(validate: false)
+        new AccessToken(clientId: 'test', value: '1234').save(validate: false)
+        new AccessToken(clientId: 'test', value: '5678').save(validate: false)
 
         when:
         def tokens = service.findTokensByClientId('test')
@@ -440,11 +442,11 @@ class GormTokenStoreServiceSpec extends Specification {
     void "test createOAuth2AccessToken with refresh token [#useRefreshToken]"() {
         given:
         if(useRefreshToken)
-            new GormOAuth2RefreshToken(value: refreshTokenValue).save(validate: false)
+            new RefreshToken(value: refreshTokenValue).save(validate: false)
 
         def expiration = new Date()
 
-        def gormAccessToken = new GormOAuth2AccessToken(
+        def gormAccessToken = new AccessToken(
                 value: 'gormAccessToken',
                 refreshToken: refreshTokenValue,
                 tokenType: 'bearer',
@@ -480,7 +482,7 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "test createOAuth2RefreshToken"() {
         given:
-        def gormRefreshToken = new GormOAuth2RefreshToken(value: 'gormRefreshToken')
+        def gormRefreshToken = new RefreshToken(value: 'gormRefreshToken')
 
         when:
         def refreshToken = service.createOAuth2RefreshToken(gormRefreshToken)

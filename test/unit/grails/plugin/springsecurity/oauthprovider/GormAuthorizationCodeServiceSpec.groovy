@@ -6,9 +6,10 @@ import grails.test.mixin.TestFor
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices
 import org.springframework.security.oauth2.provider.code.AuthorizationRequestHolder
 import spock.lang.Specification
+import test.oauth2.AuthorizationCode
 
 @TestFor(GormAuthorizationCodeService)
-@Mock([GormOAuth2AuthorizationCode])
+@Mock([AuthorizationCode])
 class GormAuthorizationCodeServiceSpec extends Specification {
 
     String code = 'testAuthCode'
@@ -19,7 +20,7 @@ class GormAuthorizationCodeServiceSpec extends Specification {
         service.grailsApplication = grailsApplication
         service.authorizationRequestHolderSerializer = Mock(AuthorizationRequestHolderSerializer)
 
-        setAuthorizationCodeClassName('grails.plugin.springsecurity.oauthprovider.GormOAuth2AuthorizationCode')
+        setAuthorizationCodeClassName('test.oauth2.AuthorizationCode')
     }
 
     private void setAuthorizationCodeClassName(String authorizationCodeClassName) {
@@ -41,7 +42,7 @@ class GormAuthorizationCodeServiceSpec extends Specification {
         service.store(code, authorizationRequestHolder)
 
         then:
-        def gormAuthorizationCode = GormOAuth2AuthorizationCode.findByCode(code)
+        def gormAuthorizationCode = AuthorizationCode.findByCode(code)
         gormAuthorizationCode != null
 
         and:
@@ -54,15 +55,15 @@ class GormAuthorizationCodeServiceSpec extends Specification {
 
     void "remove authorization code and return authorization request holder"() {
         given:
-        new GormOAuth2AuthorizationCode(code: code, authentication: serializedAuthentication).save()
-        assert GormOAuth2AuthorizationCode.findByCode(code)
+        new AuthorizationCode(code: code, authentication: serializedAuthentication).save()
+        assert AuthorizationCode.findByCode(code)
 
         when:
         def authentication = service.remove(code)
 
         then:
         authentication == authorizationRequestHolder
-        !GormOAuth2AuthorizationCode.findByCode(code)
+        !AuthorizationCode.findByCode(code)
 
         and:
         1 * service.authorizationRequestHolderSerializer.deserialize(serializedAuthentication) >> authorizationRequestHolder
@@ -75,15 +76,15 @@ class GormAuthorizationCodeServiceSpec extends Specification {
 
     void "ensure authorization code is removed even if deserialization throws"() {
         given:
-        new GormOAuth2AuthorizationCode(code: code, authentication: serializedAuthentication).save()
-        assert GormOAuth2AuthorizationCode.findByCode(code)
+        new AuthorizationCode(code: code, authentication: serializedAuthentication).save()
+        assert AuthorizationCode.findByCode(code)
 
         when:
         def authentication = service.remove(code)
 
         then:
         authentication == null
-        !GormOAuth2AuthorizationCode.findByCode(code)
+        !AuthorizationCode.findByCode(code)
 
         and:
         1 * service.authorizationRequestHolderSerializer.deserialize(serializedAuthentication) >> {

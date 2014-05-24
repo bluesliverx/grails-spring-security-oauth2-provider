@@ -1,16 +1,17 @@
-package grails.plugin.springsecurity.oauthprovider
+package test.oauth2
 
 import grails.test.mixin.*
 import spock.lang.Specification
 import spock.lang.Unroll
+import test.oauth2.Client
 
-@TestFor(GormOAuth2Client)
-class GormOAuth2ClientSpec extends Specification {
+@TestFor(Client)
+class ClientSpec extends Specification {
 
     @Unroll
     void "client id is required -- check invalid id [#clientId]"() {
         when:
-        def client = new GormOAuth2Client(clientId: clientId)
+        def client = new Client(clientId: clientId)
 
         then:
         !client.validate(['clientId'])
@@ -21,11 +22,11 @@ class GormOAuth2ClientSpec extends Specification {
 
     void "client id must be unique"() {
         given:
-        def existingClient = new GormOAuth2Client(clientId: 'client')
-        mockForConstraintsTests(GormOAuth2Client, [existingClient])
+        def existingClient = new Client(clientId: 'client')
+        mockForConstraintsTests(Client, [existingClient])
 
         when:
-        def newClient = new GormOAuth2Client(clientId: 'client')
+        def newClient = new Client(clientId: 'client')
 
         then:
         !newClient.validate(['clientId'])
@@ -33,7 +34,7 @@ class GormOAuth2ClientSpec extends Specification {
 
     void "client secret can be optional"() {
         when:
-        def client = new GormOAuth2Client()
+        def client = new Client()
 
         then:
         client.validate(['clientSecret'])
@@ -42,7 +43,7 @@ class GormOAuth2ClientSpec extends Specification {
     @Unroll
     void "[#type] token validity can be null"() {
         when:
-        def client = new GormOAuth2Client()
+        def client = new Client()
 
         then:
         client.validate([name])
@@ -56,7 +57,7 @@ class GormOAuth2ClientSpec extends Specification {
     @Unroll
     void "valid scopes [#scopes]"() {
         when:
-        def client = new GormOAuth2Client(scopes: scopes)
+        def client = new Client(scopes: scopes)
 
         then:
         client.validate(['scopes'])
@@ -71,7 +72,7 @@ class GormOAuth2ClientSpec extends Specification {
     @Unroll
     void "valid authorities [#authorities]"() {
         when:
-        def client = new GormOAuth2Client(authorities: authorities)
+        def client = new Client(authorities: authorities)
 
         then:
         client.validate(['authorities'])
@@ -86,7 +87,7 @@ class GormOAuth2ClientSpec extends Specification {
     @Unroll
     void "valid grant types [#grantTypes]"() {
         when:
-        def client = new GormOAuth2Client(authorizedGrantTypes: grantTypes)
+        def client = new Client(authorizedGrantTypes: grantTypes)
 
         then:
         client.validate(['authorizedGrantTypes'])
@@ -101,7 +102,7 @@ class GormOAuth2ClientSpec extends Specification {
     @Unroll
     void "valid redirect uris [#redirectUris]"() {
         when:
-        def client = new GormOAuth2Client(redirectUris: redirectUris)
+        def client = new Client(redirectUris: redirectUris)
 
         then:
         client.validate(['redirectUris'])
@@ -117,7 +118,7 @@ class GormOAuth2ClientSpec extends Specification {
     @Unroll
     void "valid resource ids [#resourceIds]"() {
         when:
-        def client = new GormOAuth2Client(resourceIds: resourceIds)
+        def client = new Client(resourceIds: resourceIds)
 
         then:
         client.validate(['resourceIds'])

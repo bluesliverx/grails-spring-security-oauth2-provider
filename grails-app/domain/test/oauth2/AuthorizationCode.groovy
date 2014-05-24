@@ -1,6 +1,6 @@
-package grails.plugin.springsecurity.oauthprovider
+package test.oauth2
 
-class GormOAuth2AuthorizationCode {
+class AuthorizationCode {
 
     byte[] authentication
     String code

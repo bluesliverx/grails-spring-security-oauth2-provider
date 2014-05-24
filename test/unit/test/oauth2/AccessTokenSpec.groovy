@@ -1,18 +1,19 @@
-package grails.plugin.springsecurity.oauthprovider
+package test.oauth2
 
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
-import org.springframework.security.oauth2.common.OAuth2AccessToken
 import spock.lang.Specification
 import spock.lang.Unroll
+import test.oauth2.AccessToken
+import test.oauth2.RefreshToken
 
-@TestFor(GormOAuth2AccessToken)
-@Mock([GormOAuth2RefreshToken])
-class GormOAuth2AccessTokenSpec extends Specification {
+@TestFor(AccessToken)
+@Mock([RefreshToken])
+class AccessTokenSpec extends Specification {
 
     void "username is optional to support flows that don't require it"() {
         when:
-        def token = new GormOAuth2AccessToken(username: null)
+        def token = new AccessToken(username: null)
 
         then:
         token.validate(['username'])
@@ -21,7 +22,7 @@ class GormOAuth2AccessTokenSpec extends Specification {
     @Unroll
     void "clientId is required -- test invalid [#clientId]"() {
         when:
-        def token = new GormOAuth2AccessToken(clientId: clientId)
+        def token = new AccessToken(clientId: clientId)
 
         then:
         !token.validate(['clientId'])
@@ -33,7 +34,7 @@ class GormOAuth2AccessTokenSpec extends Specification {
     @Unroll
     void "value is required -- test invalid [#value]"() {
         when:
-        def token = new GormOAuth2AccessToken(value: value)
+        def token = new AccessToken(value: value)
 
         then:
         !token.validate(['value'])
@@ -44,11 +45,11 @@ class GormOAuth2AccessTokenSpec extends Specification {
 
     void "value must be unique"() {
         given:
-        def existingToken = new GormOAuth2AccessToken(value: 'gormAccessToken')
-        mockForConstraintsTests(GormOAuth2AccessToken, [existingToken])
+        def existingToken = new AccessToken(value: 'gormAccessToken')
+        mockForConstraintsTests(AccessToken, [existingToken])
 
         when:
-        def newToken = new GormOAuth2AccessToken(value: 'gormAccessToken')
+        def newToken = new AccessToken(value: 'gormAccessToken')
 
         then:
         !newToken.validate(['value'])
@@ -57,7 +58,7 @@ class GormOAuth2AccessTokenSpec extends Specification {
     @Unroll
     void "tokenType is required -- test invalid [#type]"() {
         when:
-        def token = new GormOAuth2AccessToken(tokenType: type)
+        def token = new AccessToken(tokenType: type)
 
         then:
         !token.validate(['tokenType'])
@@ -68,7 +69,7 @@ class GormOAuth2AccessTokenSpec extends Specification {
 
     void "allow expiration to be null"() {
         when:
-        def token = new GormOAuth2AccessToken(expiration: null)
+        def token = new AccessToken(expiration: null)
 
         then:
         token.validate(['expiration'])
@@ -76,7 +77,7 @@ class GormOAuth2AccessTokenSpec extends Specification {
 
     void "scope is required"() {
         when:
-        def token = new GormOAuth2AccessToken(scope: null)
+        def token = new AccessToken(scope: null)
 
         then:
         !token.validate(['scope'])
@@ -84,7 +85,7 @@ class GormOAuth2AccessTokenSpec extends Specification {
 
     void "refresh token can be null"() {
         when:
-        def token = new GormOAuth2AccessToken(refreshToken: null)
+        def token = new AccessToken(refreshToken: null)
 
         then:
         token.validate(['refreshToken'])
@@ -93,7 +94,7 @@ class GormOAuth2AccessTokenSpec extends Specification {
     @Unroll
     void "test authentication constraints [#auth] is valid [#valid]"() {
         when:
-        def token = new GormOAuth2AccessToken(authentication: auth as byte[])
+        def token = new AccessToken(authentication: auth as byte[])
 
         then:
         token.validate(['authentication']) == valid

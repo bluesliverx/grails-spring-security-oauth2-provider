@@ -7,9 +7,10 @@ import org.springframework.security.oauth2.provider.ClientDetails
 import org.springframework.security.oauth2.provider.NoSuchClientException
 import spock.lang.Specification
 import spock.lang.Unroll
+import test.oauth2.Client
 
 @TestFor(GormClientDetailsService)
-@Mock([GormOAuth2Client])
+@Mock([Client])
 class GormClientDetailsServiceSpec extends Specification {
 
     void setup() {
@@ -18,7 +19,7 @@ class GormClientDetailsServiceSpec extends Specification {
         SpringSecurityUtils.securityConfig = [oauthProvider: [:]] as ConfigObject
         setUpDefaultClientConfig()
 
-        setClientClassName('grails.plugin.springsecurity.oauthprovider.GormOAuth2Client')
+        setClientClassName('test.oauth2.Client')
     }
 
     private void setClientClassName(clientClassName) {
@@ -60,7 +61,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
     void "request valid client using dynamic look up"() {
         given:
-        new GormOAuth2Client(
+        new Client(
                 clientId: 'gormClient',
                 clientSecret: 'grails',
                 accessTokenValiditySeconds: 1234,
@@ -74,7 +75,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
         and:
         boolean encodeCalled = false
-        GormOAuth2Client.metaClass.encodeClientSecret { -> encodeCalled = true }
+        Client.metaClass.encodeClientSecret { -> encodeCalled = true }
 
         when:
         def details = service.loadClientByClientId('gormClient')
@@ -114,7 +115,7 @@ class GormClientDetailsServiceSpec extends Specification {
         details.registeredRedirectUri.contains('http://anywhereButHere')
 
         cleanup:
-        GormOAuth2Client.metaClass = null
+        Client.metaClass = null
     }
 
     void "requested client not found"() {
@@ -145,7 +146,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
     void "client secret can be optional"() {
         given:
-        def client = new GormOAuth2Client()
+        def client = new Client()
 
         when:
         def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
@@ -160,7 +161,7 @@ class GormClientDetailsServiceSpec extends Specification {
         setUpDefaultClientConfig([(name): 13490])
 
         and:
-        def client = new GormOAuth2Client()
+        def client = new Client()
 
         when:
         def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
@@ -179,7 +180,7 @@ class GormClientDetailsServiceSpec extends Specification {
         setUpDefaultClientConfig([scope: ['read']])
 
         and:
-        def client = new GormOAuth2Client(scopes: null)
+        def client = new Client(scopes: null)
 
         when:
         def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
@@ -192,7 +193,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
     void "multiple scopes"() {
         given:
-        def client = new GormOAuth2Client(scopes: ['read', 'write', 'trust'] as Set)
+        def client = new Client(scopes: ['read', 'write', 'trust'] as Set)
 
         when:
         def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
@@ -208,7 +209,7 @@ class GormClientDetailsServiceSpec extends Specification {
     @Unroll
     void "authorities default to nothing"() {
         given:
-        def client = new GormOAuth2Client()
+        def client = new Client()
 
         when:
         def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
@@ -219,7 +220,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
     void "multiple authorities"() {
         given:
-        def client = new GormOAuth2Client(authorities: ['ROLE_CLIENT', 'ROLE_TRUSTED_CLIENT'] as Set)
+        def client = new Client(authorities: ['ROLE_CLIENT', 'ROLE_TRUSTED_CLIENT'] as Set)
 
         when:
         def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
@@ -235,7 +236,7 @@ class GormClientDetailsServiceSpec extends Specification {
         setUpDefaultClientConfig([authorizedGrantTypes: []])
 
         and:
-        def client = new GormOAuth2Client(authorizedGrantTypes: null)
+        def client = new Client(authorizedGrantTypes: null)
 
         when:
         def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
@@ -249,7 +250,7 @@ class GormClientDetailsServiceSpec extends Specification {
         setUpDefaultClientConfig([authorizedGrantTypes: ['foo', 'bar']])
 
         and:
-        def client = new GormOAuth2Client(authorizedGrantTypes: null)
+        def client = new Client(authorizedGrantTypes: null)
 
         when:
         def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
@@ -262,7 +263,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
     void "multiple grant types"() {
         given:
-        def client = new GormOAuth2Client(authorizedGrantTypes: ['password','authorization_code', 'refresh_token', 'implicit'] as Set)
+        def client = new Client(authorizedGrantTypes: ['password','authorization_code', 'refresh_token', 'implicit'] as Set)
 
         when:
         def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
@@ -280,7 +281,7 @@ class GormClientDetailsServiceSpec extends Specification {
         setUpDefaultClientConfig([registeredRedirectUri: ['http://somewhere.com']])
 
         and:
-        def client = new GormOAuth2Client(redirectUris: null)
+        def client = new Client(redirectUris: null)
 
         when:
         def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
@@ -292,7 +293,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
     void "multiple redirect uris"() {
         given:
-        def client = new GormOAuth2Client(redirectUris: ['http://somewhere', 'http://nowhere'] as Set)
+        def client = new Client(redirectUris: ['http://somewhere', 'http://nowhere'] as Set)
 
         when:
         def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
@@ -308,7 +309,7 @@ class GormClientDetailsServiceSpec extends Specification {
         setUpDefaultClientConfig([resourceIds: ['someResource']])
 
         and:
-        def client = new GormOAuth2Client(resourceIds: null)
+        def client = new Client(resourceIds: null)
 
         when:
         def details = service.createClientDetails(client, clientLookup, defaultClientConfig)

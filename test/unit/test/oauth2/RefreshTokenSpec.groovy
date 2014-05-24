@@ -1,20 +1,20 @@
-package grails.plugin.springsecurity.oauthprovider
+package test.oauth2
 
 import grails.test.mixin.TestFor
-import org.springframework.security.oauth2.common.OAuth2RefreshToken
 import spock.lang.Specification
 import spock.lang.Unroll
+import test.oauth2.RefreshToken
 
-@TestFor(GormOAuth2RefreshToken)
-class GormOAuth2RefreshTokenSpec extends Specification {
+@TestFor(RefreshToken)
+class RefreshTokenSpec extends Specification {
 
     void "value must be unique"() {
         given:
-        def existingToken = new GormOAuth2RefreshToken(value: 'gormRefreshToken')
-        mockForConstraintsTests(GormOAuth2RefreshToken, [existingToken])
+        def existingToken = new RefreshToken(value: 'gormRefreshToken')
+        mockForConstraintsTests(RefreshToken, [existingToken])
 
         when:
-        def newToken = new GormOAuth2RefreshToken(value: 'gormRefreshToken')
+        def newToken = new RefreshToken(value: 'gormRefreshToken')
 
         then:
         !newToken.validate(['value'])
@@ -23,7 +23,7 @@ class GormOAuth2RefreshTokenSpec extends Specification {
     @Unroll
     void "value is required -- test invalid [#value]"() {
         when:
-        def token = new GormOAuth2RefreshToken(value: value)
+        def token = new RefreshToken(value: value)
 
         then:
         !token.validate(['value'])
@@ -35,7 +35,7 @@ class GormOAuth2RefreshTokenSpec extends Specification {
     @Unroll
     void "test authentication constraints [#auth] is valid [#valid]"() {
         when:
-        def token = new GormOAuth2RefreshToken(authentication: auth as byte[])
+        def token = new RefreshToken(authentication: auth as byte[])
 
         then:
         token.validate(['authentication']) == valid

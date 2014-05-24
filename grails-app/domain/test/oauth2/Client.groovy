@@ -1,6 +1,6 @@
-package grails.plugin.springsecurity.oauthprovider
+package test.oauth2
 
-class GormOAuth2Client {
+class Client {
 
     private static final String NO_CLIENT_SECRET = ''
 
