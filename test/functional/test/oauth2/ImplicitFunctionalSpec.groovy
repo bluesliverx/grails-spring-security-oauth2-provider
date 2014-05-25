@@ -33,6 +33,19 @@ class ImplicitFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
         error.text().startsWith('error="invalid_grant"')
     }
 
+    void "invalid client requests implicit without scope"() {
+        given:
+        params.client_id = 'invalid-client'
+        params.remove('scope')
+
+        when:
+        authorize(params)
+
+        then:
+        at OAuth2ErrorPage
+        error.text().startsWith('error="invalid_client"')
+    }
+
     void "client is authorized for authorization code but not implicit"() {
         given:
         params.client_id = 'authorization-code-only'

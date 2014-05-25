@@ -42,6 +42,7 @@ public class OAuth2TokenEndpointExceptionResolver extends AbstractHandlerExcepti
     private ModelAndView handleException(HttpServletRequest request, HttpServletResponse response,
                                          OAuth2TokenEndpointException tokenEndpointException) {
         try {
+            logger.debug("Handling token endpoint exception: " + tokenEndpointException.getCause());
             ResponseEntity<OAuth2Exception> entity = extractResponseEntity(tokenEndpointException);
 
             ServletWebRequest webRequest = new ServletWebRequest(request, response);

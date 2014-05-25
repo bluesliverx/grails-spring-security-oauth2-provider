@@ -33,6 +33,31 @@ class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpe
         error.text() == 'error="invalid_grant", error_description="A client must have at least one authorized grant type."'
     }
 
+    void "invalid client requests authorization code"() {
+        given:
+        def params = createAuthorizationEndpointParams('invalid-client')
+
+        when:
+        authorize(params)
+
+        then:
+        at OAuth2ErrorPage
+        error.text().startsWith('error="invalid_client"')
+    }
+
+    void "invalid client requests authorization code without scope"() {
+        given:
+        def params = createAuthorizationEndpointParams('invalid-client')
+        params.remove('scope')
+
+        when:
+        authorize(params)
+
+        then:
+        at OAuth2ErrorPage
+        error.text().startsWith('error="invalid_client"')
+    }
+
     void "client is authorized for implicit but not authorization code"() {
         given:
         def params = createAuthorizationEndpointParams('implicit-only')

@@ -21,14 +21,14 @@ public class ScopeRequiredAuthorizationRequestManager extends DefaultAuthorizati
     public AuthorizationRequest createAuthorizationRequest(Map<String, String> parameters) {
 
         String clientId = extractClientId(parameters);
+        ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
+
         Set<String> scopes = extractScopes(parameters);
 
         DefaultAuthorizationRequest request = new DefaultAuthorizationRequest(parameters,
                 Collections.<String, String> emptyMap(), clientId, scopes);
 
-        ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
         request.addClientDetails(clientDetails);
-
         return request;
     }
 
