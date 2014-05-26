@@ -287,7 +287,7 @@ OAuth2 Provider support for the Spring Security plugin.
             saltSource = ref('saltSource')
         }
 
-		clientCredentialsTokenEndpointFilter(ClientCredentialsTokenEndpointFilter) {
+		clientCredentialsTokenEndpointFilter(ClientCredentialsTokenEndpointFilter, conf.oauthProvider.tokenEndpointUrl) {
 			authenticationManager = ref('authenticationManager')
 		}
 
