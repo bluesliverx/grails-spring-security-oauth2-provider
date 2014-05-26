@@ -132,10 +132,10 @@ private void runQuickstart() {
     config.withWriter { it.writeLine contents }
 
     config.withWriterAppend { it.writeLine '''grails.plugin.springsecurity.providerNames = [
+        'clientCredentialsAuthenticationProvider',
         'daoAuthenticationProvider',
         'anonymousAuthenticationProvider',
-        'rememberMeAuthenticationProvider',
-        'clientCredentialsAuthenticationProvider'
+        'rememberMeAuthenticationProvider'
 ]'''}
 }
 
