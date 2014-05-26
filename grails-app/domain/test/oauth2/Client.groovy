@@ -38,10 +38,6 @@ class Client {
         redirectUris nullable: true
     }
 
-    static mapping = {
-        version false
-    }
-
     def beforeInsert() {
         encodeClientSecret()
     }
