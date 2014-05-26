@@ -33,7 +33,8 @@ class GormClientDetailsServiceSpec extends Specification {
                 authorizedGrantTypesPropertyName: 'authorizedGrantTypes',
                 resourceIdsPropertyName: 'resourceIds',
                 scopesPropertyName: 'scopes',
-                redirectUrisPropertyName: 'redirectUris'
+                redirectUrisPropertyName: 'redirectUris',
+                additionalInformationPropertyName: 'additionalInformation'
         ]
         SpringSecurityUtils.securityConfig.oauthProvider.clientLookup = clientLookup
     }
@@ -46,7 +47,8 @@ class GormClientDetailsServiceSpec extends Specification {
                 registeredRedirectUri: null,
                 authorities: [],
                 accessTokenValiditySeconds: null,
-                refreshTokenValiditySeconds: null
+                refreshTokenValiditySeconds: null,
+                additionalInformation: [:]
         ] << overrides
         SpringSecurityUtils.securityConfig.oauthProvider.defaultClientConfig = clientConfig
     }
@@ -70,7 +72,8 @@ class GormClientDetailsServiceSpec extends Specification {
                 authorizedGrantTypes: ['implicit'] as Set,
                 resourceIds: ['someResource'] as Set,
                 scopes: ['kaleidoscope'] as Set,
-                redirectUris: ['http://anywhereButHere'] as Set
+                redirectUris: ['http://anywhereButHere'] as Set,
+                additionalInformation: [text: 'words', number: 1234]
         ).save()
 
         and:
@@ -113,6 +116,11 @@ class GormClientDetailsServiceSpec extends Specification {
         and:
         details.registeredRedirectUri.size() == 1
         details.registeredRedirectUri.contains('http://anywhereButHere')
+
+        and:
+        details.additionalInformation.size() == 2
+        details.additionalInformation.text == 'words'
+        details.additionalInformation.number == 1234
 
         cleanup:
         Client.metaClass = null
@@ -317,5 +325,20 @@ class GormClientDetailsServiceSpec extends Specification {
         then:
         details.resourceIds.size() == 1
         details.resourceIds.contains('someResource')
+    }
+
+    void "additional information is optional -- honor default if not specified"() {
+        given:
+        setUpDefaultClientConfig([additionalInformation: [foo: 'bar']])
+
+        and:
+        def client = new Client(additionalInformation: null)
+
+        when:
+        def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
+
+        then:
+        details.additionalInformation.size() == 1
+        details.additionalInformation.foo == 'bar'
     }
 }

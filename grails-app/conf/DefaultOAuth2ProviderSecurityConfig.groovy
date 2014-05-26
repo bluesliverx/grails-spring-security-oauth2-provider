@@ -67,6 +67,7 @@ security {
 			authorities = []
 			accessTokenValiditySeconds = null
 			refreshTokenValiditySeconds = null
+            additionalInformation = [:]
 		}
 
         authorizationCodeLookup {
@@ -104,6 +105,7 @@ security {
             resourceIdsPropertyName = 'resourceIds'
             scopesPropertyName = 'scopes'
             redirectUrisPropertyName = 'redirectUris'
+            additionalInformationPropertyName = 'additionalInformation'
         }
 	}
 }

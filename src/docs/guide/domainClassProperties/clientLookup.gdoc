@@ -10,4 +10,5 @@ clientLookup.authorizedGrantTypesPropertyName       |   @'authorizedGrantTypes'@
 clientLookup.resourceIdsPropertyName                |   @'resourceIds'@                 |   Client class allowed resource IDs field.
 clientLookup.scopesPropertyName                     |   @'scopes'@                      |   Client class scopes field.
 clientLookup.redirectUrisPropertyName               |   @'redirectUris'@                |   Client class redirect URIs field.
+clientLookup.additionalInformationPropertyName      |   @'additionalInformation'@       |   Client class additional information field.
 {table}

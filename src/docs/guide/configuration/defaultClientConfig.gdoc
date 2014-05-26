@@ -9,4 +9,5 @@ defaultClientConfig.registeredRedirectUri       |   @null@          |   URI to r
 defaultClientConfig.authorities                 |   @\[\]@          |   Roles and authorities granted to the client.
 defaultClientConfig.accessTokenValiditySeconds  |   @null@          |   The length of time that an access token will be valid after it has been issued. This is used instead of the length configured for token services if available.
 defaultClientConfig.refreshTokenValiditySeconds |   @null@          |   The length of time that a refresh token will be valid after it has been issued. This is used instead of the length configured for token services if available.
+defaultClientConfig.additionalInformation       |   @\[:\]@         |   Additional information about the client. This is not required by OAuth 2.0 but is exposed in the underlying Spring library.
 {table}

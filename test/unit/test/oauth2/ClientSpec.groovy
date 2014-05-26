@@ -130,4 +130,23 @@ class ClientSpec extends Specification {
         _   |   ['something'] as Set
         _   |   ['something', 'more'] as Set
     }
+
+    @Unroll
+    void "valid additional information [#info]"() {
+        when:
+        def client = new Client(additionalInformation: info)
+
+        then:
+        client.validate(['additionalInformation'])
+
+        and:
+        client.additionalInformation == info
+
+        where:
+        _   |   info
+        _   |   null
+        _   |   [:]
+        _   |   [foo: 'bar']
+        _   |   [foo: 'bar', buzz: 'bar', number: 1234]
+    }
 }

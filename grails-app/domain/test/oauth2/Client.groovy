@@ -12,6 +12,8 @@ class Client {
     Integer accessTokenValiditySeconds
     Integer refreshTokenValiditySeconds
 
+    Map<String, Object> additionalInformation
+
     static hasMany = [
             authorities: String,
             authorizedGrantTypes: String,
@@ -36,6 +38,7 @@ class Client {
         scopes nullable: true
 
         redirectUris nullable: true
+        additionalInformation nullable: true
     }
 
     def beforeInsert() {

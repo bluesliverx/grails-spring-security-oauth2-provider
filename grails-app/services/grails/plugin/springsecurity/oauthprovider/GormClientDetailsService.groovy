@@ -56,6 +56,7 @@ class GormClientDetailsService implements ClientDetailsService {
         def resourceIdsPropertyName = clientLookup.resourceIdsPropertyName
         def scopesPropertyName = clientLookup.scopesPropertyName
         def redirectUrisPropertyName = clientLookup.redirectUrisPropertyName
+        def additionalInformationPropertyName = clientLookup.additionalInformationPropertyName
 
         // Load client properties or defaults
         def resourceIds = client."$resourceIdsPropertyName" ?: defaultClientConfig.resourceIds
@@ -70,6 +71,7 @@ class GormClientDetailsService implements ClientDetailsService {
         details.clientSecret = client."$clientSecretPropertyName"
         details.accessTokenValiditySeconds  = client."$accessTokenValiditySecondsPropertyName" ?: defaultClientConfig.accessTokenValiditySeconds
         details.refreshTokenValiditySeconds = client."$refreshTokenValiditySecondsPropertyName" ?: defaultClientConfig.refreshTokenValiditySeconds
+        details.additionalInformation = client."$additionalInformationPropertyName" ?: defaultClientConfig.additionalInformation
         correctAuthorizedGrantTypes(details, authorizedGrantTypes)
         return details
     }
