@@ -83,7 +83,6 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
         'scripts/CreateOauth2TestApps.groovy'
 	]
 
-	//Map dependsOn = [springSecurityCore: '1.0 > *']
 	def loadAfter = ["springSecurityCore"]
 
 	def license = "APACHE"
@@ -100,25 +99,74 @@ OAuth2 Provider support for the Spring Security plugin.
 
 	String documentation = 'http://grails.org/plugin/spring-security-oauth2-provider'
 
-	def doWithSpring = {
-		def conf = SpringSecurityUtils.securityConfig
-		if (!conf || !conf.active) {
-			return
-		}
+    private List availableMessageConverters = [
+            new StringHttpMessageConverter(writeAcceptCharset: false),
+            new ByteArrayHttpMessageConverter(),
+            new FormHttpMessageConverter(),
+            new SourceHttpMessageConverter(),
+            new MappingJacksonHttpMessageConverter()
+    ]
+
+    def doWithSpring = {
+        def conf = loadSecurityConfig()
+        if(!conf) {
+            return
+        }
+
+		println 'Configuring Spring Security OAuth2 provider ...'
 
         // Required for list constructor arguments for versions < 2.2-RC1
         // GRAILS-4995: https://jira.grails.org/browse/GRAILS-4995
         xmlns util:"http://www.springframework.org/schema/util"
 
-        SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
-		// have to get again after overlaying DefaultOAuthProviderSecurityConfig
-		conf = SpringSecurityUtils.securityConfig
+        /* Enable GORM backed implementations */
+        configureGormSupport.delegate = delegate
+        configureGormSupport()
 
-		if (!conf.oauthProvider.active)
-			return
+        /* Establish baseline token support */
+        configureTokenServices.delegate = delegate
+        configureTokenServices(conf)
 
-		println 'Configuring Spring Security OAuth2 provider ...'
+        /* Register token granters */
+        configureTokenGranters.delegate = delegate
+        configureTokenGranters(conf)
 
+        /* Register redirect resolver */
+        configureRedirectResolver.delegate = delegate
+        configureRedirectResolver(conf)
+
+        /* Register authorization request manager */
+        configureAuthorizationRequestManager.delegate = delegate
+        configureAuthorizationRequestManager(conf)
+
+        /* Register authorization and token endpoints */
+        configureEndpoints.delegate = delegate
+        configureEndpoints(conf)
+
+        /* Register exception resolvers for integration with the endpoints' @ExceptionHandler methods */
+        configureExceptionResolvers.delegate = delegate
+        configureExceptionResolvers()
+
+        /* Register details service, authentication provider and filter for client authentication */
+        configureClientAuthentication.delegate = delegate
+        configureClientAuthentication(conf)
+
+        /* Ensure OAuth2 authentication entry point plays well with the one provided by the Core plugin */
+        configureAuthenticationEntryPoints.delegate = delegate
+        configureAuthenticationEntryPoints(conf)
+
+        /* Ensure access tokens are extracted from incoming requests for access to protected resources */
+        configureResourceProtection.delegate = delegate
+        configureResourceProtection(conf)
+
+        /* Prepare for token endpoint filter chain voodoo */
+        configureTokenEndpointFilterChain.delegate = delegate
+        configureTokenEndpointFilterChain()
+
+		println "... done configuring Spring Security OAuth2 provider"
+	}
+
+    private configureGormSupport = {
         /* Gorm backed beans */
         springConfig.addAlias 'clientDetailsService', 'gormClientDetailsService'
         springConfig.addAlias 'tokenStore', 'gormTokenStoreService'
@@ -127,25 +175,20 @@ OAuth2 Provider support for the Spring Security plugin.
         /* Helper classes for Gorm support */
         oauth2AuthenticationSerializer(OAuth2AuthenticationSerializer)
         authorizationRequestHolderSerializer(AuthorizationRequestHolderSerializer)
+    }
 
-		tokenServices(DefaultTokenServices) {
-			tokenStore = ref("tokenStore")
-			clientDetailsService = ref("clientDetailsService")
-			accessTokenValiditySeconds = conf.oauthProvider.tokenServices.accessTokenValiditySeconds
-			refreshTokenValiditySeconds = conf.oauthProvider.tokenServices.refreshTokenValiditySeconds
-			reuseRefreshToken = conf.oauthProvider.tokenServices.reuseRefreshToken
-			supportRefreshToken = conf.oauthProvider.tokenServices.supportRefreshToken
-		}
+    private configureTokenServices = { conf ->
+        tokenServices(DefaultTokenServices) {
+            tokenStore = ref("tokenStore")
+            clientDetailsService = ref("clientDetailsService")
+            accessTokenValiditySeconds = conf.oauthProvider.tokenServices.accessTokenValiditySeconds
+            refreshTokenValiditySeconds = conf.oauthProvider.tokenServices.refreshTokenValiditySeconds
+            reuseRefreshToken = conf.oauthProvider.tokenServices.reuseRefreshToken
+            supportRefreshToken = conf.oauthProvider.tokenServices.supportRefreshToken
+        }
+    }
 
-        userApprovalHandler(TokenServicesUserApprovalHandler) {
-			approvalParameter = conf.oauthProvider.userApprovalParameter
-			tokenServices = ref("tokenServices")
-		}
-
-        /* Register authorization request manager */
-        oauth2AuthorizationRequestManager(DefaultAuthorizationRequestManager, ref('clientDetailsService'))
-
-        /* Register token granters */
+    private configureTokenGranters = { conf ->
         def grantTypes = conf.oauthProvider.grantTypes
 
         /* Must enforce restrictions on which grants, e.g. implicit, are available to each each endpoint */
@@ -187,10 +230,10 @@ OAuth2 Provider support for the Spring Security plugin.
         /* password */
         if(grantTypes.password) {
             delegateResourceOwnerPasswordTokenGranter(ResourceOwnerPasswordTokenGranter,
-                ref('authenticationManager'), ref('tokenServices'), ref('clientDetailsService'))
+                    ref('authenticationManager'), ref('tokenServices'), ref('clientDetailsService'))
 
             resourceOwnerPasswordGranter(StrictTokenGranter,
-                ref('delegateResourceOwnerPasswordTokenGranter'), ref('clientDetailsService'))
+                    ref('delegateResourceOwnerPasswordTokenGranter'), ref('clientDetailsService'))
 
             tokenEndpointTokenGrantersBeanNames << 'resourceOwnerPasswordGranter'
         }
@@ -209,7 +252,9 @@ OAuth2 Provider support for the Spring Security plugin.
 
         oauth2AuthorizationEndpointTokenGranter(CompositeTokenGranter, ref('authorizationEndpointTokenGranters'))
         oauth2TokenEndpointTokenGranter(CompositeTokenGranter, ref('tokenEndpointTokenGranters'))
+    }
 
+    private configureRedirectResolver = { conf ->
         if(conf.oauthProvider.authorization.requireRegisteredRedirectUri) {
             /* Require clients to have registered redirect URIs */
             redirectResolver(RequiredRedirectResolver)
@@ -218,7 +263,9 @@ OAuth2 Provider support for the Spring Security plugin.
             /* This resolver will use the requested redirect URI if client does not have one registered */
             redirectResolver(DefaultRedirectResolver)
         }
+    }
 
+    private configureAuthorizationRequestManager = { conf ->
         if(conf.oauthProvider.authorization.requireScope) {
             /* Require every request to include requested scope */
             authorizationRequestManager(ScopeRequiredAuthorizationRequestManager, ref('clientDetailsService'))
@@ -226,6 +273,31 @@ OAuth2 Provider support for the Spring Security plugin.
         else {
             /* Default implementation does not require scope */
             authorizationRequestManager(DefaultAuthorizationRequestManager, ref('clientDetailsService'))
+        }
+    }
+
+    private configureExceptionResolvers = {
+        oauth2ExceptionRenderer(DefaultOAuth2ExceptionRenderer) {
+            messageConverters = availableMessageConverters
+        }
+
+        oauth2TokenEndpointExceptionResolver(OAuth2TokenEndpointExceptionResolver) {
+            order = 0
+            tokenEndpoint = ref('oauth2TokenEndpoint')
+            exceptionRenderer = ref('oauth2ExceptionRenderer')
+        }
+
+        oauth2AuthorizationEndpointExceptionResolver(OAuth2AuthorizationEndpointExceptionResolver) {
+            order = 0
+            authorizationEndpoint = ref('oauth2AuthorizationEndpoint')
+        }
+    }
+
+    private configureEndpoints = { conf ->
+
+        userApprovalHandler(TokenServicesUserApprovalHandler) {
+            approvalParameter = conf.oauthProvider.userApprovalParameter
+            tokenServices = ref("tokenServices")
         }
 
         /* Register authorization endpoint */
@@ -255,48 +327,13 @@ OAuth2 Provider support for the Spring Security plugin.
             ]
         }
 
-        List availableMessageConverters = [
-                new StringHttpMessageConverter(writeAcceptCharset: false),
-                new ByteArrayHttpMessageConverter(),
-                new FormHttpMessageConverter(),
-                new SourceHttpMessageConverter(),
-                new MappingJacksonHttpMessageConverter()
-        ]
-
-        oauth2ExceptionRenderer(DefaultOAuth2ExceptionRenderer) {
+        /* Register jackson handler for token responses */
+        annotationHandlerAdapter(RequestMappingHandlerAdapter){
             messageConverters = availableMessageConverters
         }
+    }
 
-        oauth2TokenEndpointExceptionResolver(OAuth2TokenEndpointExceptionResolver) {
-            order = 0
-            tokenEndpoint = ref('oauth2TokenEndpoint')
-            exceptionRenderer = ref('oauth2ExceptionRenderer')
-        }
-
-        oauth2AuthorizationEndpointExceptionResolver(OAuth2AuthorizationEndpointExceptionResolver) {
-            order = 0
-            authorizationEndpoint = ref('oauth2AuthorizationEndpoint')
-        }
-
-		// Allow client log-ins
-		clientDetailsUserService(ClientDetailsUserDetailsService, ref('clientDetailsService'))
-
-        // Use the password encoder configured for the core plugin for encoding client secrets
-        clientCredentialsAuthenticationProvider(DaoAuthenticationProvider) {
-			userDetailsService = ref('clientDetailsUserService')
-            passwordEncoder = ref('passwordEncoder')
-            saltSource = ref('saltSource')
-        }
-
-		clientCredentialsTokenEndpointFilter(ClientCredentialsTokenEndpointFilter, conf.oauthProvider.tokenEndpointUrl) {
-			authenticationManager = ref('authenticationManager')
-		}
-
-		// Register jackson handler for token responses
-		annotationHandlerAdapter(RequestMappingHandlerAdapter){
-			messageConverters = availableMessageConverters
-		}
-
+    private configureAuthenticationEntryPoints = { conf ->
         // Configure multiple authentication entry points
         // http://jdevdiary.blogspot.com/2013/03/grails-spring-security-and-multiple.html
         oauth2RequestMatcher(AntPathRequestMatcher, conf.oauthProvider.tokenEndpointUrl + '**')
@@ -308,17 +345,40 @@ OAuth2 Provider support for the Spring Security plugin.
             }
         }
 
-        // This is identical to the authenticationEntryPoint bean configured by core plugin
-        defaultAuthenticationEntryPoint(AjaxAwareAuthenticationEntryPoint, conf.auth.loginFormUrl) {
-            ajaxLoginFormUrl = conf.auth.ajaxLoginFormUrl
-            forceHttps = conf.auth.forceHttps
-            useForward = conf.auth.useForward
-            portMapper = ref('portMapper')
-            portResolver = ref('portResolver')
-        }
+        // Retrieve the bean definition defined by the Core plugin
+        def defaultAuthenticationEntryPoint = getBeanDefinition('authenticationEntryPoint')
 
         authenticationEntryPoint(DelegatingAuthenticationEntryPoint, ref('authenticationEntryPointMap')) {
-            defaultEntryPoint = ref('defaultAuthenticationEntryPoint')
+            defaultEntryPoint = defaultAuthenticationEntryPoint
+        }
+    }
+
+    private configureClientAuthentication = { conf ->
+        /* Allow client log-ins */
+        clientDetailsUserService(ClientDetailsUserDetailsService, ref('clientDetailsService'))
+
+        /* Use the password encoder configured for the core plugin for encoding client secrets */
+        clientCredentialsAuthenticationProvider(DaoAuthenticationProvider) {
+            userDetailsService = ref('clientDetailsUserService')
+            passwordEncoder = ref('passwordEncoder')
+            saltSource = ref('saltSource')
+        }
+
+        clientCredentialsTokenEndpointFilter(ClientCredentialsTokenEndpointFilter, conf.oauthProvider.tokenEndpointUrl) {
+            authenticationManager = ref('authenticationManager')
+        }
+
+        SpringSecurityUtils.registerFilter 'clientCredentialsTokenEndpointFilter',
+                conf.oauthProvider.clientFilterStartPosition + 1
+    }
+
+    private configureResourceProtection = { conf ->
+
+        // Override expression handler provided by Spring Security core plugin
+        webExpressionHandler(OAuth2WebSecurityExpressionHandler) {
+            roleHierarchy = ref('roleHierarchy')
+            expressionParser = ref('voterExpressionParser')
+            permissionEvaluator = ref('permissionEvaluator')
         }
 
         oauth2AuthenticationManager(OAuth2AuthenticationManager) {
@@ -330,42 +390,33 @@ OAuth2 Provider support for the Spring Security plugin.
             authenticationManager = ref('oauth2AuthenticationManager')
         }
 
-        // Override expression handler provided by Spring Security core plugin
-        // TODO: See if there is a more stable way to do this, e.g. config option
-        webExpressionHandler(OAuth2WebSecurityExpressionHandler) {
-            roleHierarchy = ref('roleHierarchy')
-            expressionParser = ref('voterExpressionParser')
-            permissionEvaluator = ref('permissionEvaluator')
-        }
+        SpringSecurityUtils.registerFilter 'oauth2ProviderFilter',
+                conf.oauthProvider.filterStartPosition + 1
+    }
 
+    private configureTokenEndpointFilterChain = {
         // Register the token endpoint as stateless
         // This is added to the filter chain
         nullContextRepository(NullSecurityContextRepository)
         statelessSecurityContextPersistenceFilter(SecurityContextPersistenceFilter, ref('nullContextRepository'))
-
-		// Register endpoint URL filter since we define the URLs above
-        SpringSecurityUtils.registerFilter 'oauth2ProviderFilter',
-                conf.oauthProvider.filterStartPosition + 1
-		SpringSecurityUtils.registerFilter 'clientCredentialsTokenEndpointFilter',
-				conf.oauthProvider.clientFilterStartPosition + 1
-
-		println "... done configuring Spring Security OAuth2 provider"
-	}
+    }
 
     def doWithApplicationContext = { ctx ->
-        def conf = SpringSecurityUtils.securityConfig
-        if(!conf || !conf.active) {
+        def conf = loadSecurityConfig()
+        if(!conf) {
             return
         }
-
-        SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
-        conf = SpringSecurityUtils.securityConfig
 
         if(conf.oauthProvider.tokenEndpointFilterChain.disabled) {
             log.debug("Skipping token endpoint filter chain configuration")
             return
         }
 
+        setupTokenEndpointFilterChain.delegate = delegate
+        setupTokenEndpointFilterChain(conf, ctx)
+    }
+
+    private setupTokenEndpointFilterChain = { conf, ctx ->
         def springSecurityFilterChain = ctx.springSecurityFilterChain
         def originalFilterChainMap = springSecurityFilterChain.filterChainMap
 
@@ -423,5 +474,24 @@ OAuth2 Provider support for the Spring Security plugin.
         filterChainMap.find { AntPathRequestMatcher urlPattern, filters ->
             urlPattern.pattern == url
         }
+    }
+
+    def onConfigChange = { event ->
+        loadSecurityConfig()
+    }
+
+    private static ConfigObject loadSecurityConfig() {
+        def conf = SpringSecurityUtils.securityConfig
+        if (!conf || !conf.active) {
+            return null
+        }
+
+        SpringSecurityUtils.loadSecondaryConfig 'DefaultOAuth2ProviderSecurityConfig'
+        conf = SpringSecurityUtils.securityConfig
+
+        if (!conf.oauthProvider.active) {
+            return null
+        }
+        return conf
     }
 }
