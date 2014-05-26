@@ -374,7 +374,7 @@ OAuth2 Provider support for the Spring Security plugin.
         // Inherit the filter chain specified by another end point
         def allFilters = findFilterChainForUrl(statelessUrlPattern, originalFilterChainMap).value as List
         if(allFilters == null) {
-            log.warn("Could not find base filter chain for pattern [${statelessUrlPattern}] to use for token endpoint [${tokenEndpointUrl}]")
+            log.error("Could not find base filter chain for pattern [${statelessUrlPattern}] to use for token endpoint [${tokenEndpointUrl}]")
             return
         }
 
@@ -384,14 +384,17 @@ OAuth2 Provider support for the Spring Security plugin.
 
         // Skip if the securityContextPersistenceFilter is not present
         def filterPresent = (scpfIdx != -1) && allFilters[scpfIdx].is(scpfBean)
-        if(filterPresent) {
-            // Replace default securityContextPersistenceFilter bean with one that is stateless
-            def tokenEndpointFilters = replaceSecurityContextPersistenceFilterWithStateless(allFilters, scpfIdx, ctx)
-
-            // Rebuild the filterChainMap with the the token endpoint filter at the beginning
-            def filterChainMap = injectFilterChain(tokenEndpointUrl, tokenEndpointFilters, originalFilterChainMap)
-            springSecurityFilterChain.filterChainMap = filterChainMap
+        if(!filterPresent) {
+            log.error("Could not find securityContextPersistenceFilter in filter chain associated with [${statelessUrlPattern}]")
+            return
         }
+
+        // Replace default securityContextPersistenceFilter bean with one that is stateless
+        def tokenEndpointFilters = replaceSecurityContextPersistenceFilterWithStateless(allFilters, scpfIdx, ctx)
+
+        // Rebuild the filterChainMap with the the token endpoint filter at the beginning
+        def filterChainMap = injectFilterChain(tokenEndpointUrl, tokenEndpointFilters, originalFilterChainMap)
+        springSecurityFilterChain.filterChainMap = filterChainMap
     }
 
     private Map injectFilterChain(String url, List filters, Map oldFilterChainMap) {
