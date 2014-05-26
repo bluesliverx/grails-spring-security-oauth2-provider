@@ -1,27 +1,32 @@
 package grails.plugin.springsecurity.oauthprovider.provider;
 
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
+import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.*;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public class ScopeRequiredAuthorizationRequestManager extends DefaultAuthorizationRequestManager {
+public class GrailsAuthorizationRequestManager extends DefaultAuthorizationRequestManager {
 
     private final ClientDetailsService clientDetailsService;
+    private final boolean scopeRequired;
 
-    public ScopeRequiredAuthorizationRequestManager(ClientDetailsService clientDetailsService) {
+    public GrailsAuthorizationRequestManager(ClientDetailsService clientDetailsService, boolean scopeRequired) {
         super(clientDetailsService);
         this.clientDetailsService = clientDetailsService;
+        this.scopeRequired = scopeRequired;
     }
 
     public AuthorizationRequest createAuthorizationRequest(Map<String, String> parameters) {
 
         String clientId = extractClientId(parameters);
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
+        validateGrantTypes(clientDetails);
 
         Set<String> scopes = extractScopes(parameters);
 
@@ -44,7 +49,7 @@ public class ScopeRequiredAuthorizationRequestManager extends DefaultAuthorizati
         Set<String> scopes = OAuth2Utils.parseParameterList(parameters.get("scope"));
         boolean scopesNotPresent = scopesNotPresent(scopes);
 
-        if(scopesNotPresent && scopesCanBeOmitted(parameters)) {
+        if(scopesNotPresent && (scopesCanBeOmitted(parameters) || !scopeRequired)) {
             scopes = Collections.emptySet();
         }
         else if(scopesNotPresent) {
@@ -62,5 +67,12 @@ public class ScopeRequiredAuthorizationRequestManager extends DefaultAuthorizati
     private boolean scopesCanBeOmitted(Map<String, String> parameters) {
         String grantType = parameters.get("grant_type");
         return (grantType != null) && (grantType.equals("authorization_code"));
+    }
+
+    private void validateGrantTypes(ClientDetails clientDetails) {
+        Collection<String> authorizedGrantTypes = clientDetails.getAuthorizedGrantTypes();
+        if(authorizedGrantTypes == null || authorizedGrantTypes.isEmpty()) {
+            throw new InvalidGrantException("A client must have at least one authorized grant type.");
+        }
     }
 }

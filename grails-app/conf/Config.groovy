@@ -34,10 +34,10 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 ]
 
 grails.plugin.springsecurity.providerNames = [
+        'clientCredentialsAuthenticationProvider',
         'daoAuthenticationProvider',
         'anonymousAuthenticationProvider',
-        'rememberMeAuthenticationProvider',
-        'clientCredentialsAuthenticationProvider'
+        'rememberMeAuthenticationProvider'
 ]
 
 // Added by the Spring Security OAuth2 Provider plugin:

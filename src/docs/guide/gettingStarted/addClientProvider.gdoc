@@ -2,9 +2,11 @@ Next you will need to add the @clientCredentialsAuthenticationProvider@ to the l
 
 {code}
 grails.plugin.springsecurity.providerNames = [
+        'clientCredentialsAuthenticationProvider',
         'daoAuthenticationProvider',
         'anonymousAuthenticationProvider',
-        'rememberMeAuthenticationProvider',
-        'clientCredentialsAuthenticationProvider'
+        'rememberMeAuthenticationProvider'
 ]
 {code}
+
+The order is important. The @clientCredentialsAuthenticationProvider@ *must* occur first to ensure proper authentication of the client and user during the Resource Owner Password Credentials grant.

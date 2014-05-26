@@ -18,7 +18,7 @@ import grails.plugin.springsecurity.oauthprovider.OAuth2AuthenticationSerializer
 import grails.plugin.springsecurity.oauthprovider.endpoint.RequiredRedirectResolver
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationEndpoint
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedTokenEndpoint
-import grails.plugin.springsecurity.oauthprovider.provider.ScopeRequiredAuthorizationRequestManager
+import grails.plugin.springsecurity.oauthprovider.provider.GrailsAuthorizationRequestManager
 import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2AuthorizationEndpointExceptionResolver
 import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2TokenEndpointExceptionResolver
 import grails.plugin.springsecurity.oauthprovider.token.StrictTokenGranter
@@ -218,22 +218,16 @@ OAuth2 Provider support for the Spring Security plugin.
 
         /* client-credentials */
         if(grantTypes.clientCredentials) {
-            delegateClientCredentialsGranter(ClientCredentialsTokenGranter,
+            clientCredentialsGranter(ClientCredentialsTokenGranter,
                     ref('tokenServices'), ref('clientDetailsService'))
-
-            clientCredentialsGranter(StrictTokenGranter,
-                    ref('delegateClientCredentialsGranter'), ref('clientDetailsService'))
 
             tokenEndpointTokenGrantersBeanNames << 'clientCredentialsGranter'
         }
 
         /* password */
         if(grantTypes.password) {
-            delegateResourceOwnerPasswordTokenGranter(ResourceOwnerPasswordTokenGranter,
+            resourceOwnerPasswordGranter(ResourceOwnerPasswordTokenGranter,
                     ref('authenticationManager'), ref('tokenServices'), ref('clientDetailsService'))
-
-            resourceOwnerPasswordGranter(StrictTokenGranter,
-                    ref('delegateResourceOwnerPasswordTokenGranter'), ref('clientDetailsService'))
 
             tokenEndpointTokenGrantersBeanNames << 'resourceOwnerPasswordGranter'
         }
@@ -266,14 +260,9 @@ OAuth2 Provider support for the Spring Security plugin.
     }
 
     private configureAuthorizationRequestManager = { conf ->
-        if(conf.oauthProvider.authorization.requireScope) {
-            /* Require every request to include requested scope */
-            authorizationRequestManager(ScopeRequiredAuthorizationRequestManager, ref('clientDetailsService'))
-        }
-        else {
-            /* Default implementation does not require scope */
-            authorizationRequestManager(DefaultAuthorizationRequestManager, ref('clientDetailsService'))
-        }
+        /* Should every request be required to include the scope of the access token */
+        boolean requireScope = conf.oauthProvider.authorization.requireScope as boolean
+        authorizationRequestManager(GrailsAuthorizationRequestManager, ref('clientDetailsService'), requireScope)
     }
 
     private configureExceptionResolvers = {

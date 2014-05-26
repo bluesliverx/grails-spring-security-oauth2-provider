@@ -37,6 +37,24 @@ class ResourceOwnerCredentialsFunctionalSpec extends Specification {
         assertAccessTokenErrorRequest(params, 401, 'invalid_client')
     }
 
+    void "resource owner credentials unknown user"() {
+        given:
+        params << [client_id: 'public-client']
+        params.username = 'unknown-user'
+
+        expect:
+        assertAccessTokenErrorRequest(params, 400, 'invalid_grant')
+    }
+
+    void "resource owner credentials known user and invalid password"() {
+        given:
+        params << [client_id: 'public-client']
+        params.password = 'invalid-password'
+
+        expect:
+        assertAccessTokenErrorRequest(params, 400, 'invalid_grant')
+    }
+
     void "resource owner credentials with confidential client"() {
         given:
         params << [client_id: 'confidential-client', client_secret: 'secret-pass-phrase']
