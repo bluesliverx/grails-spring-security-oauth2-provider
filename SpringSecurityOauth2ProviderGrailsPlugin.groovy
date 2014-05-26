@@ -21,8 +21,6 @@ import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedTokenEndpoint
 import grails.plugin.springsecurity.oauthprovider.provider.GrailsAuthorizationRequestManager
 import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2AuthorizationEndpointExceptionResolver
 import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2TokenEndpointExceptionResolver
-import grails.plugin.springsecurity.oauthprovider.token.StrictTokenGranter
-import grails.plugin.springsecurity.web.authentication.AjaxAwareAuthenticationEntryPoint
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationContext
@@ -33,7 +31,6 @@ import org.springframework.http.converter.json.MappingJacksonHttpMessageConverte
 import org.springframework.http.converter.xml.SourceHttpMessageConverter
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.oauth2.provider.CompositeTokenGranter
-import org.springframework.security.oauth2.provider.DefaultAuthorizationRequestManager
 import org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter
