@@ -1,4 +1,4 @@
-This class represents an authorization code that has been issued via the authorization endpoint as part of an authorization code grant. The authentication object serialized is an instance of @OAuth2Authentication@ from Spring Security OAuth 2.0.
+This class represents an authorization code that has been issued via the authorization endpoint as part of an authorization code grant. The authentication object serialized is an instance of @AuthorizationRequestHolder@ from Spring Security OAuth 2.0.
 
 {code}
 package com.yourapp
