@@ -1,6 +1,0 @@
-{table}
-*Property*                  |   *Default Value*     |   *Meaning*
-className                   |   @null@              |   Refresh token class name.
-authenticationPropertyName  |   @'authentication'@  |   Refresh token class serialized authentication field.
-valuePropertyName           |   @'value'@           |   Refresh token class value field.
-{table}

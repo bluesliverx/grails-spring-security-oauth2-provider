@@ -1,1 +1,0 @@
-When the plugin is installed, two views are copied for the error and confirm access pages. They are located under @grails-app/views/oauth/@. Customize these to fit your needs.

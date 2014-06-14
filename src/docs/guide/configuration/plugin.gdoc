@@ -1,8 +1,0 @@
-The following properties define whether the plugin is active and where the required filters are registered in the Spring Security filter chain:
-
-{table}
-*Property*                  |   *Default Value*                                     |   *Meaning*
-active                      |   @true@                                              |   Whether the plugin is enabled.
-filterStartPosition         |   @SecurityFilterPosition.X509_FILTER.order@          |   The position in the filter chain of the @OAuth2AuthenticationProcessingFilter@, which handles authentication for resource access by extracting an access token from the incoming request.
-clientFilterStartPosition   |   @SecurityFilterPosition.DIGEST_AUTH_FILTER.order@   |   The position in the filter chain of the @ClientCredentialsTokenEndpointFilter@, which handles client authentication.
-{table}

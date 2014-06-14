@@ -1,5 +1,0 @@
-The OAuth2 plugin adds [OAuth 2.0|http://oauth.net/2/] support to a Grails application that uses Spring Security. It depends on [Spring Security Core plugin|http://grails.org/plugin/spring-security-core].
-
-Under the covers, [Spring Security OAuth version 1.0.5|http://projects.spring.io/spring-security-oauth/] is used by the plugin to provide OAuth 2.0 services. This documentation specifies a few specific steps you will have to take in order to ensure proper integration with the underlying library.
-
-This plugin provides support for Grails domain classes necessary for providing OAuth 2.0 authorization. The standard grant types described in [RFC 6749|http://tools.ietf.org/html/rfc6749] are supported by the plugin. Access to protected resources is currently controlled by Spring Security Core's methods, i.e. request maps, annotations, intercept maps.

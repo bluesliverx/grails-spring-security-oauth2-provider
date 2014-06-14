@@ -1,6 +1,0 @@
-{table}
-*Property*                  |   *Default Value*     |   *Meaning*
-className                   |   @null@              |   Authorization code class name.
-authenticationPropertyName  |   @'authentication'@  |   Authorization code class serialized authentication field.
-codePropertyName            |   @'code'@            |   Authorization code class code field.
-{table}
