@@ -1,0 +1,10 @@
+* 1.0.5.2
+** Fix #13 - Make clientSecret optional in client configuration structure
+
+* 1.0.5.1
+** Merge pull request #21 (Burt's cleanup)
+** Use log wrapper instead of log4j
+** Depends on Grails 2.0 or greater (consistent with core plugin)
+
+* 1.0.5
+** Initial release of plugin compatible with spring security core 2.0-RC2

@@ -1,0 +1,13 @@
+The implicit grant is similar to the authorization code grant and can be initiated by directing your browser to the authorization endpoint:
+
+{code}
+http://localhost:8080/oauth2-test/oauth/authorize?response_type=token&client_id=my-client&scope=read
+{code}
+
+Upon confirmation, your browser will be redirected to the following URL:
+
+{code}
+http://myredirect.com/#access_token=4e22ad4f-08ae-49dc-befb-2c9821af04d1&token_type=bearer&expires_in=43199
+{code}
+
+The @access_token@ can be extracted from the URL fragment.

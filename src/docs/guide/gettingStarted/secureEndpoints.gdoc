@@ -1,0 +1,12 @@
+Update the Core plugin's rules for the authorization and token endpoints so they are protected by Spring Security. If you're using the Core plugin's @staticRules@, you'll want to add the following in @grails-app/conf/Config.groovy@:
+
+{code}
+grails.plugin.springsecurity.controllerAnnotations.staticRules = [
+        '/oauth/authorize.dispatch':      ["isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"],
+        '/oauth/token.dispatch':          ["isFullyAuthenticated() and request.getMethod().equals('POST')"],
+        ...
+{code}
+
+The endpoints are standard Spring MVC controllers in the underlying Spring Security OAuth2 implementations and the URLs must be mapped with @.dispatch@.
+
+The additional restrictions on the allowed HTTP methods are to ensure compliance with the OAuth 2.0 spec as defined in [RFC 6749|http://tools.ietf.org/html/rfc6749].

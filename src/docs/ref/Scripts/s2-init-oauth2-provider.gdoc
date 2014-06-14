@@ -1,0 +1,19 @@
+h1. s2-init-oauth2-provider
+
+h2. Purpose
+
+Creates the domain classes required to manage OAuth 2.0 clients in the specified package.
+
+The general format is:
+
+bc.
+grails s2-init-oauth2-provider <package> <client> <authorization-code> <access-token> <refresh-token>
+
+h2. Examples
+
+bc.
+grails s2-init-oauth2-provider com.yourapp Client AuthorizationCode AccessToken RefreshToken
+
+h2. Description
+
+* Updates @grails-app/conf/Config.groovy@ with OAuth 2.0 domain class configuration settings and creates domain classes in @grails-app/domain@
