@@ -77,7 +77,8 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
         'grails-app/views/redirect/**',
 		'grails-app/views/index.gsp',
 		'grails-app/views/error.gsp',
-        'scripts/CreateOauth2TestApps.groovy'
+        'scripts/CreateOauth2TestApps.groovy',
+        'scripts/PublishGithub.groovy',
 	]
 
 	def loadAfter = ["springSecurityCore"]
