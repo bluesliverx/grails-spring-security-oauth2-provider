@@ -1,0 +1,7 @@
+Spring Security Core plugin's @securityContextPersistenceFilter@ stores state in the HTTP session. Access to the token endpoint must be stateless. The default behavior of the OAuth2 plugin is to attempt to create a new filter chain based on an existing chain definition and then replace the @securityContextPersistenceFilter@ with a @statelessSecurityContextPersistenceFilter@.
+
+{table}
+*Property*                                  |   *Default Value* |   *Meaning*
+tokenEndpointFilterChain.baseUrlPattern     |   @'/\*\*'@       |   URL pattern used to identify the existing filter chain to use as a base for the token endpoint's filter chain. The referenced filter chain *must* include the @securityContextPersistenceFilter@ for this to function properly.
+tokenEndpointFilterChain.disabled           |   @false@         |   Whether to disable this functionality.
+{table}

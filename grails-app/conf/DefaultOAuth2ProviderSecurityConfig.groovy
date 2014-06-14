@@ -21,18 +21,27 @@ security {
 		filterStartPosition = SecurityFilterPosition.X509_FILTER.order
 		clientFilterStartPosition = SecurityFilterPosition.DIGEST_AUTH_FILTER.order
 
+        // Configuration for the token endpoint's filter chain
+        tokenEndpointFilterChain {
+            // Defines the URL pattern for the filter chain to "inherit" as the base
+            baseUrlPattern = '/**'
+            // Should the stateless filter be injected
+            disabled = false
+        }
+
 		tokenServices {
 			accessTokenValiditySeconds = 60 * 60 * 12 //default 12 hours
 			refreshTokenValiditySeconds = 60 * 10 //default 10 minutes
-			reuseRefreshToken = true
+			reuseRefreshToken = false
 			supportRefreshToken = true
 		}
 		authorizationEndpointUrl = "/oauth/authorize"
 		tokenEndpointUrl = "/oauth/token"
-		userApprovalEndpointUrl = "/oauth/confirm"
+		userApprovalEndpointUrl = "/oauth/confirm_access"
 		userApprovalParameter = "user_oauth_approval"
+        errorEndpointUrl = "/oauth/error"
 
-		// Decides which grant types are enabled or not
+        // Decides which grant types are enabled or not
 		grantTypes {
 			authorizationCode = true
 			implicit = true
@@ -40,21 +49,63 @@ security {
 			clientCredentials = true
 			password = true
 		}
+
+        authorization {
+            // Should the authorization endpoint allow unregistered redirect_uri
+            // to be specified in request if client has none registered
+            requireRegisteredRedirectUri = true
+
+            // Should each request be required to include the scope param
+            requireScope = true
+        }
+
 		defaultClientConfig {
 			resourceIds = []
-			authorizedGrantTypes = ["authorization_code", "refresh_token"]
+			authorizedGrantTypes = []
 			scope = []
 			registeredRedirectUri = null
 			authorities = []
 			accessTokenValiditySeconds = null
 			refreshTokenValiditySeconds = null
+            additionalInformation = [:]
 		}
-		clients = []
-	}
-}
 
-environments {
-	test {
-		security.oauthProvider.active = false
+        authorizationCodeLookup {
+            className = null
+            authenticationPropertyName = 'authentication'
+            codePropertyName = 'code'
+        }
+
+        accessTokenLookup {
+            className = null
+            authenticationPropertyName = 'authentication'
+            usernamePropertyName = 'username'
+            clientIdPropertyName = 'clientId'
+            valuePropertyName = 'value'
+            tokenTypePropertyName = 'tokenType'
+            expirationPropertyName = 'expiration'
+            refreshTokenPropertyName = 'refreshToken'
+            scopePropertyName = 'scope'
+        }
+
+        refreshTokenLookup {
+            className = null
+            authenticationPropertyName = 'authentication'
+            valuePropertyName = 'value'
+        }
+
+        clientLookup {
+            className = null
+            clientIdPropertyName = 'clientId'
+            clientSecretPropertyName = 'clientSecret'
+            accessTokenValiditySecondsPropertyName = 'accessTokenValiditySeconds'
+            refreshTokenValiditySecondsPropertyName = 'refreshTokenValiditySeconds'
+            authoritiesPropertyName = 'authorities'
+            authorizedGrantTypesPropertyName = 'authorizedGrantTypes'
+            resourceIdsPropertyName = 'resourceIds'
+            scopesPropertyName = 'scopes'
+            redirectUrisPropertyName = 'redirectUris'
+            additionalInformationPropertyName = 'additionalInformation'
+        }
 	}
 }

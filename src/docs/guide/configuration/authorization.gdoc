@@ -1,0 +1,7 @@
+The plugin enforces the following restrictions on authorization request params:
+
+{table}
+*Property*                                  |   *Default Value* |   *Meaning*
+authorization.requireRegisteredRedirectUri  |   @true@          |   Whether a client is required to have registered a redirect URI before performing an authorization request. This addresses _RFC 6749 Section 10.6: Authorization Code Redirection URI Manipulation_ and _RFC 6749 Section 10.15: Open Redirectors_.
+authorization.requireScope                  |   @true@          |   Whether the scope for each access token requested is required.
+{table}
