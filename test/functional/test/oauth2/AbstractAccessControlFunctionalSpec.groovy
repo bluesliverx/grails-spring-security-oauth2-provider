@@ -56,6 +56,17 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
         }
     }
 
+    protected HttpResponseDecorator requestRawResponse(String relativeUrl, String token) {
+        try {
+            def requestUrl = browser.baseUrl + relativeUrl
+            def headers = [Authorization: "Bearer $token"]
+            restClient.get(uri: requestUrl, headers: headers) as HttpResponseDecorator
+        }
+        catch(HttpResponseException e) {
+            return e.response
+        }
+    }
+
     protected String getAccessToken(AccessTokenRequest request) {
 
         Map params = createParamsFromRequest(request)
