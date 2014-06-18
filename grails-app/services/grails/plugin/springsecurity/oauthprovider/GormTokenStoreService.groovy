@@ -76,6 +76,10 @@ class GormTokenStoreService implements TokenStore {
         def valuePropertyName = accessTokenLookup.valuePropertyName
         def gormAccessToken = GormAccessToken.findWhere((valuePropertyName): tokenValue)
 
+        if(!gormAccessToken) {
+            log.debug("Failed to find access token with value [$tokenValue]")
+            return null
+        }
         createOAuth2AccessToken(gormAccessToken)
     }
 

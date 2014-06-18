@@ -8,6 +8,15 @@ import spock.lang.Unroll
 
 class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpec {
 
+    void "invalid bearer token in request"() {
+        when:
+        def response = requestRawResponse('secured/clientRole', 'invalid-bearer-token')
+
+        then:
+        response.status == 401
+        response.data.error == 'invalid_token'
+    }
+
     @Unroll
     void "client has role expression for grant type [#grantType]"() {
         given:

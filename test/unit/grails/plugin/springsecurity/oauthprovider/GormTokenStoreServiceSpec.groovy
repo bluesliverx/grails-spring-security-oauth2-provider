@@ -217,6 +217,11 @@ class GormTokenStoreServiceSpec extends Specification {
         oAuthRefreshToken.value == refreshValue
     }
 
+    void "read access token returns null when token not found"() {
+        expect:
+        service.readAccessToken(tokenValue) == null
+    }
+
     void "return null if refresh token can't be read"() {
         expect:
         service.readRefreshToken(refreshValue) == null
