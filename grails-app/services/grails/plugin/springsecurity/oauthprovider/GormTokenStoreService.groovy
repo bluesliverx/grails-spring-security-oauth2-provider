@@ -167,7 +167,7 @@ class GormTokenStoreService implements TokenStore {
         def refreshTokenPropertyName = accessTokenLookup.refreshTokenPropertyName
         def gormAccessToken = GormAccessToken.findWhere((refreshTokenPropertyName): refreshToken.value)
 
-        gormAccessToken.delete()
+        gormAccessToken?.delete()
     }
 
     @Override
