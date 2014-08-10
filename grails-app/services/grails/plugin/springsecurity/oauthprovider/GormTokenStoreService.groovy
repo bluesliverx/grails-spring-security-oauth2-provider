@@ -94,7 +94,7 @@ class GormTokenStoreService implements TokenStore {
         def valuePropertyName = accessTokenLookup.valuePropertyName
         def gormAccessToken = GormAccessToken.findWhere((valuePropertyName): tokenValue)
 
-        gormAccessToken.delete()
+        gormAccessToken?.delete()
     }
 
     @Override
@@ -157,7 +157,7 @@ class GormTokenStoreService implements TokenStore {
         def valuePropertyName = refreshTokenLookup.valuePropertyName
         def gormRefreshToken = GormRefreshToken.findWhere((valuePropertyName): tokenValue)
 
-        gormRefreshToken.delete()
+        gormRefreshToken?.delete()
     }
 
     @Override
