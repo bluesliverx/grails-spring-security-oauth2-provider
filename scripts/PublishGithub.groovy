@@ -107,8 +107,8 @@ target(default: "Generates the plugin documentation and makes it available on yo
 	new File(layoutsDir, "main.html").write(tmpl.toString())
 
 	// Add all new or changed files to git.
-	executeGit("add docs _layouts")
-
+	executeGit("add ${docsDir.toString() - basedir.toString()} _layouts")
+	
 	// If the user wants to, also commit and push the changes.
 	if (argsMap["commit"] || argsMap["push"]) {
 		executeGit(["commit", "-m", "Auto-publication of plugin docs.", "-a"])
