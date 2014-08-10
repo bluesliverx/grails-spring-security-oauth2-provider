@@ -95,7 +95,7 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 OAuth2 Provider support for the Spring Security plugin.
 '''
 
-	String documentation = 'http://grails.org/plugin/spring-security-oauth2-provider'
+	String documentation = 'http://adaptivecomputing.github.io/grails-spring-security-oauth2-provider/'
 
     private List availableMessageConverters = [
             new StringHttpMessageConverter(writeAcceptCharset: false),
