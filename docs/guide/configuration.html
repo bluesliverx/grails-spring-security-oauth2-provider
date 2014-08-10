@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>6 Configuration 1.0.5-SNAPSHOT</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/introduction.html"><strong>1</strong><span>Introduction to the Spring Security OAuth2 Plugin</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/exampleFlows.html"><strong>3</strong><span>Example Flows</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/domainClassProperties.html"><strong>5</strong><span>Domain Class Properties</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/configuration.html"><strong>6</strong><span>Configuration</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        
+    </div>
+    <p>OAuth2 Provider support for the Spring Security plugin.
+</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/domainClassProperties.html">&lt;&lt; <strong>5</strong><span>Domain Class Properties</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+
+
+                <div class="project">
+                    <h1>6 Configuration - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Brian Saville</p>
+
+                    <p><strong>Version:</strong> 1.0.5-SNAPSHOT</p>
+
+                    
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#plugin"><strong>6.1</strong><span>Plugin</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#endpoints"><strong>6.2</strong><span>Endpoint URLs</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#tokenServices"><strong>6.3</strong><span>Token Services</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#grantTypes"><strong>6.4</strong><span>Supported Grant Types</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#authorization"><strong>6.5</strong><span>Additional Authorization Constraints</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#defaultClientConfig"><strong>6.6</strong><span>Default Client Configuration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#tokenEndpointFilterChain"><strong>6.7</strong><span>Token Endpoint Filter Chain</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="configuration">6 Configuration</h1>
+The plugin is pessimistic by default, locking down as much as possible to guard against accidental security breaches. However, these constraints can be modified if so desired in <code>grails-app/conf/Config.groovy</code>. The properties below exist in the <code>grails.plugin.springsecurity.oauthProvider</code> namespace.
+
+
+<h2 id="plugin">6.1 Plugin</h2>
+The following properties define whether the plugin is active and where the required filters are registered in the Spring Security filter chain:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>active</td><td><code>true</code></td><td>Whether the plugin is enabled.</td></tr><tr class="table-even"><td>filterStartPosition</td><td><code>SecurityFilterPosition.X509_FILTER.order</code></td><td>The position in the filter chain of the <code>OAuth2AuthenticationProcessingFilter</code>, which handles authentication for resource access by extracting an access token from the incoming request.</td></tr><tr class="table-odd"><td>clientFilterStartPosition</td><td><code>SecurityFilterPosition.DIGEST_AUTH_FILTER.order</code></td><td>The position in the filter chain of the <code>ClientCredentialsTokenEndpointFilter</code>, which handles client authentication.</td></tr></table>
+
+
+<h2 id="endpoints">6.2 Endpoint URLs</h2>
+The endpoint URLs used by the underlying Spring Security OAuth 2.0 implementation can be changed using the following properties:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>authorizationEndpointUrl</td><td><code>'/oauth/authorize'</code></td><td>Authorization endpoint URL.</td></tr><tr class="table-even"><td>tokenEndpointUrl</td><td><code>'/oauth/token'</code></td><td>Token endpoint URL.</td></tr><tr class="table-odd"><td>userApprovalEndpointUrl</td><td><code>'/oauth/confirm_access'</code></td><td>URL of the view to display for confirming access to protected resources.</td></tr><tr class="table-even"><td>userApprovalParameter</td><td><code>'user_oauth_approval'</code></td><td>The name of the parameter submitted in the confirmation request. The value of this parameter is used to determine whether a user has confirmed (<code>true</code>) or denied (<code>false</code>) access.</td></tr><tr class="table-odd"><td>errorEndpointUrl</td><td><code>'/oauth/error'</code></td><td>URL of the view to display if an error occurs while interacting with the authorization endpoint and the error cannot be returned as part of the query or fragment of the client's redirect URI. This is usually the case when there is a problem with the requesting client's redirect URI.</td></tr></table><p class="paragraph"/>When changing the URL for the <code>authorizationEndpointUrl</code> or <code>tokenEndpointUrl</code>, you <strong class="bold">must</strong> update Spring Security Core's configuration. Using the <code>staticRules</code> configuration and the default configuration as an example, your <code>grails-app/conf/Config.groovy</code> will look like this:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.controllerAnnotations.staticRules = &#91;
+        '/oauth/authorize.dispatch':      &#91;<span class="java&#45;quote">"isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"</span>&#93;,
+        '/oauth/token.dispatch':          &#91;<span class="java&#45;quote">"isFullyAuthenticated() and request.getMethod().equals('POST')"</span>&#93;,
+        ...</pre></div><p class="paragraph"/>To change the <code>authorizationEndpointUrl</code> to <code>/authorize</code>, you will need to make the following changes in <code>grails-app/conf/Config.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.oauthProvider.authorizationEndpointUrl = '/authorize'<p class="paragraph"/>grails.plugin.springsecurity.controllerAnnotations.staticRules = &#91;
+        '/authorize.dispatch':            &#91;<span class="java&#45;quote">"isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"</span>&#93;,
+        '/oauth/token.dispatch':          &#91;<span class="java&#45;quote">"isFullyAuthenticated() and request.getMethod().equals('POST')"</span>&#93;,
+        ...</pre></div><p class="paragraph"/>The URL mapping must include the <code>.dispatch</code> suffix in order integrate with the underlying Spring MVC controller.
+
+
+<h2 id="tokenServices">6.3 Token Services</h2>
+The following properties apply to how tokens are issued and how long they are valid. If a client has defined a specific token validity length, the client's length will take priority over the values configured for the token services.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>tokenServices.accessTokenValiditySeconds</td><td><code>60 &#42; 60 &#42; 12</code></td><td>The length of time that an access token will be valid after it has been issued.</td></tr><tr class="table-even"><td>tokenServices.refreshTokenValiditySeconds</td><td><code>60 &#42; 10</code></td><td>The length of time that a refresh token will be valid after it has been issued.</td></tr><tr class="table-odd"><td>tokenServices.reuseRefreshToken</td><td><code>false</code></td><td>Whether a new refresh token should be generated if one is currently available.</td></tr><tr class="table-even"><td>tokenServices.supportRefreshToken</td><td><code>true</code></td><td>Whether a refresh token can be issued upon request.</td></tr></table><p class="paragraph"/>
+
+
+<h2 id="grantTypes">6.4 Supported Grant Types</h2>
+The following properties determine which of the standard grant types the application can support. Individual clients <strong class="bold">must</strong> declare which of the enabled grant types they support.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>grantTypes.authorizationCode</td><td><code>true</code></td><td>Whether the Authorization Code Grant is supported.</td></tr><tr class="table-even"><td>grantTypes.implicit</td><td><code>true</code></td><td>Whether the Implicit Grant is supported.</td></tr><tr class="table-odd"><td>grantTypes.clientCredentials</td><td><code>true</code></td><td>Whether the Client Credentials Grant is supported.</td></tr><tr class="table-even"><td>grantTypes.password</td><td><code>true</code></td><td>Whether the Resource Owner Password Credentials is supported.</td></tr><tr class="table-odd"><td>grantTypes.refreshToken</td><td><code>true</code></td><td>Whether Refresh Token Grant is supported.</td></tr></table>
+
+
+
+<h2 id="authorization">6.5 Additional Authorization Constraints</h2>
+The plugin enforces the following restrictions on authorization request params:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>authorization.requireRegisteredRedirectUri</td><td><code>true</code></td><td>Whether a client is required to have registered a redirect URI before performing an authorization request. This addresses  <em class="italic">RFC 6749 Section 10.6: Authorization Code Redirection URI Manipulation</em>  and  <em class="italic">RFC 6749 Section 10.15: Open Redirectors</em> .</td></tr><tr class="table-even"><td>authorization.requireScope</td><td><code>true</code></td><td>Whether the scope for each access token requested is required.</td></tr></table>
+
+
+<h2 id="defaultClientConfig">6.6 Default Client Configuration</h2>
+An application can use the following properties to define the default values that will be used when creating a <code>ClientDetails</code> instance if a client has not specified a value. The default configuration will not allow a client to retrieve an access token unless they have explicitly registered support for the requested grant type.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>defaultClientConfig.resourceIds</td><td><code>&#91;&#93;</code></td><td>Resources the client is authorized to access. This is currently unused as access to resources is controlled by Spring Security Core's rules.</td></tr><tr class="table-even"><td>defaultClientConfig.authorizedGrantTypes</td><td><code>&#91;&#93;</code></td><td>Grant types the client supports.</td></tr><tr class="table-odd"><td>defaultClientConfig.scope</td><td><code>&#91;&#93;</code></td><td>Scope to use for each access token request.</td></tr><tr class="table-even"><td>defaultClientConfig.registeredRedirectUri</td><td><code>null</code></td><td>URI to redirect the user-agent to during an authorization code or implicit grant.</td></tr><tr class="table-odd"><td>defaultClientConfig.authorities</td><td><code>&#91;&#93;</code></td><td>Roles and authorities granted to the client.</td></tr><tr class="table-even"><td>defaultClientConfig.accessTokenValiditySeconds</td><td><code>null</code></td><td>The length of time that an access token will be valid after it has been issued. This is used instead of the length configured for token services if available.</td></tr><tr class="table-odd"><td>defaultClientConfig.refreshTokenValiditySeconds</td><td><code>null</code></td><td>The length of time that a refresh token will be valid after it has been issued. This is used instead of the length configured for token services if available.</td></tr><tr class="table-even"><td>defaultClientConfig.additionalInformation</td><td><code>&#91;:&#93;</code></td><td>Additional information about the client. This is not required by OAuth 2.0 but is exposed in the underlying Spring library.</td></tr></table>
+
+
+<h2 id="tokenEndpointFilterChain">6.7 Token Endpoint Filter Chain</h2>
+Spring Security Core plugin's <code>securityContextPersistenceFilter</code> stores state in the HTTP session. Access to the token endpoint must be stateless. The default behavior of the OAuth2 plugin is to attempt to create a new filter chain based on an existing chain definition and then replace the <code>securityContextPersistenceFilter</code> with a <code>statelessSecurityContextPersistenceFilter</code>.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>tokenEndpointFilterChain.baseUrlPattern</td><td><code>'/&#42;&#42;'</code></td><td>URL pattern used to identify the existing filter chain to use as a base for the token endpoint's filter chain. The referenced filter chain <strong class="bold">must</strong> include the <code>securityContextPersistenceFilter</code> for this to function properly.</td></tr><tr class="table-even"><td>tokenEndpointFilterChain.disabled</td><td><code>false</code></td><td>Whether to disable this functionality.</td></tr></table>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/domainClassProperties.html">&lt;&lt; <strong>5</strong><span>Domain Class Properties</span></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Scripts</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../ref/Scripts/s2-init-oauth2-provider.html">s2-init-oauth2-provider</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>6.2 Endpoint URLs 1.0.5-SNAPSHOT</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction to the Spring Security OAuth2 Plugin</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/exampleFlows.html"><strong>3</strong><span>Example Flows</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClassProperties.html"><strong>5</strong><span>Domain Class Properties</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/configuration.html"><strong>6</strong><span>Configuration</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        
+    </div>
+    <p>OAuth2 Provider support for the Spring Security plugin.
+</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/domainClassProperties.html">&lt;&lt; <strong>5</strong><span>Domain Class Properties</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+
+
+                <div class="project">
+                    <h1>6.2 Endpoint URLs - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Brian Saville</p>
+
+                    <p><strong>Version:</strong> 1.0.5-SNAPSHOT</p>
+
+                    
+                </div>
+
+                
+
+                
+
+<h2 id="endpoints">6.2 Endpoint URLs</h2>
+The endpoint URLs used by the underlying Spring Security OAuth 2.0 implementation can be changed using the following properties:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>authorizationEndpointUrl</td><td><code>'/oauth/authorize'</code></td><td>Authorization endpoint URL.</td></tr><tr class="table-even"><td>tokenEndpointUrl</td><td><code>'/oauth/token'</code></td><td>Token endpoint URL.</td></tr><tr class="table-odd"><td>userApprovalEndpointUrl</td><td><code>'/oauth/confirm_access'</code></td><td>URL of the view to display for confirming access to protected resources.</td></tr><tr class="table-even"><td>userApprovalParameter</td><td><code>'user_oauth_approval'</code></td><td>The name of the parameter submitted in the confirmation request. The value of this parameter is used to determine whether a user has confirmed (<code>true</code>) or denied (<code>false</code>) access.</td></tr><tr class="table-odd"><td>errorEndpointUrl</td><td><code>'/oauth/error'</code></td><td>URL of the view to display if an error occurs while interacting with the authorization endpoint and the error cannot be returned as part of the query or fragment of the client's redirect URI. This is usually the case when there is a problem with the requesting client's redirect URI.</td></tr></table><p class="paragraph"/>When changing the URL for the <code>authorizationEndpointUrl</code> or <code>tokenEndpointUrl</code>, you <strong class="bold">must</strong> update Spring Security Core's configuration. Using the <code>staticRules</code> configuration and the default configuration as an example, your <code>grails-app/conf/Config.groovy</code> will look like this:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.controllerAnnotations.staticRules = &#91;
+        '/oauth/authorize.dispatch':      &#91;<span class="java&#45;quote">"isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"</span>&#93;,
+        '/oauth/token.dispatch':          &#91;<span class="java&#45;quote">"isFullyAuthenticated() and request.getMethod().equals('POST')"</span>&#93;,
+        ...</pre></div><p class="paragraph"/>To change the <code>authorizationEndpointUrl</code> to <code>/authorize</code>, you will need to make the following changes in <code>grails-app/conf/Config.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.oauthProvider.authorizationEndpointUrl = '/authorize'<p class="paragraph"/>grails.plugin.springsecurity.controllerAnnotations.staticRules = &#91;
+        '/authorize.dispatch':            &#91;<span class="java&#45;quote">"isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"</span>&#93;,
+        '/oauth/token.dispatch':          &#91;<span class="java&#45;quote">"isFullyAuthenticated() and request.getMethod().equals('POST')"</span>&#93;,
+        ...</pre></div><p class="paragraph"/>The URL mapping must include the <code>.dispatch</code> suffix in order integrate with the underlying Spring MVC controller.
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/domainClassProperties.html">&lt;&lt; <strong>5</strong><span>Domain Class Properties</span></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Scripts</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Scripts/s2-init-oauth2-provider.html">s2-init-oauth2-provider</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>4.1 Client Class 1.0.5-SNAPSHOT</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction to the Spring Security OAuth2 Plugin</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/exampleFlows.html"><strong>3</strong><span>Example Flows</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClassProperties.html"><strong>5</strong><span>Domain Class Properties</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/configuration.html"><strong>6</strong><span>Configuration</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        
+    </div>
+    <p>OAuth2 Provider support for the Spring Security plugin.
+</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/exampleFlows.html">&lt;&lt; <strong>3</strong><span>Example Flows</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/domainClassProperties.html"><strong>5</strong><span>Domain Class Properties</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>4.1 Client Class - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Brian Saville</p>
+
+                    <p><strong>Version:</strong> 1.0.5-SNAPSHOT</p>
+
+                    
+                </div>
+
+                
+
+                
+
+<h2 id="clientClass">4.1 Client Class</h2>
+Information from the Grails client domain class will be extracted to create a <code>ClientDetails</code> instance for the underlying Spring Security OAuth2 implementation.<p class="paragraph"/>The generated class will look like this:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class Client &#123;<p class="paragraph"/>    <span class="java&#45;keyword">private</span> <span class="java&#45;keyword">static</span> <span class="java&#45;keyword">final</span> <span class="java&#45;object">String</span> NO_CLIENT_SECRET = ''<p class="paragraph"/>    <span class="java&#45;keyword">transient</span> springSecurityService<p class="paragraph"/>    <span class="java&#45;object">String</span> clientId
+    <span class="java&#45;object">String</span> clientSecret<p class="paragraph"/>    <span class="java&#45;object">Integer</span> accessTokenValiditySeconds
+    <span class="java&#45;object">Integer</span> refreshTokenValiditySeconds<p class="paragraph"/>    Map&#60;<span class="java&#45;object">String</span>, <span class="java&#45;object">Object</span>&#62; additionalInformation<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasMany = &#91;
+            authorities: <span class="java&#45;object">String</span>,
+            authorizedGrantTypes: <span class="java&#45;object">String</span>,
+            resourceIds: <span class="java&#45;object">String</span>,
+            scopes: <span class="java&#45;object">String</span>,
+            redirectUris: <span class="java&#45;object">String</span>
+    &#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> transients = &#91;'springSecurityService'&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
+        clientId blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
+        clientSecret nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        accessTokenValiditySeconds nullable: <span class="java&#45;keyword">true</span>
+        refreshTokenValiditySeconds nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        authorities nullable: <span class="java&#45;keyword">true</span>
+        authorizedGrantTypes nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        resourceIds nullable: <span class="java&#45;keyword">true</span>
+        scopes nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        redirectUris nullable: <span class="java&#45;keyword">true</span>
+        additionalInformation nullable: <span class="java&#45;keyword">true</span>
+   &#125;<p class="paragraph"/>    def beforeInsert() &#123;
+        encodeClientSecret()
+    &#125;<p class="paragraph"/>    def beforeUpdate() &#123;
+        <span class="java&#45;keyword">if</span>(isDirty('clientSecret')) &#123;
+            encodeClientSecret()
+        &#125;
+    &#125;<p class="paragraph"/>    <span class="java&#45;keyword">protected</span> void encodeClientSecret() &#123;
+        clientSecret = clientSecret ?: NO_CLIENT_SECRET
+        clientSecret = springSecurityService.encodePassword(clientSecret)
+    &#125;
+&#125;</pre></div><p class="paragraph"/>The client secret is encoded using the same strategy that is configured by the Core plugin for handling passwords. Optional client secrets are also supported out of the box.
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/exampleFlows.html">&lt;&lt; <strong>3</strong><span>Example Flows</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/domainClassProperties.html"><strong>5</strong><span>Domain Class Properties</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Scripts</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Scripts/s2-init-oauth2-provider.html">s2-init-oauth2-provider</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
