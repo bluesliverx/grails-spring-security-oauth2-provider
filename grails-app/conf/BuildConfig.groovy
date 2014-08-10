@@ -1,5 +1,5 @@
 grails.project.work.dir = 'target'
-grails.project.docs.output.dir = 'target/docs' // for backwards-compatibility, the docs are checked into gh-pages branch
+grails.project.docs.output.dir = 'docs'
 
 // Code Narc
 codenarc.reports = {
