@@ -21,6 +21,8 @@ security {
 		filterStartPosition = SecurityFilterPosition.X509_FILTER.order
 		clientFilterStartPosition = SecurityFilterPosition.DIGEST_AUTH_FILTER.order
 
+        realmName = 'Grails OAuth2 Realm'
+
         // Configuration for the token endpoint's filter chain
         tokenEndpointFilterChain {
             // Defines the URL pattern for the filter chain to "inherit" as the base

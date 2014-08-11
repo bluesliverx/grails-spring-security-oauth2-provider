@@ -341,7 +341,9 @@ OAuth2 Provider support for the Spring Security plugin.
         // Configure multiple authentication entry points
         // http://jdevdiary.blogspot.com/2013/03/grails-spring-security-and-multiple.html
         oauth2RequestMatcher(AntPathRequestMatcher, conf.oauthProvider.tokenEndpointUrl + '**')
-        oauth2AuthenticationEntryPoint(OAuth2AuthenticationEntryPoint)
+        oauth2AuthenticationEntryPoint(OAuth2AuthenticationEntryPoint) {
+            realmName = conf.oauthProvider.realmName
+        }
 
         util.map(id: 'authenticationEntryPointMap') {
             entry('key-ref': 'oauth2RequestMatcher') {
@@ -370,6 +372,7 @@ OAuth2 Provider support for the Spring Security plugin.
 
         clientCredentialsTokenEndpointFilter(ClientCredentialsTokenEndpointFilter, conf.oauthProvider.tokenEndpointUrl) {
             authenticationManager = ref('authenticationManager')
+            authenticationEntryPoint = ref('oauth2AuthenticationEntryPoint')
         }
 
         SpringSecurityUtils.registerFilter 'clientCredentialsTokenEndpointFilter',

@@ -22,13 +22,18 @@ class TokenEndpointFunctionalSpec extends AbstractTokenEndpointFunctionalSpec {
         thrown HttpResponseException
     }
 
+    void "missing all params for token request"() {
+        expect:
+        assertAccessTokenErrorRequest([:], 401, 'unauthorized', FULL_AUTHENTICATION_REQUIRED, true)
+    }
+
     @Unroll
     void "invalid client requested for grant_type [#grantType]"() {
         given:
         def params = [grant_type: grantType, client_id: 'invalid-client']
 
         expect:
-        assertAccessTokenErrorRequest(params, 401, 'invalid_client', BAD_CLIENT_CREDENTIALS)
+        assertAccessTokenErrorRequest(params, 401, 'invalid_client', BAD_CLIENT_CREDENTIALS, true)
 
         where:
         _   |   grantType

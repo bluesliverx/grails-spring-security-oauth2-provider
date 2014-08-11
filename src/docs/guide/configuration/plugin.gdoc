@@ -5,4 +5,5 @@ The following properties define whether the plugin is active and where the requi
 active                      |   @true@                                              |   Whether the plugin is enabled.
 filterStartPosition         |   @SecurityFilterPosition.X509_FILTER.order@          |   The position in the filter chain of the @OAuth2AuthenticationProcessingFilter@, which handles authentication for resource access by extracting an access token from the incoming request.
 clientFilterStartPosition   |   @SecurityFilterPosition.DIGEST_AUTH_FILTER.order@   |   The position in the filter chain of the @ClientCredentialsTokenEndpointFilter@, which handles client authentication.
+realmName                   |   @Grails OAuth2 Realm@                               |   Realm name included in the WWW-Authenticate header in a challenge response.
 {table}
