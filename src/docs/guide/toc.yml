@@ -18,6 +18,7 @@ exampleFlows:
   implicit: Implicit Grant
   password: Resource Owner Password Credentials Grant
   clientCredentials: Client Credentials Grant
+  refreshToken: Refresh Token Grant
 domainClasses:
   title: Required Domain Classes
   clientClass: Client Class

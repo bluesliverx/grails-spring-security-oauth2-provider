@@ -1,0 +1,19 @@
+The refresh token grant is performed by exchanging a refresh token received during a previous authorization request for an access token from the token endpoint:
+
+{code}
+http://localhost:8080/oauth2-test/oauth/token?grant_type=refresh_token&refresh_token=269afd46-0b41-45c2-a920-7d5af8a38d56&client_id=my-client&scope=read
+{code}
+
+The above assumes that @269afd46-0b41-45c2-a920-7d5af8a38d56@ is the value of the refresh token the client had obtained prior to this request.
+
+The @access_token@ is included in the response:
+
+{code}
+{
+    "access_token": "a3da52c7-4bd2-4d42-a58d-efa64b4de453",
+    "token_type": "bearer",
+    "refresh_token": "6396c283-47ff-41d2-b887-39bde6af5f1e",
+    "expires_in": 43199,
+    "scope": "read"
+}
+{code}
