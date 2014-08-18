@@ -3,8 +3,8 @@ package grails.plugin.springsecurity.oauthprovider
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
+import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices
-import org.springframework.security.oauth2.provider.code.AuthorizationRequestHolder
 import spock.lang.Specification
 import test.oauth2.AuthorizationCode
 
@@ -14,11 +14,11 @@ class GormAuthorizationCodeServiceSpec extends Specification {
 
     String code = 'testAuthCode'
     byte[] serializedAuthentication = [0x42]
-    AuthorizationRequestHolder authorizationRequestHolder = Mock(AuthorizationRequestHolder)
+    OAuth2Authentication oauth2Authentication = Mock(OAuth2Authentication)
 
     void setup() {
         service.grailsApplication = grailsApplication
-        service.authorizationRequestHolderSerializer = Mock(AuthorizationRequestHolderSerializer)
+        service.oauth2AuthenticationSerializer = Mock(OAuth2AuthenticationSerializer)
 
         setAuthorizationCodeClassName('test.oauth2.AuthorizationCode')
     }
@@ -39,7 +39,7 @@ class GormAuthorizationCodeServiceSpec extends Specification {
 
     void "store authorization code and authentication"() {
         when:
-        service.store(code, authorizationRequestHolder)
+        service.store(code, oauth2Authentication)
 
         then:
         def gormAuthorizationCode = AuthorizationCode.findByCode(code)
@@ -50,7 +50,7 @@ class GormAuthorizationCodeServiceSpec extends Specification {
         gormAuthorizationCode.authentication == serializedAuthentication
 
         and:
-        1 * service.authorizationRequestHolderSerializer.serialize(authorizationRequestHolder) >> serializedAuthentication
+        1 * service.oauth2AuthenticationSerializer.serialize(oauth2Authentication) >> serializedAuthentication
     }
 
     void "remove authorization code and return authorization request holder"() {
@@ -62,11 +62,11 @@ class GormAuthorizationCodeServiceSpec extends Specification {
         def authentication = service.remove(code)
 
         then:
-        authentication == authorizationRequestHolder
+        authentication == oauth2Authentication
         !AuthorizationCode.findByCode(code)
 
         and:
-        1 * service.authorizationRequestHolderSerializer.deserialize(serializedAuthentication) >> authorizationRequestHolder
+        1 * service.oauth2AuthenticationSerializer.deserialize(serializedAuthentication) >> oauth2Authentication
     }
 
     void "return null for invalid authorization code"() {
@@ -87,7 +87,7 @@ class GormAuthorizationCodeServiceSpec extends Specification {
         !AuthorizationCode.findByCode(code)
 
         and:
-        1 * service.authorizationRequestHolderSerializer.deserialize(serializedAuthentication) >> {
+        1 * service.oauth2AuthenticationSerializer.deserialize(serializedAuthentication) >> {
             throw new IllegalArgumentException('UH OH')
         }
     }
@@ -97,7 +97,7 @@ class GormAuthorizationCodeServiceSpec extends Specification {
         setAuthorizationCodeClassName(className)
 
         when:
-        service.store(code, authorizationRequestHolder)
+        service.store(code, oauth2Authentication)
 
         then:
         def e = thrown(IllegalArgumentException)

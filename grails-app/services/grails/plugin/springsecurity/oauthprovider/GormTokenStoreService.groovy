@@ -14,7 +14,8 @@ class GormTokenStoreService implements TokenStore {
     OAuth2AuthenticationSerializer oauth2AuthenticationSerializer
     GrailsApplication grailsApplication
 
-    private static final String INVALID_DOMAIN_CLASS_FORMAT = "The specified %s token domain class '%s' is not a domain class"
+    private static
+    final String INVALID_DOMAIN_CLASS_FORMAT = "The specified %s token domain class '%s' is not a domain class"
 
     @Override
     OAuth2Authentication readAuthentication(OAuth2AccessToken token) {
@@ -59,14 +60,14 @@ class GormTokenStoreService implements TokenStore {
         def ctorArgs = [
                 (authenticationPropertyName): oauth2AuthenticationSerializer.serialize(authentication),
                 (usernamePropertyName): authentication.isClientOnly() ? null : authentication.name,
-                (clientIdPropertyName): authentication.authorizationRequest.clientId,
+                (clientIdPropertyName): authentication.getOAuth2Request().clientId,
                 (valuePropertyName): token.value,
                 (tokenTypePropertyName): token.tokenType,
                 (expirationPropertyName): token.expiration,
                 (refreshTokenPropertyName): token.refreshToken?.value,
                 (scopePropertyName): token.scope
         ]
-        GormAccessToken.newInstance(ctorArgs).save()
+        GormAccessToken.newInstance(ctorArgs).save(failOnError: true)
     }
 
     @Override
@@ -76,7 +77,7 @@ class GormTokenStoreService implements TokenStore {
         def valuePropertyName = accessTokenLookup.valuePropertyName
         def gormAccessToken = GormAccessToken.findWhere((valuePropertyName): tokenValue)
 
-        if(!gormAccessToken) {
+        if (!gormAccessToken) {
             log.debug("Failed to find access token with value [$tokenValue]")
             return null
         }
@@ -178,7 +179,7 @@ class GormTokenStoreService implements TokenStore {
         def authenticationPropertyName = accessTokenLookup.authenticationPropertyName
         def gormAccessToken = GormAccessToken.findWhere((authenticationPropertyName): serializedAuthentication)
 
-        if(!gormAccessToken) {
+        if (!gormAccessToken) {
             log.debug("Failed to find access token for authentication [$authentication]")
             return null
         }
@@ -186,13 +187,14 @@ class GormTokenStoreService implements TokenStore {
     }
 
     @Override
-    Collection<OAuth2AccessToken> findTokensByUserName(String userName) {
+    Collection<OAuth2AccessToken> findTokensByClientIdAndUserName(String clientId, String userName) {
         def (accessTokenLookup, GormAccessToken) = getAccessTokenLookupAndClass()
 
+        def clientIdPropertyName = accessTokenLookup.clientIdPropertyName
         def usernamePropertyName = accessTokenLookup.usernamePropertyName
-        def gormAccessTokens = GormAccessToken.findAllWhere((usernamePropertyName): userName)
+        def gormAccessTokens = GormAccessToken.findAllWhere((clientIdPropertyName): clientId, (usernamePropertyName): userName)
 
-        collectAccessTokensFromGormAccessTokens(gormAccessTokens, "username [$userName]")
+        collectAccessTokensFromGormAccessTokens(gormAccessTokens, "clientId [$clientId], username [$userName]")
     }
 
     @Override
@@ -206,8 +208,9 @@ class GormTokenStoreService implements TokenStore {
     }
 
     private Collection<OAuth2AccessToken> collectAccessTokensFromGormAccessTokens(gormAccessTokens, String searchArg) {
-        if(!gormAccessTokens)
+        if (!gormAccessTokens) {
             log.debug("Failed to find access tokens for $searchArg")
+        }
         gormAccessTokens.collect { createOAuth2AccessToken(it) } ?: Collections.emptyList()
     }
 
@@ -230,7 +233,7 @@ class GormTokenStoreService implements TokenStore {
 
     private OAuth2RefreshToken createRefreshTokenForAccessToken(gormAccessToken, refreshTokenPropertyName) {
 
-        if(gormAccessToken?."$refreshTokenPropertyName") {
+        if (gormAccessToken?."$refreshTokenPropertyName") {
             def (refreshTokenLookup, GormRefreshToken) = getRefreshTokenLookupAndClass()
 
             def refreshValue = gormAccessToken."$refreshTokenPropertyName"
@@ -238,8 +241,7 @@ class GormTokenStoreService implements TokenStore {
 
             def gormRefreshToken = GormRefreshToken.findWhere((refreshValuePropertyName): refreshValue)
             return gormRefreshToken ? new DefaultOAuth2RefreshToken(refreshValue) : null
-        }
-        else {
+        } else {
             return null
         }
     }
@@ -274,7 +276,7 @@ class GormTokenStoreService implements TokenStore {
 
     private Class getTokenClass(String tokenType, String className) {
         def tokenClass = className ? grailsApplication.getDomainClass(className) : null
-        if(!tokenClass) {
+        if (!tokenClass) {
             def message = String.format(INVALID_DOMAIN_CLASS_FORMAT, tokenType, className)
             throw new IllegalArgumentException(message)
         }
@@ -283,7 +285,7 @@ class GormTokenStoreService implements TokenStore {
 
     private void checkForDomainConfigurationRelatedException(IllegalArgumentException e, String tokenType, String className) {
         def invalidDomainMessage = String.format(INVALID_DOMAIN_CLASS_FORMAT, tokenType, className)
-        if(e.message == invalidDomainMessage) {
+        if (e.message == invalidDomainMessage) {
             throw e
         }
     }

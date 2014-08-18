@@ -1,3 +1,6 @@
+grails.project.target.level = 1.6
+grails.project.source.level = 1.6
+
 grails.project.work.dir = 'target'
 grails.project.docs.output.dir = 'docs'
 
@@ -13,6 +16,7 @@ codenarc.reports = {
 	}
 }
 
+grails.project.dependency.resolver = 'maven'
 grails.project.dependency.resolution = {
 
 	inherits 'global'
@@ -25,7 +29,7 @@ grails.project.dependency.resolution = {
 	}
 
 	dependencies {
-		compile 'org.springframework.security.oauth:spring-security-oauth2:1.0.5.RELEASE', {
+		compile 'org.springframework.security.oauth:spring-security-oauth2:2.0.2.RELEASE', {
 			excludes "spring-beans",
 			         "spring-core",
 			         "spring-context",
@@ -39,13 +43,11 @@ grails.project.dependency.resolution = {
 			         "commons-codec"
 		}
 
+        compile "com.fasterxml.jackson.core:jackson-databind:2.4.1.3"
+
         test 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1', {
             export = false
             excludes "commons-logging", "xml-apis", "groovy"
-        }
-
-        test "org.spockframework:spock-grails-support:0.7-groovy-2.0", {
-            export = false
         }
 
         test 'cglib:cglib-nodep:2.2.2', {
@@ -56,11 +58,11 @@ grails.project.dependency.resolution = {
             export = false
         }
 
-        test "org.gebish:geb-spock:0.9.2", {
+        test "org.gebish:geb-spock:0.9.3", {
             export = false
         }
 
-        test "org.seleniumhq.selenium:selenium-chrome-driver:2.41.0", {
+        test "org.seleniumhq.selenium:selenium-chrome-driver:2.42.2", {
             export = false
         }
 
@@ -72,31 +74,26 @@ grails.project.dependency.resolution = {
 
 	plugins {
 		// Release
-		build ":tomcat:$grailsVersion", ':release:2.2.1', ':rest-client-builder:2.0.1', {
+		build ":tomcat:7.0.55", ':release:3.0.1', ':rest-client-builder:2.0.1', {
 			export = false
 		}
 
 		// Testing
-		test ':code-coverage:1.2.4', {
+		test ':code-coverage:2.0.3-2', {
 			export = false
 		}
-		test ':codenarc:0.15', {
+		test ':codenarc:0.21', {
 			export = false
 		}
 
-        test(":spock:0.7") {
-            exclude "spock-grails-support"
+        runtime ":hibernate:3.6.10.14", {
             export = false
         }
 
-        runtime ":hibernate:$grailsVersion", {
+        test ":geb:0.9.3", {
             export = false
         }
 
-        test ":geb:0.9.2", {
-            export = false
-        }
-
-        compile ':spring-security-core:2.0-RC2'
+        compile ':spring-security-core:2.0-RC4'
 	}
 }

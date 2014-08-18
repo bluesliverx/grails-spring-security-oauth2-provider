@@ -2,7 +2,7 @@ package grails.plugin.springsecurity.oauthprovider
 
 import grails.plugin.springsecurity.SpringSecurityUtils
 import org.codehaus.groovy.grails.commons.GrailsApplication
-import org.springframework.security.oauth2.provider.BaseClientDetails
+import org.springframework.security.oauth2.provider.client.BaseClientDetails
 import org.springframework.security.oauth2.provider.ClientDetails
 import org.springframework.security.oauth2.provider.ClientDetailsService
 import org.springframework.security.oauth2.provider.ClientRegistrationException

@@ -49,3 +49,23 @@ grails.plugin.springsecurity.oauthProvider.refreshTokenLookup.className = 'test.
 // Documentation properties
 grails.doc.license = 'Apache License 2.0'
 grails.doc.title = 'Spring Security OAuth2 Plugin'
+
+// GSP settings
+grails {
+    views {
+        gsp {
+            encoding = 'UTF-8'
+            htmlcodec = 'xml' // use xml escaping instead of HTML4 escaping
+            codecs {
+                expression = 'html' // escapes values inside null
+                scriptlet = 'none' // escapes output from scriptlets in GSPs
+                taglib = 'none' // escapes output from taglibs
+                staticparts = 'none' // escapes output from static template parts
+            }
+        }
+        // escapes all not-encoded output at final stage of outputting
+        filteringCodecForContentType {
+            //'text/html' = 'html'
+        }
+    }
+}
