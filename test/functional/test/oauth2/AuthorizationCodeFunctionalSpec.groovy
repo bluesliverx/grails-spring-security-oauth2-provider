@@ -73,7 +73,7 @@ class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpe
 
         then:
         def tokenEndpointParams = createTokenEndpointParams('implicit-only')
-        assertAccessTokenErrorRequest(tokenEndpointParams, 400, 'invalid_grant')
+        assertAccessTokenErrorRequest(tokenEndpointParams, 401, 'invalid_client')
     }
 
     void "successful authorization for client with refresh token"() {
@@ -155,10 +155,8 @@ class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpe
         authorize(params)
 
         then:
-        at RegisteredRedirectPage
-
-        and:
-        assertQueryContainsErrorCodeAndDescription('invalid_scope', 'Scope must be specified')
+        at OAuth2ErrorPage
+        error.text() == 'error="invalid_scope", error_description="Scope must be specified"'
     }
 
     void "ignore scope if included in access token request for authorization code"() {

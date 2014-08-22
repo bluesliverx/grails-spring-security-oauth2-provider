@@ -301,6 +301,7 @@ OAuth2 Provider support for the Spring Security plugin.
             clientDetailsService = ref('clientDetailsService')
             redirectResolver = ref('redirectResolver')
             userApprovalHandler = ref('userApprovalHandler')
+            OAuth2RequestFactory = ref('oauth2RequestFactory')
 
             // The URL where the user approves the grant
             userApprovalPage = conf.oauthProvider.userApprovalEndpointUrl

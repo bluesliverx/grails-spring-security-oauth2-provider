@@ -3,6 +3,7 @@ package grails.plugin.springsecurity.oauthprovider.endpoint;
 import grails.plugin.springsecurity.oauthprovider.exceptions.OAuth2AuthorizationEndpointException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
+import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.support.SessionStatus;
@@ -25,5 +26,14 @@ public class WrappedAuthorizationEndpoint extends AuthorizationEndpoint {
         catch(OAuth2Exception e) {
             throw new OAuth2AuthorizationEndpointException(e);
         }
+    }
+
+    @Override
+    protected OAuth2RequestFactory getDefaultOAuth2RequestFactory() {
+        OAuth2RequestFactory oauth2RequestFactory = super.getOAuth2RequestFactory();
+        if (oauth2RequestFactory == null) {
+            oauth2RequestFactory = super.getDefaultOAuth2RequestFactory();
+        }
+        return oauth2RequestFactory;
     }
 }

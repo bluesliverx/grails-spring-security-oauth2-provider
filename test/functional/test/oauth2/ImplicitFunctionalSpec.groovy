@@ -60,7 +60,7 @@ class ImplicitFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
         authorizeButton.click()
 
         then:
-        assertFragmentContainsErrorCodeAndDescription('invalid_grant', 'Unauthorized grant type: implicit')
+        assertFragmentContainsErrorCodeAndDescription('invalid_client', 'Unauthorized grant type: implicit')
     }
 
     void "redirect uri is missing and no uri is registered"() {
@@ -72,7 +72,7 @@ class ImplicitFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
 
         then:
         at OAuth2ErrorPage
-        error.text() == 'error="redirect_uri_mismatch", error_description="A redirect_uri must be supplied."'
+        error.text() == 'error="invalid_request", error_description="A redirect_uri must be supplied."'
     }
 
     void "redirect uri does not match the one registered"() {
@@ -84,7 +84,7 @@ class ImplicitFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
 
         then:
         at OAuth2ErrorPage
-        error.text().startsWith('error="redirect_uri_mismatch"')
+        error.text().startsWith('error="invalid_grant", error_description="Invalid redirect: http://somewhere')
     }
 
     void "invalid scope requested"() {
@@ -164,10 +164,8 @@ class ImplicitFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
         authorize(params)
 
         then:
-        at RegisteredRedirectPage
-
-        and:
-        assertFragmentContainsErrorCodeAndDescription('invalid_scope', 'Scope must be specified')
+        at OAuth2ErrorPage
+        error.text() == 'error="invalid_scope", error_description="Scope must be specified"'
     }
 
     void "state parameter is returned in response"() {

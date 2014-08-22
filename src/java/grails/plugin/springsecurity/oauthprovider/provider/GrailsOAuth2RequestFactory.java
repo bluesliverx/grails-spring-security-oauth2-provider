@@ -1,15 +1,13 @@
 package grails.plugin.springsecurity.oauthprovider.provider;
 
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Based heavily on {@link DefaultOAuth2RequestFactory} which initializes fields from the parameters map, validates
@@ -40,6 +38,11 @@ public class GrailsOAuth2RequestFactory extends DefaultOAuth2RequestFactory {
     }
 
     @Override
+    public void setCheckUserScopes(boolean checkUserScopes) {
+        this.checkUserScopes = checkUserScopes;
+    }
+
+    @Override
     public void setSecurityContextAccessor(SecurityContextAccessor securityContextAccessor) {
         this.securityContextAccessor = securityContextAccessor;
     }
@@ -60,6 +63,8 @@ public class GrailsOAuth2RequestFactory extends DefaultOAuth2RequestFactory {
                 responseTypes);
 
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
+        validateGrantTypes(clientDetails);
+
         request.setResourceIdsAndAuthoritiesFromClientDetails(clientDetails);
 
         return request;
@@ -111,6 +116,13 @@ public class GrailsOAuth2RequestFactory extends DefaultOAuth2RequestFactory {
     private boolean scopesCanBeOmitted(Map<String, String> requestParameters) {
         String grantType = requestParameters.get("grant_type");
         return (grantType != null) && (grantType.equals("authorization_code"));
+    }
+
+    private void validateGrantTypes(ClientDetails clientDetails) {
+        Collection<String> authorizedGrantTypes = clientDetails.getAuthorizedGrantTypes();
+        if (authorizedGrantTypes == null || authorizedGrantTypes.isEmpty()) {
+            throw new InvalidGrantException("A client must have at least one authorized grant type.");
+        }
     }
 
 }
