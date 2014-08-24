@@ -3,6 +3,7 @@ package test.oauth2
 import spock.lang.Specification
 
 import static helper.TokenEndpointAssert.*
+import static helper.ErrorDescriptions.*
 
 class ClientCredentialsFunctionalSpec extends Specification {
 
@@ -10,17 +11,16 @@ class ClientCredentialsFunctionalSpec extends Specification {
 
     void "client credentials with no client"() {
         expect:
-        assertAccessTokenErrorRequest(params, 401, 'unauthorized')
+        assertAccessTokenErrorRequest(params, 401, 'unauthorized', FULL_AUTHENTICATION_REQUIRED)
     }
 
-// TODO: InvalidGrantException is thrown, but results in OAuth2 Error page
-//    void "client credentials request for unauthorized client"() {
-//        given:
-//        params << [client_id: 'no-grant-client']
-//
-//        expect:
-//        assertAccessTokenErrorRequest(params, 400, 'invalid_grant')
-//    }
+    void "client credentials request for unauthorized client"() {
+        given:
+        params << [client_id: 'no-grant-client']
+
+        expect:
+        assertAccessTokenErrorRequest(params, 400, 'invalid_grant', GRANT_TYPE_REQUIRED)
+    }
 
     void "client credentials with public client"() {
         given:
@@ -35,7 +35,7 @@ class ClientCredentialsFunctionalSpec extends Specification {
         params << [client_id: 'confidential-client']
 
         expect:
-        assertAccessTokenErrorRequest(params, 401, 'invalid_client')
+        assertAccessTokenErrorRequest(params, 401, 'invalid_client', BAD_CLIENT_CREDENTIALS)
     }
 
     void "client credentials with confidential client and incorrect client secret"() {
@@ -43,7 +43,7 @@ class ClientCredentialsFunctionalSpec extends Specification {
         params << [client_id: 'confidential-client', client_secret: 'incorrect']
 
         expect:
-        assertAccessTokenErrorRequest(params, 401, 'invalid_client')
+        assertAccessTokenErrorRequest(params, 401, 'invalid_client', BAD_CLIENT_CREDENTIALS)
     }
 
     void "client credentials with confidential client"() {

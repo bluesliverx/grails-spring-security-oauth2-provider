@@ -3,6 +3,7 @@ package test.oauth2
 import spock.lang.Specification
 
 import static helper.TokenEndpointAssert.*
+import static helper.ErrorDescriptions.*
 
 class ResourceOwnerCredentialsFunctionalSpec extends Specification {
 
@@ -10,7 +11,7 @@ class ResourceOwnerCredentialsFunctionalSpec extends Specification {
 
     void "resource owner credentials with no client"() {
         expect:
-        assertAccessTokenErrorRequest(params, 401, 'unauthorized')
+        assertAccessTokenErrorRequest(params, 401, 'unauthorized', FULL_AUTHENTICATION_REQUIRED)
     }
 
     void "resource owner credentials with public client"() {
@@ -26,7 +27,7 @@ class ResourceOwnerCredentialsFunctionalSpec extends Specification {
         params << [client_id: 'confidential-client']
 
         expect:
-        assertAccessTokenErrorRequest(params, 401, 'invalid_client')
+        assertAccessTokenErrorRequest(params, 401, 'invalid_client', BAD_CLIENT_CREDENTIALS)
     }
 
     void "resource owner credentials with confidential client and incorrect client secret"() {
@@ -34,7 +35,7 @@ class ResourceOwnerCredentialsFunctionalSpec extends Specification {
         params << [client_id: 'confidential-client', client_secret: 'incorrect']
 
         expect:
-        assertAccessTokenErrorRequest(params, 401, 'invalid_client')
+        assertAccessTokenErrorRequest(params, 401, 'invalid_client', BAD_CLIENT_CREDENTIALS)
     }
 
     void "resource owner credentials unknown user"() {
@@ -43,7 +44,7 @@ class ResourceOwnerCredentialsFunctionalSpec extends Specification {
         params.username = 'unknown-user'
 
         expect:
-        assertAccessTokenErrorRequest(params, 400, 'invalid_grant')
+        assertAccessTokenErrorRequest(params, 400, 'invalid_grant', BAD_CREDENTIALS)
     }
 
     void "resource owner credentials known user and invalid password"() {
@@ -52,7 +53,7 @@ class ResourceOwnerCredentialsFunctionalSpec extends Specification {
         params.password = 'invalid-password'
 
         expect:
-        assertAccessTokenErrorRequest(params, 400, 'invalid_grant')
+        assertAccessTokenErrorRequest(params, 400, 'invalid_grant', BAD_CREDENTIALS)
     }
 
     void "resource owner credentials with confidential client"() {
@@ -68,7 +69,7 @@ class ResourceOwnerCredentialsFunctionalSpec extends Specification {
         params << [client_id: 'no-grant-client']
 
         expect:
-        assertAccessTokenErrorRequest(params, 400, 'invalid_grant')
+        assertAccessTokenErrorRequest(params, 400, 'invalid_grant', GRANT_TYPE_REQUIRED)
     }
 
     void "resource owner credentials client is not allowed a refresh token"() {
@@ -84,7 +85,7 @@ class ResourceOwnerCredentialsFunctionalSpec extends Specification {
         params.grant_type = 'implicit'
 
         expect:
-        assertAccessTokenErrorRequest(params, 401, 'unauthorized')
+        assertAccessTokenErrorRequest(params, 401, 'unauthorized', FULL_AUTHENTICATION_REQUIRED)
     }
 
     void "restrict scope of token"() {

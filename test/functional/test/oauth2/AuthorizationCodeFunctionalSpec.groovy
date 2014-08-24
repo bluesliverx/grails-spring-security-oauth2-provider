@@ -6,6 +6,7 @@ import pages.RegisteredRedirectPage
 import spock.lang.Unroll
 
 import static helper.TokenEndpointAssert.*
+import static helper.ErrorDescriptions.*
 
 class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
 
@@ -73,7 +74,7 @@ class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpe
 
         then:
         def tokenEndpointParams = createTokenEndpointParams('implicit-only')
-        assertAccessTokenErrorRequest(tokenEndpointParams, 401, 'invalid_client')
+        assertAccessTokenErrorRequest(tokenEndpointParams, 400, 'invalid_client', unauthorizedGrantType('authorization_code'))
     }
 
     void "successful authorization for client with refresh token"() {
@@ -211,7 +212,7 @@ class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpe
 
         then:
         def tokenEndpointParams = createTokenEndpointParams('confidential-client')
-        assertAccessTokenErrorRequest(tokenEndpointParams, 401, 'invalid_client')
+        assertAccessTokenErrorRequest(tokenEndpointParams, 401, 'invalid_client', BAD_CLIENT_CREDENTIALS)
     }
 
     @Unroll

@@ -22,12 +22,12 @@ class TokenEndpointAssert {
         assertAccessTokenDataContainsScopes(json, scopes)
     }
 
-    static void assertAccessTokenErrorRequest(Map params, int statusCode, String errorCode) {
+    static void assertAccessTokenErrorRequest(Map params, int statusCode, String errorCode, String errorDescription) {
         def response = getErrorResponse(params)
 
         assertHeaders(response)
         assertStatusCode(response, statusCode)
-        assertErrorCode(response, errorCode)
+        assertErrorCode(response, errorCode, errorDescription)
     }
 
     private static def getSuccessfulResponseData(Map params) {
@@ -62,8 +62,9 @@ class TokenEndpointAssert {
         }
     }
 
-    private static void assertErrorCode(HttpResponseDecorator response, String errorCode) {
+    private static void assertErrorCode(HttpResponseDecorator response, String errorCode, String errorDescription) {
         assert response.data.error == errorCode
+        assert response.data.error_description == errorDescription
     }
 
 }
