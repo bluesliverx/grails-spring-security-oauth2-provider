@@ -5,7 +5,7 @@ class ErrorDescriptions {
     static final String FULL_AUTHENTICATION_REQUIRED = 'Full authentication is required to access this resource'
     static final String BAD_CREDENTIALS = 'Bad credentials'
     static final String BAD_CLIENT_CREDENTIALS = 'Bad client credentials'
-    static final String SCOPE_REQUIRED = 'Scope must be specified'
+    static final String SCOPE_REQUIRED = 'Empty scope (either the client or the user is not allowed the requested scopes)'
     static final String GRANT_TYPE_REQUIRED = 'A client must have at least one authorized grant type.'
     static final String IMPLICIT_GRANT_TYPE_UNSUPPORTED = 'Implicit grant type not supported from token endpoint'
 

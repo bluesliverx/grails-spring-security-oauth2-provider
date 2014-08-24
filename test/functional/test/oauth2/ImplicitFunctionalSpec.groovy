@@ -3,7 +3,8 @@ package test.oauth2
 import pages.ConfirmAccessPage
 import pages.OAuth2ErrorPage
 import pages.RegisteredRedirectPage
-import spock.lang.Ignore
+
+import static helper.ErrorDescriptions.*
 
 class ImplicitFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
 
@@ -164,8 +165,10 @@ class ImplicitFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
         authorize(params)
 
         then:
-        at OAuth2ErrorPage
-        error.text() == 'error="invalid_scope", error_description="Scope must be specified"'
+        at RegisteredRedirectPage
+
+        and:
+        assertFragmentContainsErrorCodeAndDescription('invalid_scope', SCOPE_REQUIRED)
     }
 
     void "state parameter is returned in response"() {

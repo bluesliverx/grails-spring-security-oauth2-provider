@@ -102,15 +102,12 @@ public class GrailsOAuth2RequestFactory extends DefaultOAuth2RequestFactory {
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
         boolean scopesNotPresent = scopesNotPresent(scopes);
 
-        // TODO: Allow falling back to client default scopes if !scopeRequired
-        if (scopesNotPresent && (scopesCanBeOmitted(requestParameters) || !scopeRequired)) {
-            // If no scopes are specified in the incoming data, use the default values registered with the client
-            // (the spec allows us to choose between this option and rejecting the request completely, so we'll take the
-            // least obnoxious choice as a default).
+        // Use the client's registered defaults per spec if request isn't required to include scope
+        if(scopesNotPresent && !scopeRequired) {
+            scopes = clientDetails.getScope();
+        }
+        else if (scopesNotPresent && scopesCanBeOmitted(requestParameters)) {
             scopes = Collections.emptySet();
-
-        } else if (scopesNotPresent) {
-            throw new InvalidScopeException("Scope must be specified");
         }
 
         if (checkUserScopes) {

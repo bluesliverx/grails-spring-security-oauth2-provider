@@ -156,8 +156,10 @@ class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpe
         authorize(params)
 
         then:
-        at OAuth2ErrorPage
-        error.text() == 'error="invalid_scope", error_description="Scope must be specified"'
+        at RegisteredRedirectPage
+
+        and:
+        assertQueryContainsErrorCodeAndDescription('invalid_scope', SCOPE_REQUIRED)
     }
 
     void "ignore scope if included in access token request for authorization code"() {
