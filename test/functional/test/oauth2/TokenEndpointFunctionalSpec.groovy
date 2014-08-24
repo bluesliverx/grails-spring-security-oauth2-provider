@@ -48,8 +48,8 @@ class TokenEndpointFunctionalSpec extends Specification {
         where:
         _   |   grantType
         _   |   'password'
-//        _   |   'client_credentials'
-//        _   |   'refresh_token'         // Fails for the wrong reason (Invalid refresh token)
+        _   |   'client_credentials'
+        _   |   'refresh_token'
     }
 
     void "implicit grant type cannot be used with the token endpoint"() {

@@ -28,6 +28,8 @@ public class WrappedAuthorizationEndpoint extends AuthorizationEndpoint {
         }
     }
 
+    // Not convinced this is needed since the only place it's used is as a fallback
+    // if getOAuth2RequestFactory() throws an exception
     @Override
     protected OAuth2RequestFactory getDefaultOAuth2RequestFactory() {
         OAuth2RequestFactory oauth2RequestFactory = super.getOAuth2RequestFactory();

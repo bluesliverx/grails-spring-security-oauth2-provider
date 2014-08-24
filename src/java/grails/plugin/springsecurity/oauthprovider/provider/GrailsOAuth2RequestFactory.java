@@ -1,6 +1,7 @@
 package grails.plugin.springsecurity.oauthprovider.provider;
 
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
@@ -71,16 +72,42 @@ public class GrailsOAuth2RequestFactory extends DefaultOAuth2RequestFactory {
 
     }
 
+    @Override
+    public TokenRequest createTokenRequest(Map<String, String> requestParameters, ClientDetails authenticatedClient) {
+
+        String clientId = requestParameters.get(OAuth2Utils.CLIENT_ID);
+        if (clientId == null) {
+            // if the clientId wasn't passed in in the map, we add pull it from the authenticated client object
+            clientId = authenticatedClient.getClientId();
+        }
+        else {
+            // otherwise, make sure that they match
+            if (!clientId.equals(authenticatedClient.getClientId())) {
+                throw new InvalidClientException("Given client ID does not match authenticated client");
+            }
+        }
+        String grantType = requestParameters.get(OAuth2Utils.GRANT_TYPE);
+
+        Set<String> scopes = extractScopes(requestParameters, clientId);
+        TokenRequest tokenRequest = new TokenRequest(requestParameters, clientId, scopes, grantType);
+
+        ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
+        validateGrantTypes(clientDetails);
+
+        return tokenRequest;
+    }
+
     private Set<String> extractScopes(Map<String, String> requestParameters, String clientId) {
         Set<String> scopes = OAuth2Utils.parseParameterList(requestParameters.get(OAuth2Utils.SCOPE));
         ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
         boolean scopesNotPresent = scopesNotPresent(scopes);
 
+        // TODO: Allow falling back to client default scopes if !scopeRequired
         if (scopesNotPresent && (scopesCanBeOmitted(requestParameters) || !scopeRequired)) {
             // If no scopes are specified in the incoming data, use the default values registered with the client
             // (the spec allows us to choose between this option and rejecting the request completely, so we'll take the
             // least obnoxious choice as a default).
-            scopes = clientDetails.getScope();
+            scopes = Collections.emptySet();
 
         } else if (scopesNotPresent) {
             throw new InvalidScopeException("Scope must be specified");
