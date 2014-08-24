@@ -62,6 +62,12 @@ grails.project.dependency.resolution = {
             export = false
         }
 
+        // Workaround for java.lang.ClassNotFoundException: org.apache.http.conn.HttpClientConnectionManager
+        // that is thrown during the initialization of the selenium driver for 2.42.x.
+        test "org.apache.httpcomponents:httpclient:4.3.2", {
+            export = false
+        }
+
         test "org.seleniumhq.selenium:selenium-chrome-driver:2.42.2", {
             export = false
         }
