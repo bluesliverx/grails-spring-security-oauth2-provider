@@ -109,13 +109,13 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
         authorize(params)
         confirm()
 
-        def tokenEndpointParams = createTokenEndpointParams(params.client_id, params?.client_secret)
+        def tokenEndpointParams = createTokenEndpointParams(params.scope, params.client_id, params?.client_secret)
         AccessTokenRequester.getAccessToken(tokenEndpointParams)
     }
 
-    private Map createTokenEndpointParams(String clientId, String clientSecret = null) {
+    private Map createTokenEndpointParams(String scope, String clientId, String clientSecret = null) {
         def code = getCodeFromQuery()
-        def params = [grant_type: 'authorization_code', code: code, client_id: clientId]
+        def params = [grant_type: 'authorization_code', code: code, client_id: clientId, scope: scope]
         if(clientSecret) {
             params << [client_secret: clientSecret]
         }

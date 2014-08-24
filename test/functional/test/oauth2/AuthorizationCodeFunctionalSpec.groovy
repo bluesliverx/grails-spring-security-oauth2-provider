@@ -74,7 +74,7 @@ class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpe
 
         then:
         def tokenEndpointParams = createTokenEndpointParams('implicit-only')
-        assertAccessTokenErrorRequest(tokenEndpointParams, 400, 'invalid_client', unauthorizedGrantType('authorization_code'))
+        assertAccessTokenErrorRequest(tokenEndpointParams, 401, 'invalid_client', unauthorizedGrantType('authorization_code'))
     }
 
     void "successful authorization for client with refresh token"() {
@@ -247,7 +247,7 @@ class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpe
     }
 
     private Map createTokenEndpointParams(String clientId, String clientSecret = null) {
-        def params = [grant_type: 'authorization_code', code: code, client_id: clientId]
+        def params = [grant_type: 'authorization_code', code: code, client_id: clientId, scope: 'test']
         if(clientSecret) {
             params << [client_secret: clientSecret]
         }
