@@ -23,6 +23,10 @@ class GormAuthorizationCodeServiceSpec extends Specification {
         setAuthorizationCodeClassName('test.oauth2.AuthorizationCode')
     }
 
+    void cleanup() {
+        SpringSecurityUtils.securityConfig = null
+    }
+
     private void setAuthorizationCodeClassName(String authorizationCodeClassName) {
         def authorizationCodeLookup = [
                 className: authorizationCodeClassName,

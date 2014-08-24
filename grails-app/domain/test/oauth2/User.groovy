@@ -23,7 +23,7 @@ class User {
 	}
 
 	Set<Role> getAuthorities() {
-		UserRole.findAllByUser(this).collect { it.role } as Set
+		UserRole.findAllByUser(this).collect { it.role }
 	}
 
 	def beforeInsert() {
@@ -37,6 +37,6 @@ class User {
 	}
 
 	protected void encodePassword() {
-		password = springSecurityService.encodePassword(password)
+		password = springSecurityService?.passwordEncoder ? springSecurityService.encodePassword(password) : password
 	}
 }

@@ -38,6 +38,10 @@ class GormTokenStoreServiceSpec extends Specification {
         setRefreshTokenClassName('test.oauth2.RefreshToken')
     }
 
+    void cleanup() {
+        SpringSecurityUtils.securityConfig = null
+    }
+
     private void setAccessTokenClassName(accessTokenClassName) {
         def accessTokenLookup = [
                 className: accessTokenClassName,
