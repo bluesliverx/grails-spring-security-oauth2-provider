@@ -142,13 +142,15 @@ private void runQuickstart() {
 private void copyTestResources() {
 
     /* Bootstrap (Client Registration) */
-    ant.copy file: "grails-app/conf/BootStrap.groovy", tofile: "$testProjectRoot/grails-app/conf/BootStrap.groovy"
+    ant.copy file: "grails-app/conf/BootStrap.groovy",
+             tofile: "$testProjectRoot/grails-app/conf/BootStrap.groovy",
+             overwrite: true
 
     /* Change the redirect uri to use for registration */
     changeRedirectUriConstant('grails-app/conf/BootStrap.groovy')
 
     /* Controllers */
-    ant.copy(todir: "$testProjectRoot/grails-app/controllers/test/oauth2") {
+    ant.copy(todir: "$testProjectRoot/grails-app/controllers/test/oauth2", overwrite: true) {
         fileset(dir: 'grails-app/controllers/test/oauth2') {
             include name: 'LogoutController.groovy'
             include name: 'RedirectController.groovy'
@@ -159,11 +161,14 @@ private void copyTestResources() {
     /* Views */
     ['logout', 'redirect', 'secured'].each { name ->
         ant.mkdir dir: "$testProjectRoot/grails-app/views/$name"
-        ant.copy file: "grails-app/views/$name/index.gsp", tofile: "$testProjectRoot/grails-app/views/$name/index.gsp"
+
+        ant.copy file: "grails-app/views/$name/index.gsp",
+                 tofile: "$testProjectRoot/grails-app/views/$name/index.gsp",
+                 overwrite: true
     }
 
     /* Tests */
-    ant.copydir src: "test/functional", dest: "$testProjectRoot/test/functional"
+    ant.copydir src: "test/functional", dest: "$testProjectRoot/test/functional", forceoverwrite: true
 
     /* Change redirect uri referenced in tests */
     changeRedirectUriConstant('test/functional/test/oauth2/AuthorizationEndpointFunctionalSpec.groovy')
