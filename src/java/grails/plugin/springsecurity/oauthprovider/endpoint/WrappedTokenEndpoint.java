@@ -15,10 +15,9 @@ public class WrappedTokenEndpoint extends TokenEndpoint {
 
     @Override
     public ResponseEntity<OAuth2AccessToken> getAccessToken(Principal principal,
-            @RequestParam(value = "grant_type", required = false) String grantType,
             @RequestParam Map<String, String> parameters) {
         try {
-            return super.getAccessToken(principal, grantType, parameters);
+            return super.getAccessToken(principal, parameters);
         }
         catch (ClientRegistrationException e) {
             throw new OAuth2TokenEndpointException(e);

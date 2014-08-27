@@ -4,6 +4,7 @@ import helper.AccessTokenRequester
 import spock.lang.Specification
 
 import static helper.TokenEndpointAssert.*
+import static helper.ErrorDescriptions.*
 
 class RefreshTokenFunctionalSpec extends Specification {
 
@@ -20,15 +21,16 @@ class RefreshTokenFunctionalSpec extends Specification {
         params.remove('client_id')
 
         expect:
-        assertAccessTokenErrorRequest(params, 401, 'unauthorized')
+        assertAccessTokenErrorRequest(params, 401, 'unauthorized', FULL_AUTHENTICATION_REQUIRED)
     }
 
     void "invalid refresh token"() {
         given:
-        params.refresh_token += 'a'
+        def token = params.refresh_token + 'a'
+        params.refresh_token = token
 
         expect:
-        assertAccessTokenErrorRequest(params, 400, 'invalid_grant')
+        assertAccessTokenErrorRequest(params, 400, 'invalid_grant', invalidRefreshToken(token))
     }
 
     void "refresh token with client that requested the initial access token"() {
@@ -41,7 +43,7 @@ class RefreshTokenFunctionalSpec extends Specification {
         params.client_id = 'no-grant-client'
 
         expect:
-        assertAccessTokenErrorRequest(params, 400, 'invalid_grant')
+        assertAccessTokenErrorRequest(params, 400, 'invalid_grant', GRANT_TYPE_REQUIRED)
     }
 
     void "refresh token scopes are restricted to original access token's scope"() {
@@ -50,7 +52,7 @@ class RefreshTokenFunctionalSpec extends Specification {
         params.refresh_token = AccessTokenRequester.getRefreshToken(getRefreshTokenParams)
 
         expect:
-        assertAccessTokenErrorRequest(params, 400, 'invalid_scope')
+        assertAccessTokenErrorRequest(params, 400, 'invalid_scope', unableToNarrowScope('test'))
     }
 
     void "refresh token returns a new access token"() {

@@ -9,43 +9,13 @@
 //
 // This appears to be related to GRAILS-10661:
 // https://jira.grails.org/browse/GRAILS-10661
-//
-// Test apps for Grails version 2.4.0 require and update of the Spring Security Core
-// plugin dependency to version 2.0-RC3, which introduces issues due to changes in the
-// underlying Spring Security library.
-//
-// TODO: Find a solution to the 2.0-RC3 incompatibility
-
-v20 {
-	grailsVersion = '2.0.4'
-	pluginVersion = version
-	dotGrails = dotGrailsCommon
-	projectDir = projectDirCommon
-	grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
-}
-
-v21 {
-	grailsVersion = '2.1.4' // 2.1.5 has a plugin i18n bug
-	pluginVersion = version
-	dotGrails = dotGrailsCommon
-	projectDir = projectDirCommon
-	grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
-}
-
-v22 {
-	grailsVersion = '2.2.4'
-	pluginVersion = version
-	dotGrails = dotGrailsCommon
-	projectDir = projectDirCommon
-	grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
-}
 
 v235 {
     grailsVersion = '2.3.5'
     pluginVersion = version
     dotGrails = dotGrailsCommon
     projectDir = projectDirCommon
-    grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
+    grailsHome = grailsHomeRoot + '/' + grailsVersion
 }
 
 v236 {
@@ -53,7 +23,7 @@ v236 {
     pluginVersion = version
     dotGrails = dotGrailsCommon
     projectDir = projectDirCommon
-    grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
+    grailsHome = grailsHomeRoot + '/' + grailsVersion
 }
 
 v237 {
@@ -61,7 +31,7 @@ v237 {
     pluginVersion = version
     dotGrails = dotGrailsCommon
     projectDir = projectDirCommon
-    grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
+    grailsHome = grailsHomeRoot + '/' + grailsVersion
 }
 
 v238 {
@@ -69,5 +39,60 @@ v238 {
     pluginVersion = version
     dotGrails = dotGrailsCommon
     projectDir = projectDirCommon
-    grailsHome = grailsHomeRoot + '/grails-' + grailsVersion
+    grailsHome = grailsHomeRoot + '/' + grailsVersion
+}
+
+v239 {
+    grailsVersion = '2.3.9'
+    pluginVersion = version
+    dotGrails = dotGrailsCommon
+    projectDir = projectDirCommon
+    grailsHome = grailsHomeRoot + '/' + grailsVersion
+}
+
+v2310 {
+    grailsVersion = '2.3.10'
+    pluginVersion = version
+    dotGrails = dotGrailsCommon
+    projectDir = projectDirCommon
+    grailsHome = grailsHomeRoot + '/' + grailsVersion
+}
+
+v2311 {
+    grailsVersion = '2.3.11'
+    pluginVersion = version
+    dotGrails = dotGrailsCommon
+    projectDir = projectDirCommon
+    grailsHome = grailsHomeRoot + '/' + grailsVersion
+}
+v24 {
+    grailsVersion = '2.4.0'
+    pluginVersion = version
+    dotGrails = dotGrailsCommon
+    projectDir = projectDirCommon
+    grailsHome = grailsHomeRoot + '/' + grailsVersion
+}
+
+v241 {
+    grailsVersion = '2.4.1'
+    pluginVersion = version
+    dotGrails = dotGrailsCommon
+    projectDir = projectDirCommon
+    grailsHome = grailsHomeRoot + '/' + grailsVersion
+}
+
+v242 {
+    grailsVersion = '2.4.2'
+    pluginVersion = version
+    dotGrails = dotGrailsCommon
+    projectDir = projectDirCommon
+    grailsHome = grailsHomeRoot + '/' + grailsVersion
+}
+
+v243 {
+    grailsVersion = '2.4.3'
+    pluginVersion = version
+    dotGrails = dotGrailsCommon
+    projectDir = projectDirCommon
+    grailsHome = grailsHomeRoot + '/' + grailsVersion
 }

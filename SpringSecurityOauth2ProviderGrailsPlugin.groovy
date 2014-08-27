@@ -13,17 +13,20 @@
  * limitations under the License.
  */
 import grails.plugin.springsecurity.SpringSecurityUtils
-import grails.plugin.springsecurity.oauthprovider.AuthorizationRequestHolderSerializer
 import grails.plugin.springsecurity.oauthprovider.OAuth2AuthenticationSerializer
 import grails.plugin.springsecurity.oauthprovider.endpoint.RequiredRedirectResolver
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationEndpoint
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedTokenEndpoint
-import grails.plugin.springsecurity.oauthprovider.provider.GrailsAuthorizationRequestManager
+import grails.plugin.springsecurity.oauthprovider.provider.GrailsOAuth2RequestFactory
 import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2AuthorizationEndpointExceptionResolver
 import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2TokenEndpointExceptionResolver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.context.ApplicationContext
+import org.springframework.beans.MutablePropertyValues
+import org.springframework.beans.factory.config.ConstructorArgumentValues
+import org.springframework.beans.factory.config.RuntimeBeanReference
+import org.springframework.beans.factory.support.AbstractBeanDefinition
+import org.springframework.beans.factory.support.GenericBeanDefinition
 import org.springframework.http.converter.ByteArrayHttpMessageConverter
 import org.springframework.http.converter.FormHttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
@@ -31,7 +34,7 @@ import org.springframework.http.converter.json.MappingJacksonHttpMessageConverte
 import org.springframework.http.converter.xml.SourceHttpMessageConverter
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.oauth2.provider.CompositeTokenGranter
-import org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler
+import org.springframework.security.oauth2.provider.approval.TokenStoreUserApprovalHandler
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter
@@ -47,11 +50,13 @@ import org.springframework.security.oauth2.provider.implicit.ImplicitTokenGrante
 import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter
 import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
+import org.springframework.security.web.DefaultSecurityFilterChain
+import org.springframework.security.web.FilterChainProxy
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint
 import org.springframework.security.web.context.NullSecurityContextRepository
 import org.springframework.security.web.context.SecurityContextPersistenceFilter
-import org.springframework.security.web.util.AntPathRequestMatcher
-import org.springframework.security.web.util.RequestMatcher
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 
 import javax.servlet.Filter
@@ -60,7 +65,7 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 	static final Logger log = LoggerFactory.getLogger(this)
 
 	def version = "1.0.5-SNAPSHOT"
-	String grailsVersion = '2.0 > *'
+	String grailsVersion = '2.3 > *'
 
 	List pluginExcludes = [
 		'docs/**',
@@ -125,6 +130,10 @@ OAuth2 Provider support for the Spring Security plugin.
         configureTokenServices.delegate = delegate
         configureTokenServices(conf)
 
+        /* Register oauth2 request factory */
+        configureOAuth2RequestFactory.delegate = delegate
+        configureOAuth2RequestFactory(conf)
+
         /* Register token granters */
         configureTokenGranters.delegate = delegate
         configureTokenGranters(conf)
@@ -132,10 +141,6 @@ OAuth2 Provider support for the Spring Security plugin.
         /* Register redirect resolver */
         configureRedirectResolver.delegate = delegate
         configureRedirectResolver(conf)
-
-        /* Register authorization request manager */
-        configureAuthorizationRequestManager.delegate = delegate
-        configureAuthorizationRequestManager(conf)
 
         /* Register authorization and token endpoints */
         configureEndpoints.delegate = delegate
@@ -172,7 +177,6 @@ OAuth2 Provider support for the Spring Security plugin.
 
         /* Helper classes for Gorm support */
         oauth2AuthenticationSerializer(OAuth2AuthenticationSerializer)
-        authorizationRequestHolderSerializer(AuthorizationRequestHolderSerializer)
     }
 
     private configureTokenServices = { conf ->
@@ -186,6 +190,12 @@ OAuth2 Provider support for the Spring Security plugin.
         }
     }
 
+    private configureOAuth2RequestFactory = { conf ->
+        /* Should every request be required to include the scope of the access token */
+        boolean requireScope = conf.oauthProvider.authorization.requireScope as boolean
+        oauth2RequestFactory(GrailsOAuth2RequestFactory, ref('clientDetailsService'), requireScope)
+    }
+
     private configureTokenGranters = { conf ->
         def grantTypes = conf.oauthProvider.grantTypes
 
@@ -196,7 +206,7 @@ OAuth2 Provider support for the Spring Security plugin.
         /* authorization-code */
         if(grantTypes.authorizationCode) {
             authorizationCodeTokenGranter(AuthorizationCodeTokenGranter,
-                    ref('tokenServices'), ref('authorizationCodeServices'), ref('clientDetailsService'))
+                    ref('tokenServices'), ref('authorizationCodeServices'), ref('clientDetailsService'), ref('oauth2RequestFactory'))
 
             authorizationEndpointTokenGrantersBeanNames << 'authorizationCodeTokenGranter'
             tokenEndpointTokenGrantersBeanNames << 'authorizationCodeTokenGranter'
@@ -204,28 +214,28 @@ OAuth2 Provider support for the Spring Security plugin.
 
         /* refresh-token */
         if(grantTypes.refreshToken) {
-            refreshTokenGranter(RefreshTokenGranter, ref('tokenServices'), ref('clientDetailsService'))
+            refreshTokenGranter(RefreshTokenGranter, ref('tokenServices'), ref('clientDetailsService'), ref('oauth2RequestFactory'))
             tokenEndpointTokenGrantersBeanNames << 'refreshTokenGranter'
         }
 
         /* implicit */
         if(grantTypes.implicit) {
-            implicitGranter(ImplicitTokenGranter, ref('tokenServices'), ref('clientDetailsService'))
+            implicitGranter(ImplicitTokenGranter, ref('tokenServices'), ref('clientDetailsService'), ref('oauth2RequestFactory'))
             authorizationEndpointTokenGrantersBeanNames << 'implicitGranter'
         }
 
         /* client-credentials */
         if(grantTypes.clientCredentials) {
             clientCredentialsGranter(ClientCredentialsTokenGranter,
-                    ref('tokenServices'), ref('clientDetailsService'))
+                    ref('tokenServices'), ref('clientDetailsService'), ref('oauth2RequestFactory'))
 
             tokenEndpointTokenGrantersBeanNames << 'clientCredentialsGranter'
         }
 
-        /* password */
+        /* password; authenticationManager provided by Spring Security Core plugin */
         if(grantTypes.password) {
             resourceOwnerPasswordGranter(ResourceOwnerPasswordTokenGranter,
-                    ref('authenticationManager'), ref('tokenServices'), ref('clientDetailsService'))
+                    ref('authenticationManager'), ref('tokenServices'), ref('clientDetailsService'), ref('oauth2RequestFactory'))
 
             tokenEndpointTokenGrantersBeanNames << 'resourceOwnerPasswordGranter'
         }
@@ -257,12 +267,6 @@ OAuth2 Provider support for the Spring Security plugin.
         }
     }
 
-    private configureAuthorizationRequestManager = { conf ->
-        /* Should every request be required to include the scope of the access token */
-        boolean requireScope = conf.oauthProvider.authorization.requireScope as boolean
-        authorizationRequestManager(GrailsAuthorizationRequestManager, ref('clientDetailsService'), requireScope)
-    }
-
     private configureExceptionResolvers = {
         oauth2ExceptionRenderer(DefaultOAuth2ExceptionRenderer) {
             messageConverters = availableMessageConverters
@@ -282,20 +286,27 @@ OAuth2 Provider support for the Spring Security plugin.
 
     private configureEndpoints = { conf ->
 
-        userApprovalHandler(TokenServicesUserApprovalHandler) {
+        userApprovalHandler(TokenStoreUserApprovalHandler) {
+            tokenStore = ref('tokenStore')
+            requestFactory = ref('oauth2RequestFactory')
+
+            // The request parameter sent from the userApprovalPage, indicating approval was given or denied
             approvalParameter = conf.oauthProvider.userApprovalParameter
-            tokenServices = ref("tokenServices")
         }
 
         /* Register authorization endpoint */
         oauth2AuthorizationEndpoint(WrappedAuthorizationEndpoint) {
             tokenGranter = ref('oauth2AuthorizationEndpointTokenGranter')
-            authorizationRequestManager = ref('authorizationRequestManager')
             authorizationCodeServices = ref('authorizationCodeServices')
             clientDetailsService = ref('clientDetailsService')
             redirectResolver = ref('redirectResolver')
             userApprovalHandler = ref('userApprovalHandler')
+            OAuth2RequestFactory = ref('oauth2RequestFactory')
+
+            // The URL where the user approves the grant
             userApprovalPage = conf.oauthProvider.userApprovalEndpointUrl
+
+            // The URL the user is directed to in case of an error
             errorPage = conf.oauthProvider.errorEndpointUrl
         }
 
@@ -303,7 +314,7 @@ OAuth2 Provider support for the Spring Security plugin.
         oauth2TokenEndpoint(WrappedTokenEndpoint) {
             clientDetailsService = ref('clientDetailsService')
             tokenGranter = ref('oauth2TokenEndpointTokenGranter')
-            authorizationRequestManager = ref('authorizationRequestManager')
+            OAuth2RequestFactory = ref('oauth2RequestFactory')
         }
 
         /* Register handler mapping for token and authorization endpoints */
@@ -383,7 +394,7 @@ OAuth2 Provider support for the Spring Security plugin.
 
     private configureTokenEndpointFilterChain = {
         // Register the token endpoint as stateless
-        // This is added to the filter chain
+        // This is added to the filter chain in doWithApplicationContext
         nullContextRepository(NullSecurityContextRepository)
         statelessSecurityContextPersistenceFilter(SecurityContextPersistenceFilter, ref('nullContextRepository'))
     }
@@ -405,13 +416,13 @@ OAuth2 Provider support for the Spring Security plugin.
 
     private setupTokenEndpointFilterChain = { conf, ctx ->
         def springSecurityFilterChain = ctx.springSecurityFilterChain
-        def originalFilterChainMap = springSecurityFilterChain.filterChainMap
+        def originalFilterChains = springSecurityFilterChain.filterChains
 
         def tokenEndpointUrl =  conf.oauthProvider.tokenEndpointUrl
         def statelessUrlPattern = conf.oauthProvider.tokenEndpointFilterChain.baseUrlPattern
 
         // Inherit the filter chain specified by another end point
-        def allFilters = findFilterChainForUrl(statelessUrlPattern, originalFilterChainMap).value as List
+        def allFilters = findFilterChainForUrl(statelessUrlPattern, originalFilterChains)
         if(allFilters == null) {
             log.error("Could not find base filter chain for pattern [${statelessUrlPattern}] to use for token endpoint [${tokenEndpointUrl}]")
             return
@@ -429,38 +440,32 @@ OAuth2 Provider support for the Spring Security plugin.
         }
 
         // Replace default securityContextPersistenceFilter bean with one that is stateless
-        def tokenEndpointFilters = replaceSecurityContextPersistenceFilterWithStateless(allFilters, scpfIdx, ctx)
+        List<Filter> tokenEndpointFilters = allFilters.clone()
+        tokenEndpointFilters[scpfIdx] = (Filter) ctx.getBean('statelessSecurityContextPersistenceFilter')
 
-        // Rebuild the filterChainMap with the the token endpoint filter at the beginning
-        def filterChainMap = injectFilterChain(tokenEndpointUrl, tokenEndpointFilters, originalFilterChainMap)
-        springSecurityFilterChain.filterChainMap = filterChainMap
+        // Rebuild the FilterChainProxy with one that includes tokenEndpointFilterChain at the beginning
+        def tokenEndpointFilterChain =
+                new DefaultSecurityFilterChain(new AntPathRequestMatcher(tokenEndpointUrl), tokenEndpointFilters)
+
+        def constructorArgumentValues = new ConstructorArgumentValues()
+        constructorArgumentValues.addGenericArgumentValue(originalFilterChains.plus(0, tokenEndpointFilterChain))
+
+        def propertyValues = new MutablePropertyValues()
+        propertyValues.add('filterChainValidator', new RuntimeBeanReference('filterChainValidator'))
+        propertyValues.add('firewall', new RuntimeBeanReference('httpFirewall'))
+
+        ctx.registerBeanDefinition('springSecurityFilterChainProxy', new GenericBeanDefinition(
+                beanClass: FilterChainProxy,
+                constructorArgumentValues: constructorArgumentValues,
+                propertyValues: propertyValues,
+                autowireMode: AbstractBeanDefinition.AUTOWIRE_BY_NAME
+        ))
     }
 
-    private Map injectFilterChain(String url, List filters, Map oldFilterChainMap) {
-        Map<RequestMatcher, List<Filter>> filterChainMap = [:]
-        filterChainMap[new AntPathRequestMatcher(url)] = filters
-        filterChainMap << oldFilterChainMap
-        return filterChainMap
-    }
-
-    private List replaceSecurityContextPersistenceFilterWithStateless(List allFilters, int scpfIdx, ApplicationContext ctx) {
-        def tokenEndpointFilters = []
-        allFilters.eachWithIndex { filter, idx ->
-            if (idx == scpfIdx) {
-                def statelessFilter = ctx.getBean('statelessSecurityContextPersistenceFilter')
-                tokenEndpointFilters << statelessFilter
-            } else {
-                tokenEndpointFilters << filter
-            }
-
-        }
-        return tokenEndpointFilters
-    }
-
-    private def findFilterChainForUrl(String url, Map filterChainMap) {
-        filterChainMap.find { AntPathRequestMatcher urlPattern, filters ->
-            urlPattern.pattern == url
-        }
+    private def findFilterChainForUrl(String url, List<SecurityFilterChain> filterChains) {
+        filterChains.find { DefaultSecurityFilterChain sfc ->
+            ((AntPathRequestMatcher) sfc.requestMatcher).pattern == url
+        }?.filters
     }
 
     def onConfigChange = { event ->

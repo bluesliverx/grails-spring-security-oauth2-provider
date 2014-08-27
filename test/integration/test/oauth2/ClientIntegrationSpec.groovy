@@ -1,8 +1,8 @@
 package test.oauth2
 
-import grails.plugin.spock.IntegrationSpec
+import spock.lang.Specification
 
-class ClientIntegrationSpec extends IntegrationSpec {
+class ClientIntegrationSpec extends Specification {
 
     void "client secret should be encoded differently for each public client"() {
         when:

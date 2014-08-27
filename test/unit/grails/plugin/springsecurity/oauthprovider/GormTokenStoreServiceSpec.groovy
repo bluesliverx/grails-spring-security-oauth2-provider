@@ -7,8 +7,8 @@ import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken
 import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.security.oauth2.common.OAuth2RefreshToken
-import org.springframework.security.oauth2.provider.AuthorizationRequest
 import org.springframework.security.oauth2.provider.OAuth2Authentication
+import org.springframework.security.oauth2.provider.OAuth2Request
 import spock.lang.Specification
 import spock.lang.Unroll
 import test.oauth2.AccessToken
@@ -36,6 +36,10 @@ class GormTokenStoreServiceSpec extends Specification {
         SpringSecurityUtils.securityConfig = [oauthProvider: [:]] as ConfigObject
         setAccessTokenClassName('test.oauth2.AccessToken')
         setRefreshTokenClassName('test.oauth2.RefreshToken')
+    }
+
+    void cleanup() {
+        SpringSecurityUtils.securityConfig = null
     }
 
     private void setAccessTokenClassName(accessTokenClassName) {
@@ -124,13 +128,14 @@ class GormTokenStoreServiceSpec extends Specification {
             getExpiration() >> expiration
         }
 
-        def authorizationRequest = Stub(AuthorizationRequest) {
-            getClientId() >> 'testClient'
-        }
+        def oauth2Request = new OAuth2Request(null, 'testClient', null, false, null, null, null, null, null)
 
         oAuth2Authentication.getName() >> username
-        oAuth2Authentication.getAuthorizationRequest() >> authorizationRequest
+        oAuth2Authentication.getOAuth2Request() >> oauth2Request
         oAuth2Authentication.isClientOnly() >> isClientOnly
+
+        expect:
+        oauth2Request.clientId == 'testClient'
 
         when:
         service.storeAccessToken(oauth2AccessToken, oAuth2Authentication)
@@ -315,13 +320,13 @@ class GormTokenStoreServiceSpec extends Specification {
     void "find tokens by clientId or by username returns a collection of OAuth2AccessTokens"() {
         expect:
         service.findTokensByClientId('') instanceof Collection<OAuth2AccessToken>
-        service.findTokensByUserName('') instanceof Collection<OAuth2AccessToken>
+        service.findTokensByClientIdAndUserName('', '') instanceof Collection<OAuth2AccessToken>
     }
 
     @Unroll
-    void "find tokens by username [#username] returns empty collection"() {
+    void "find tokens by client ['testClient'] and username [#username] returns empty collection"() {
         expect:
-        service.findTokensByUserName(username).empty
+        service.findTokensByClientIdAndUserName('testClient', username).empty
 
         where:
         username << ['', 'non-existent', null]
@@ -329,10 +334,10 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "find single token by username"() {
         given:
-        new AccessToken(username: 'test', value: '1234').save(validate: false)
+        new AccessToken(clientId: 'test', username: 'test', value: '1234').save(validate: false)
 
         when:
-        def tokens = service.findTokensByUserName('test')
+        def tokens = service.findTokensByClientIdAndUserName('test', 'test')
 
         then:
         tokens.size() == 1
@@ -341,11 +346,11 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "find multiple tokens by username"() {
         given:
-        new AccessToken(username: 'test', value: '1234').save(validate: false)
-        new AccessToken(username: 'test', value: '5678').save(validate: false)
+        new AccessToken(clientId: 'test', username: 'test', value: '1234').save(validate: false)
+        new AccessToken(clientId: 'test', username: 'test', value: '5678').save(validate: false)
 
         when:
-        def tokens = service.findTokensByUserName('test')
+        def tokens = service.findTokensByClientIdAndUserName('test', 'test')
 
         then:
         tokens.size() == 2
@@ -418,7 +423,7 @@ class GormTokenStoreServiceSpec extends Specification {
         _   |   'removeAccessToken'                     |   ['token']
         _   |   'getAccessToken'                        |   [null]
         _   |   'removeAccessTokenUsingRefreshToken'    |   [null]
-        _   |   'findTokensByUserName'                  |   ['user']
+        _   |   'findTokensByClientIdAndUserName'       |   ['client', 'user']
         _   |   'findTokensByClientId'                  |   ['client']
     }
 

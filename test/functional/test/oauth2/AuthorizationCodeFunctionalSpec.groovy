@@ -6,6 +6,7 @@ import pages.RegisteredRedirectPage
 import spock.lang.Unroll
 
 import static helper.TokenEndpointAssert.*
+import static helper.ErrorDescriptions.*
 
 class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
 
@@ -73,7 +74,7 @@ class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpe
 
         then:
         def tokenEndpointParams = createTokenEndpointParams('implicit-only')
-        assertAccessTokenErrorRequest(tokenEndpointParams, 400, 'invalid_grant')
+        assertAccessTokenErrorRequest(tokenEndpointParams, 401, 'invalid_client', unauthorizedGrantType('authorization_code'))
     }
 
     void "successful authorization for client with refresh token"() {
@@ -158,7 +159,7 @@ class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpe
         at RegisteredRedirectPage
 
         and:
-        assertQueryContainsErrorCodeAndDescription('invalid_scope', 'Scope must be specified')
+        assertQueryContainsErrorCodeAndDescription('invalid_scope', SCOPE_REQUIRED)
     }
 
     void "ignore scope if included in access token request for authorization code"() {
@@ -213,7 +214,7 @@ class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpe
 
         then:
         def tokenEndpointParams = createTokenEndpointParams('confidential-client')
-        assertAccessTokenErrorRequest(tokenEndpointParams, 401, 'invalid_client')
+        assertAccessTokenErrorRequest(tokenEndpointParams, 401, 'invalid_client', BAD_CLIENT_CREDENTIALS)
     }
 
     @Unroll
@@ -248,7 +249,7 @@ class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpe
     }
 
     private Map createTokenEndpointParams(String clientId, String clientSecret = null) {
-        def params = [grant_type: 'authorization_code', code: code, client_id: clientId]
+        def params = [grant_type: 'authorization_code', code: code, client_id: clientId, scope: 'test']
         if(clientSecret) {
             params << [client_secret: clientSecret]
         }

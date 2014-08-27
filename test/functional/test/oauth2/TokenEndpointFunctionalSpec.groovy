@@ -2,12 +2,12 @@ package test.oauth2
 
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
-import helper.AccessTokenRequester
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import static helper.AccessTokenRequester.*
 import static helper.TokenEndpointAssert.*
+import static helper.ErrorDescriptions.*
 
 class TokenEndpointFunctionalSpec extends Specification {
 
@@ -28,7 +28,7 @@ class TokenEndpointFunctionalSpec extends Specification {
         def params = [grant_type: grantType, client_id: 'invalid-client']
 
         expect:
-        assertAccessTokenErrorRequest(params, 401, 'invalid_client')
+        assertAccessTokenErrorRequest(params, 401, 'invalid_client', BAD_CLIENT_CREDENTIALS)
 
         where:
         _   |   grantType
@@ -43,7 +43,7 @@ class TokenEndpointFunctionalSpec extends Specification {
         def params = [grant_type: grantType, client_id: 'public-client']
 
         expect:
-        assertAccessTokenErrorRequest(params, 400, 'invalid_scope')
+        assertAccessTokenErrorRequest(params, 400, 'invalid_scope', SCOPE_REQUIRED)
 
         where:
         _   |   grantType
@@ -57,7 +57,7 @@ class TokenEndpointFunctionalSpec extends Specification {
         def params = [grant_type: 'implicit', client_id: 'public-client', scope: 'test']
 
         expect:
-        assertAccessTokenErrorRequest(params, 400, 'unsupported_grant_type')
+        assertAccessTokenErrorRequest(params, 400, 'invalid_grant', IMPLICIT_GRANT_TYPE_UNSUPPORTED)
     }
 
     void "same access token is returned so long as it has not expired"() {
@@ -79,6 +79,6 @@ class TokenEndpointFunctionalSpec extends Specification {
         def params = [grant_type: 'unknown', client_id: 'public-client', scope: 'test']
 
         expect:
-        assertAccessTokenErrorRequest(params, 400, 'unsupported_grant_type')
+        assertAccessTokenErrorRequest(params, 400, 'unsupported_grant_type', unsupportedGrantType('unknown'))
     }
 }

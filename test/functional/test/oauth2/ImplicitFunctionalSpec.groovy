@@ -3,7 +3,8 @@ package test.oauth2
 import pages.ConfirmAccessPage
 import pages.OAuth2ErrorPage
 import pages.RegisteredRedirectPage
-import spock.lang.Ignore
+
+import static helper.ErrorDescriptions.*
 
 class ImplicitFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
 
@@ -60,7 +61,7 @@ class ImplicitFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
         authorizeButton.click()
 
         then:
-        assertFragmentContainsErrorCodeAndDescription('invalid_grant', 'Unauthorized grant type: implicit')
+        assertFragmentContainsErrorCodeAndDescription('invalid_client', 'Unauthorized grant type: implicit')
     }
 
     void "redirect uri is missing and no uri is registered"() {
@@ -72,7 +73,7 @@ class ImplicitFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
 
         then:
         at OAuth2ErrorPage
-        error.text() == 'error="redirect_uri_mismatch", error_description="A redirect_uri must be supplied."'
+        error.text() == 'error="invalid_request", error_description="A redirect_uri must be supplied."'
     }
 
     void "redirect uri does not match the one registered"() {
@@ -84,7 +85,7 @@ class ImplicitFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
 
         then:
         at OAuth2ErrorPage
-        error.text().startsWith('error="redirect_uri_mismatch"')
+        error.text().startsWith('error="invalid_grant", error_description="Invalid redirect: http://somewhere')
     }
 
     void "invalid scope requested"() {
@@ -167,7 +168,7 @@ class ImplicitFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
         at RegisteredRedirectPage
 
         and:
-        assertFragmentContainsErrorCodeAndDescription('invalid_scope', 'Scope must be specified')
+        assertFragmentContainsErrorCodeAndDescription('invalid_scope', SCOPE_REQUIRED)
     }
 
     void "state parameter is returned in response"() {

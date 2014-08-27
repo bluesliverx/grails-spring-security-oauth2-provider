@@ -53,6 +53,6 @@ class Client {
 
     protected void encodeClientSecret() {
         clientSecret = clientSecret ?: NO_CLIENT_SECRET
-        clientSecret = springSecurityService.encodePassword(clientSecret)
+        clientSecret = springSecurityService?.passwordEncoder ? springSecurityService.encodePassword(clientSecret) : clientSecret
     }
 }

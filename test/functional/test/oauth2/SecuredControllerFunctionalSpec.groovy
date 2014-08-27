@@ -202,6 +202,7 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         $().text() == 'no client can see'
     }
 
+    @Unroll
     void "permitAll is not affected by grantType [#grantType]"() {
         given:
         def request = new AccessTokenRequest(grantType: grantType, clientId: 'public-client')
@@ -236,6 +237,7 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         $().text() == 'anyone can see'
     }
 
+    @Unroll
     void "locked down endpoint cannot be accessed by grantType [#grantType]"() {
         given:
         def request = new AccessTokenRequest(grantType: grantType, clientId: 'public-client')

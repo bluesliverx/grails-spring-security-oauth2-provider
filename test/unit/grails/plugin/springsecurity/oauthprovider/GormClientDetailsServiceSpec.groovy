@@ -22,6 +22,10 @@ class GormClientDetailsServiceSpec extends Specification {
         setClientClassName('test.oauth2.Client')
     }
 
+    void cleanup() {
+        SpringSecurityUtils.securityConfig = null
+    }
+
     private void setClientClassName(clientClassName) {
         def clientLookup = [
                 className: clientClassName,
