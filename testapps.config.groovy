@@ -9,11 +9,6 @@
 //
 // This appears to be related to GRAILS-10661:
 // https://jira.grails.org/browse/GRAILS-10661
-//
-// Test apps for Grails version 2.4.0 require and update of the Spring Security Core
-// plugin dependency to version 2.0-RC3, which introduces issues due to changes in the
-// underlying Spring Security library.
-//
 
 v235 {
     grailsVersion = '2.3.5'
