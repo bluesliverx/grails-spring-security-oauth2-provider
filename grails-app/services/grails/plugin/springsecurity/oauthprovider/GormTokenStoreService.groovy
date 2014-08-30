@@ -41,7 +41,7 @@ class GormTokenStoreService implements TokenStore {
         catch (IllegalArgumentException e) {
             checkForDomainConfigurationRelatedException(e, 'access', accessTokenLookup.className)
 
-            log.warn("Failed to deserialize authentication for access token [$token]")
+            log.warn("Failed to deserialize authentication for access token")
             removeAccessToken(token)
         }
         return authentication
@@ -83,7 +83,7 @@ class GormTokenStoreService implements TokenStore {
         def gormAccessToken = GormAccessToken.findWhere((valuePropertyName): tokenValue)
 
         if (!gormAccessToken) {
-            log.debug("Failed to find access token with value [$tokenValue]")
+            log.debug("Failed to find access token")
             return null
         }
         createOAuth2AccessToken(gormAccessToken)
@@ -146,7 +146,7 @@ class GormTokenStoreService implements TokenStore {
         catch (IllegalArgumentException e) {
             checkForDomainConfigurationRelatedException(e, 'refresh', refreshTokenLookup.className)
 
-            log.warn("Failed to deserialize authentication for refresh token [${tokenValue}]")
+            log.warn("Failed to deserialize authentication for refresh token")
             removeRefreshToken(tokenValue)
         }
         return authentication
