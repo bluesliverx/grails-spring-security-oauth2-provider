@@ -7,11 +7,14 @@ import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken
 import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.security.oauth2.common.OAuth2RefreshToken
 import org.springframework.security.oauth2.provider.OAuth2Authentication
+import org.springframework.security.oauth2.provider.token.AuthenticationKeyGenerator
 import org.springframework.security.oauth2.provider.token.TokenStore
 
 class GormTokenStoreService implements TokenStore {
 
     OAuth2AuthenticationSerializer oauth2AuthenticationSerializer
+    AuthenticationKeyGenerator authenticationKeyGenerator
+
     GrailsApplication grailsApplication
 
     private static
@@ -48,6 +51,7 @@ class GormTokenStoreService implements TokenStore {
     void storeAccessToken(OAuth2AccessToken token, OAuth2Authentication authentication) {
         def (accessTokenLookup, GormAccessToken) = getAccessTokenLookupAndClass()
 
+        def authenticationKeyPropertyName = accessTokenLookup.authenticationKeyPropertyName
         def authenticationPropertyName = accessTokenLookup.authenticationPropertyName
         def usernamePropertyName = accessTokenLookup.usernamePropertyName
         def clientIdPropertyName = accessTokenLookup.clientIdPropertyName
@@ -58,6 +62,7 @@ class GormTokenStoreService implements TokenStore {
         def scopePropertyName = accessTokenLookup.scopePropertyName
 
         def ctorArgs = [
+                (authenticationKeyPropertyName): authenticationKeyGenerator.extractKey(authentication),
                 (authenticationPropertyName): oauth2AuthenticationSerializer.serialize(authentication),
                 (usernamePropertyName): authentication.isClientOnly() ? null : authentication.name,
                 (clientIdPropertyName): authentication.getOAuth2Request().clientId,
@@ -173,17 +178,31 @@ class GormTokenStoreService implements TokenStore {
 
     @Override
     OAuth2AccessToken getAccessToken(OAuth2Authentication authentication) {
-        def serializedAuthentication = oauth2AuthenticationSerializer.serialize(authentication)
+        def authenticationKey = authenticationKeyGenerator.extractKey(authentication)
         def (accessTokenLookup, GormAccessToken) = getAccessTokenLookupAndClass()
 
-        def authenticationPropertyName = accessTokenLookup.authenticationPropertyName
-        def gormAccessToken = GormAccessToken.findWhere((authenticationPropertyName): serializedAuthentication)
+        def authenticationKeyPropertyName = accessTokenLookup.authenticationKeyPropertyName
+        def gormAccessToken = GormAccessToken.findWhere((authenticationKeyPropertyName): authenticationKey)
 
         if (!gormAccessToken) {
             log.debug("Failed to find access token for authentication [$authentication]")
             return null
         }
-        return createOAuth2AccessToken(gormAccessToken)
+
+        def accessToken = createOAuth2AccessToken(gormAccessToken)
+        def tokenValue = accessToken.value
+
+        if(authenticationKey != getAuthenticationKeyFromAccessToken(tokenValue)) {
+            log.warn("Authentication [$authentication] is not associated with retrieved access token")
+            removeAccessToken(tokenValue)
+            storeAccessToken(accessToken, authentication)
+        }
+        return accessToken
+    }
+
+    private String getAuthenticationKeyFromAccessToken(String token) {
+        def authentication = readAuthentication(token)
+        return authenticationKeyGenerator.extractKey(authentication)
     }
 
     @Override

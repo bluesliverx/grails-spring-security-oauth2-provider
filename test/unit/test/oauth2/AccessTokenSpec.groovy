@@ -92,6 +92,34 @@ class AccessTokenSpec extends Specification {
     }
 
     @Unroll
+    void "authentication key [#key] is valid [#valid]"() {
+        when:
+        def token = new AccessToken(authenticationKey: key)
+
+        then:
+        token.validate(['authenticationKey']) == valid
+
+        where:
+        key         |   valid
+        null        |   false
+        ''          |   false
+        '1'         |   true
+        'asdf1234'  |   true
+    }
+
+    void "authentication key must be unique"() {
+        given:
+        def existingToken = new AccessToken(authenticationKey: 'key')
+        mockForConstraintsTests(AccessToken, [existingToken])
+
+        when:
+        def newToken = new AccessToken(authenticationKey: 'key')
+
+        then:
+        !newToken.validate(['authenticationKey'])
+    }
+
+    @Unroll
     void "test authentication constraints [#auth] is valid [#valid]"() {
         when:
         def token = new AccessToken(authentication: auth as byte[])

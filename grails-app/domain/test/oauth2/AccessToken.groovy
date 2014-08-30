@@ -2,6 +2,7 @@ package test.oauth2
 
 class AccessToken {
 
+    String authenticationKey
     byte[] authentication
 
     String username
@@ -23,6 +24,7 @@ class AccessToken {
         expiration nullable: true
         scope nullable: false
         refreshToken nullable: true
+        authenticationKey nullable: false, blank: false, unique: true
         authentication nullable: false, maxSize: 1024 * 4, validator: { val, obj -> val.size() > 0 }
     }
 

@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.security.oauth2.common.OAuth2RefreshToken
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.OAuth2Request
+import org.springframework.security.oauth2.provider.token.AuthenticationKeyGenerator
 import spock.lang.Specification
 import spock.lang.Unroll
 import test.oauth2.AccessToken
@@ -21,14 +22,17 @@ class GormTokenStoreServiceSpec extends Specification {
     String tokenValue
     String refreshValue
 
+    String authenticationKey
+
     OAuth2Authentication oAuth2Authentication
     byte[] serializedAuthentication
 
     void setup() {
-        service.oauth2AuthenticationSerializer = Mock(OAuth2AuthenticationSerializer)
+        mockServiceCollaborators(service)
 
         oAuth2Authentication = Stub(OAuth2Authentication)
         serializedAuthentication = [0x13, 0x37]
+        authenticationKey = 'serializedAuthenticationKey'
 
         tokenValue = 'TEST'
         refreshValue = 'REFRESH'
@@ -38,6 +42,11 @@ class GormTokenStoreServiceSpec extends Specification {
         setRefreshTokenClassName('test.oauth2.RefreshToken')
     }
 
+    private void mockServiceCollaborators(GormTokenStoreService service) {
+        service.oauth2AuthenticationSerializer = Mock(OAuth2AuthenticationSerializer)
+        service.authenticationKeyGenerator = Mock(AuthenticationKeyGenerator)
+    }
+
     void cleanup() {
         SpringSecurityUtils.securityConfig = null
     }
@@ -45,6 +54,7 @@ class GormTokenStoreServiceSpec extends Specification {
     private void setAccessTokenClassName(accessTokenClassName) {
         def accessTokenLookup = [
                 className: accessTokenClassName,
+                authenticationKeyPropertyName: 'authenticationKey',
                 authenticationPropertyName: 'authentication',
                 usernamePropertyName: 'username',
                 clientIdPropertyName: 'clientId',
@@ -64,6 +74,10 @@ class GormTokenStoreServiceSpec extends Specification {
                 valuePropertyName: 'value',
         ]
         SpringSecurityUtils.securityConfig.oauthProvider.refreshTokenLookup = refreshTokenLookup
+    }
+
+    private void expectAuthenticationKeyExtraction() {
+        1 * service.authenticationKeyGenerator.extractKey(oAuth2Authentication as OAuth2Authentication) >> authenticationKey
     }
 
     private void expectAuthenticationSerialization() {
@@ -111,6 +125,7 @@ class GormTokenStoreServiceSpec extends Specification {
     void "store access token -- use refresh token? [#useRefreshToken] -- is client only? [#isClientOnly]"() {
         given:
         expectAuthenticationSerialization()
+        expectAuthenticationKeyExtraction()
 
         and:
         def expiration = new Date()
@@ -234,7 +249,7 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "return null if token cannot be found by authentication"() {
         given:
-        expectAuthenticationSerialization()
+        expectAuthenticationKeyExtraction()
 
         when:
         def token = service.getAccessToken(oAuth2Authentication)
@@ -305,16 +320,50 @@ class GormTokenStoreServiceSpec extends Specification {
 
     void "get access token by authentication"() {
         given:
-        expectAuthenticationSerialization()
-
-        and:
-        new AccessToken(authentication: serializedAuthentication, value: tokenValue).save(validate: false)
+        new AccessToken(authenticationKey: authenticationKey, value: tokenValue).save(validate: false)
 
         when:
         def token = service.getAccessToken(oAuth2Authentication)
 
         then:
         token.value == tokenValue
+
+        and:
+        2 * service.authenticationKeyGenerator.extractKey(_) >> authenticationKey
+    }
+
+    void "authentication associated with stored access token is not the one provided"() {
+        given:
+        def spyService = Spy(GormTokenStoreService)
+        mockServiceCollaborators(spyService)
+        spyService.grailsApplication = grailsApplication
+
+        new AccessToken(authenticationKey: authenticationKey, value: tokenValue).save(validate: false)
+
+        and:
+        def anotherAuthentication = Stub(OAuth2Authentication)
+        assert anotherAuthentication != oAuth2Authentication
+
+        and:
+        def differentAuthenticationKey = authenticationKey + 'a'
+
+        when:
+        def token = spyService.getAccessToken(oAuth2Authentication)
+
+        then:
+        token.value == tokenValue
+
+        and:
+        1 * spyService.authenticationKeyGenerator.extractKey(oAuth2Authentication as OAuth2Authentication) >> authenticationKey
+        1 * spyService.authenticationKeyGenerator.extractKey(anotherAuthentication as OAuth2Authentication) >>  differentAuthenticationKey
+
+        1 * spyService.readAuthentication(tokenValue) >> anotherAuthentication
+        1 * spyService.removeAccessToken(tokenValue)
+
+        1 * spyService.storeAccessToken(_, _) >> { OAuth2AccessToken accessToken, OAuth2Authentication auth ->
+            assert accessToken.value == tokenValue
+            assert auth == oAuth2Authentication
+        }
     }
 
     void "find tokens by clientId or by username returns a collection of OAuth2AccessTokens"() {

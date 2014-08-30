@@ -49,6 +49,7 @@ import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurity
 import org.springframework.security.oauth2.provider.implicit.ImplicitTokenGranter
 import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter
 import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter
+import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
 import org.springframework.security.web.DefaultSecurityFilterChain
 import org.springframework.security.web.FilterChainProxy
@@ -177,6 +178,7 @@ OAuth2 Provider support for the Spring Security plugin.
 
         /* Helper classes for Gorm support */
         oauth2AuthenticationSerializer(OAuth2AuthenticationSerializer)
+        authenticationKeyGenerator(DefaultAuthenticationKeyGenerator)
     }
 
     private configureTokenServices = { conf ->

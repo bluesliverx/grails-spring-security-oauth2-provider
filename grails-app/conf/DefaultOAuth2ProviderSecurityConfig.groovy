@@ -78,6 +78,7 @@ security {
 
         accessTokenLookup {
             className = null
+            authenticationKeyPropertyName = 'authenticationKey'
             authenticationPropertyName = 'authentication'
             usernamePropertyName = 'username'
             clientIdPropertyName = 'clientId'
