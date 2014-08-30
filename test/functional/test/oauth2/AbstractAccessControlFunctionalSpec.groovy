@@ -7,11 +7,8 @@ import groovyx.net.http.RESTClient
 import helper.AccessTokenRequest
 import helper.AccessTokenRequester
 import helper.GrantTypes
-import pages.AuthorizationPage
-import pages.ConfirmAccessPage
-import pages.DeniedPage
-import pages.LoginPage
-import pages.LogoutPage
+import helper.TestEnvironmentCleaner
+import pages.*
 
 abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
 
@@ -22,6 +19,7 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
         if(isLoggedIn) {
             logout()
         }
+        TestEnvironmentCleaner.cleanup()
     }
 
     private void logout() {

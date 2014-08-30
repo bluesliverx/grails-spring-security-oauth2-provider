@@ -152,6 +152,7 @@ private void copyTestResources() {
     /* Controllers */
     ant.copy(todir: "$testProjectRoot/grails-app/controllers/test/oauth2", overwrite: true) {
         fileset(dir: 'grails-app/controllers/test/oauth2') {
+            include name: 'CleanupController.groovy'
             include name: 'LogoutController.groovy'
             include name: 'RedirectController.groovy'
             include name: 'SecuredController.groovy'

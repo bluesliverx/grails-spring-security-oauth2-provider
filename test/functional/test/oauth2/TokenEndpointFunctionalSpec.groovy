@@ -2,14 +2,14 @@ package test.oauth2
 
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
-import spock.lang.Specification
 import spock.lang.Unroll
 
-import static helper.AccessTokenRequester.*
-import static helper.TokenEndpointAssert.*
+import static helper.AccessTokenRequester.getAccessToken
+import static helper.AccessTokenRequester.TOKEN_ENDPOINT_URL
 import static helper.ErrorDescriptions.*
+import static helper.TokenEndpointAssert.assertAccessTokenErrorRequest
 
-class TokenEndpointFunctionalSpec extends Specification {
+class TokenEndpointFunctionalSpec extends AbstractTokenEndpointFunctionalSpec {
 
     void "clients must use POST for access token requests"() {
         given:

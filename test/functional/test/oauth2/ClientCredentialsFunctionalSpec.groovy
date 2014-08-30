@@ -1,11 +1,9 @@
 package test.oauth2
 
-import spock.lang.Specification
-
-import static helper.TokenEndpointAssert.*
 import static helper.ErrorDescriptions.*
+import static helper.TokenEndpointAssert.*
 
-class ClientCredentialsFunctionalSpec extends Specification {
+class ClientCredentialsFunctionalSpec extends AbstractTokenEndpointFunctionalSpec {
 
     Map params = [grant_type: 'client_credentials', scope: 'test']
 
