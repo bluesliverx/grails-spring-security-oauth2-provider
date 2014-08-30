@@ -125,6 +125,11 @@ private void runQuickstart() {
 
     contents = contents.replace("grails.exceptionresolver.params.exclude = ['password']", "grails.exceptionresolver.params.exclude = ['password', 'client_secret']")
 
+    contents = contents.replace("log4j = {", """log4j = {
+        debug  'grails.plugin.springsecurity.oauthprovider',
+                'grails.plugin.springsecurity',
+                'org.springframework.security' """)
+
     contents = contents.replace('grails.plugin.springsecurity.controllerAnnotations.staticRules = [', '''grails.plugin.springsecurity.controllerAnnotations.staticRules = [
         '/oauth/authorize.dispatch':      ["isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"],
         '/oauth/token.dispatch':          ["isFullyAuthenticated() and request.getMethod().equals('POST')"],''')
@@ -172,7 +177,7 @@ private void copyTestResources() {
     ant.copydir src: "test/functional", dest: "$testProjectRoot/test/functional", forceoverwrite: true
 
     /* Change redirect uri referenced in tests */
-    changeRedirectUriConstant('test/functional/test/oauth2/AuthorizationEndpointFunctionalSpec.groovy')
+    changeRedirectUriConstant('test/functional/test/oauth2/AbstractAuthorizationEndpointFunctionalSpec.groovy')
 
     /* Remove cache plugin from BuildConfig due to incompatibility */
     removeCachePlugin('grails-app/conf/BuildConfig.groovy')
