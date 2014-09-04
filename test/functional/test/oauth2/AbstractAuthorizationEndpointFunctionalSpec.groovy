@@ -1,18 +1,20 @@
 package test.oauth2
 
 import geb.spock.GebReportingSpec
+import helper.TestEnvironmentCleaner
 import pages.AuthorizationPage
 import pages.LoginPage
 import pages.LogoutPage
 
 import static helper.AccessTokenAssert.*
 
-class AuthorizationEndpointFunctionalSpec extends GebReportingSpec {
+abstract class AbstractAuthorizationEndpointFunctionalSpec extends GebReportingSpec {
 
     protected static final String REDIRECT_URI = 'http://localhost:8080/grails-spring-security-oauth2-provider/redirect'
 
     def cleanup() {
         logout()
+        TestEnvironmentCleaner.cleanup()
     }
 
     private void logout() {

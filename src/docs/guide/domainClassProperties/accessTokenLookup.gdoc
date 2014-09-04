@@ -1,6 +1,7 @@
 {table}
 *Property*                                      |   *Default Value*                 |   *Meaning*
 accessTokenLookup.className                     |   @null@                          |   Access token class name.
+accessTokenLookup.authenticationKeyPropertyName |   @'authenticationKey'@           |   Access token class serialized authentication key used to locate tokens via serialized authentication field.
 accessTokenLookup.authenticationPropertyName    |   @'authentication'@              |   Access token class serialized authentication field.
 accessTokenLookup.usernamePropertyName          |   @'username'@                    |   Access token class username field.
 accessTokenLookup.clientIdPropertyName          |   @'clientId'@                    |   Access token class client ID field.

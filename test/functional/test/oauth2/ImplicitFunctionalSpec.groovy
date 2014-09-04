@@ -4,9 +4,9 @@ import pages.ConfirmAccessPage
 import pages.OAuth2ErrorPage
 import pages.RegisteredRedirectPage
 
-import static helper.ErrorDescriptions.*
+import static helper.ErrorDescriptions.SCOPE_REQUIRED
 
-class ImplicitFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
+class ImplicitFunctionalSpec extends AbstractAuthorizationEndpointFunctionalSpec {
 
     Map params = [response_type: 'token', client_id: 'public-client', scope: 'test']
 

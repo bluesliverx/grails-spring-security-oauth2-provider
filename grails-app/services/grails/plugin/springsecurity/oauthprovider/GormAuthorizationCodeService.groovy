@@ -36,7 +36,7 @@ class GormAuthorizationCodeService extends RandomValueAuthorizationCodeServices 
             authentication = oauth2AuthenticationSerializer.deserialize(serializedAuthentication)
         }
         catch(IllegalArgumentException e) {
-            log.warn("Failed to deserialize authentication for code [$code]")
+            log.warn("Failed to deserialize authentication for code")
             authentication = null
         }
         finally {

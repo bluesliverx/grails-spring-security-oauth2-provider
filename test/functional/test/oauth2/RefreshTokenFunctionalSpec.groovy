@@ -1,12 +1,12 @@
 package test.oauth2
 
 import helper.AccessTokenRequester
-import spock.lang.Specification
 
-import static helper.TokenEndpointAssert.*
 import static helper.ErrorDescriptions.*
+import static helper.TokenEndpointAssert.assertAccessTokenAndRefreshTokenRequest
+import static helper.TokenEndpointAssert.assertAccessTokenErrorRequest
 
-class RefreshTokenFunctionalSpec extends Specification {
+class RefreshTokenFunctionalSpec extends AbstractTokenEndpointFunctionalSpec {
 
     Map params = [grant_type: 'refresh_token', client_id: 'public-client', scope: 'test']
 

@@ -5,10 +5,10 @@ import pages.OAuth2ErrorPage
 import pages.RegisteredRedirectPage
 import spock.lang.Unroll
 
-import static helper.TokenEndpointAssert.*
 import static helper.ErrorDescriptions.*
+import static helper.TokenEndpointAssert.*
 
-class AuthorizationCodeFunctionalSpec extends AuthorizationEndpointFunctionalSpec {
+class AuthorizationCodeFunctionalSpec extends AbstractAuthorizationEndpointFunctionalSpec {
 
     void "client is not authorized to use authorization code flow"() {
         given:

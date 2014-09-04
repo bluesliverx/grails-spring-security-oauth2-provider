@@ -34,7 +34,7 @@ import org.springframework.http.converter.json.MappingJacksonHttpMessageConverte
 import org.springframework.http.converter.xml.SourceHttpMessageConverter
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.oauth2.provider.CompositeTokenGranter
-import org.springframework.security.oauth2.provider.approval.TokenStoreUserApprovalHandler
+import org.springframework.security.oauth2.provider.approval.DefaultUserApprovalHandler
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter
@@ -49,6 +49,7 @@ import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurity
 import org.springframework.security.oauth2.provider.implicit.ImplicitTokenGranter
 import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter
 import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter
+import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
 import org.springframework.security.web.DefaultSecurityFilterChain
 import org.springframework.security.web.FilterChainProxy
@@ -177,6 +178,7 @@ OAuth2 Provider support for the Spring Security plugin.
 
         /* Helper classes for Gorm support */
         oauth2AuthenticationSerializer(OAuth2AuthenticationSerializer)
+        authenticationKeyGenerator(DefaultAuthenticationKeyGenerator)
     }
 
     private configureTokenServices = { conf ->
@@ -285,11 +287,15 @@ OAuth2 Provider support for the Spring Security plugin.
     }
 
     private configureEndpoints = { conf ->
+        /*
+            TODO: Make this configurable so users can choose their preferred method of authorization auto approval
+            i.e. based on an existing token (TokenStoreUserApprovalHandler), a prior approval
+            (ApprovalStoreUserHandler) or require explicit approval every time (DefaultApprovalHandler).
 
-        userApprovalHandler(TokenStoreUserApprovalHandler) {
-            tokenStore = ref('tokenStore')
-            requestFactory = ref('oauth2RequestFactory')
-
+            This will require a GormApprovalStore implementation to be available. For now, we'll be paranoid
+            and require explicit approval every time.
+         */
+        userApprovalHandler(DefaultUserApprovalHandler) {
             // The request parameter sent from the userApprovalPage, indicating approval was given or denied
             approvalParameter = conf.oauthProvider.userApprovalParameter
         }
