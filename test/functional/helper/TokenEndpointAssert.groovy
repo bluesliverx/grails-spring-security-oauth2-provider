@@ -22,10 +22,11 @@ class TokenEndpointAssert {
         assertAccessTokenDataContainsScopes(json, scopes)
     }
 
-    static void assertAccessTokenErrorRequest(Map params, int statusCode, String errorCode, String errorDescription) {
+    static void assertAccessTokenErrorRequest(Map params, int statusCode, String errorCode, String errorDescription,
+                                              boolean checkWWWAuthenticate = false) {
         def response = getErrorResponse(params)
 
-        assertHeaders(response)
+        assertHeaders(response, checkWWWAuthenticate)
         assertStatusCode(response, statusCode)
         assertErrorCode(response, errorCode, errorDescription)
     }
@@ -42,10 +43,14 @@ class TokenEndpointAssert {
         return json
     }
 
-    private static void assertHeaders(HttpResponseDecorator response) {
+    private static void assertHeaders(HttpResponseDecorator response, boolean checkWWWAuthenticate = false) {
         assert response.contentType == 'application/json'
         assert response.headers['Cache-Control'].value == 'no-store'
         assert response.headers['Pragma'].value == 'no-cache'
+
+        if(checkWWWAuthenticate) {
+            assert response.headers['WWW-Authenticate'].value.startsWith('Bearer realm="Grails OAuth2 Realm"')
+        }
     }
 
     private static void assertStatusCode(response, statusCode) {
