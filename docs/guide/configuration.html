@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>6 Configuration 1.0.5-SNAPSHOT</title>
+    <title>6 Configuration 2.0-SNAPSHOT</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -79,7 +79,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Brian Saville</p>
 
-                    <p><strong>Version:</strong> 1.0.5-SNAPSHOT</p>
+                    <p><strong>Version:</strong> 2.0-SNAPSHOT</p>
 
                     
                 </div>
@@ -119,7 +119,7 @@ The plugin is pessimistic by default, locking down as much as possible to guard 
 
 
 <h2 id="plugin">6.1 Plugin</h2>
-The following properties define whether the plugin is active and where the required filters are registered in the Spring Security filter chain:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>active</td><td><code>true</code></td><td>Whether the plugin is enabled.</td></tr><tr class="table-even"><td>filterStartPosition</td><td><code>SecurityFilterPosition.X509_FILTER.order</code></td><td>The position in the filter chain of the <code>OAuth2AuthenticationProcessingFilter</code>, which handles authentication for resource access by extracting an access token from the incoming request.</td></tr><tr class="table-odd"><td>clientFilterStartPosition</td><td><code>SecurityFilterPosition.DIGEST_AUTH_FILTER.order</code></td><td>The position in the filter chain of the <code>ClientCredentialsTokenEndpointFilter</code>, which handles client authentication.</td></tr></table>
+The following properties define whether the plugin is active and where the required filters are registered in the Spring Security filter chain:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>active</td><td><code>true</code></td><td>Whether the plugin is enabled.</td></tr><tr class="table-even"><td>filterStartPosition</td><td><code>SecurityFilterPosition.X509_FILTER.order</code></td><td>The position in the filter chain of the <code>OAuth2AuthenticationProcessingFilter</code>, which handles authentication for resource access by extracting an access token from the incoming request.</td></tr><tr class="table-odd"><td>clientFilterStartPosition</td><td><code>SecurityFilterPosition.DIGEST_AUTH_FILTER.order</code></td><td>The position in the filter chain of the <code>ClientCredentialsTokenEndpointFilter</code>, which handles client authentication.</td></tr><tr class="table-even"><td>realmName</td><td><code>Grails OAuth2 Realm</code></td><td>Realm name included in the WWW-Authenticate header in a challenge response.</td></tr></table>
 
 
 <h2 id="endpoints">6.2 Endpoint URLs</h2>

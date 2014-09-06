@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3 Example Flows 1.0.5-SNAPSHOT</title>
+    <title>3 Example Flows 2.0-SNAPSHOT</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -81,7 +81,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Brian Saville</p>
 
-                    <p><strong>Version:</strong> 1.0.5-SNAPSHOT</p>
+                    <p><strong>Version:</strong> 2.0-SNAPSHOT</p>
 
                     
                 </div>
@@ -100,6 +100,9 @@ function addJsClass() {
                     </div>
                     
                     <div class="toc-item" style="margin-left:0px"><a href="#clientCredentials"><strong>3.4</strong><span>Client Credentials Grant</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#refreshToken"><strong>3.5</strong><span>Refresh Token Grant</span></a>
                     </div>
                     
                 </div>
@@ -157,6 +160,16 @@ The client credentials grant is performed by authenticating the client via the t
     <span class="java&#45;quote">"scope"</span>: <span class="java&#45;quote">"read"</span>
 &#125;</pre></div>
 
+
+
+<h2 id="refreshToken">3.5 Refresh Token Grant</h2>
+The refresh token grant is performed by exchanging a refresh token received during a previous authorization request for an access token from the token endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/token?grant_type=refresh_token&#38;refresh_token=269afd46&#45;0b41&#45;45c2&#45;a920&#45;7d5af8a38d56&#38;client_id=my&#45;client&#38;scope=read</pre></div><p class="paragraph"/>The above assumes that <code>269afd46-0b41-45c2-a920-7d5af8a38d56</code> is the value of the refresh token the client had obtained prior to this request.<p class="paragraph"/>The <code>access_token</code> is included in the response:<p class="paragraph"/><div class="code"><pre>&#123;
+    <span class="java&#45;quote">"access_token"</span>: <span class="java&#45;quote">"a3da52c7&#45;4bd2&#45;4d42&#45;a58d&#45;efa64b4de453"</span>,
+    <span class="java&#45;quote">"token_type"</span>: <span class="java&#45;quote">"bearer"</span>,
+    <span class="java&#45;quote">"refresh_token"</span>: <span class="java&#45;quote">"6396c283&#45;47ff&#45;41d2&#45;b887&#45;39bde6af5f1e"</span>,
+    <span class="java&#45;quote">"expires_in"</span>: 43199,
+    <span class="java&#45;quote">"scope"</span>: <span class="java&#45;quote">"read"</span>
+&#125;</pre></div>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
