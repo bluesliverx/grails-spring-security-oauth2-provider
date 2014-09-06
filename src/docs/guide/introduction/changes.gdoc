@@ -1,3 +1,8 @@
+* 2.0-RC1
+** Complete overhaul of the plugin
+** Requires/supports Spring Security Core 2.0-RC4
+** Uses Spring Security OAuth2 2.0.2.RELEASE
+
 * 1.0.5.2
 ** Fix #13 - Make clientSecret optional in client configuration structure
 

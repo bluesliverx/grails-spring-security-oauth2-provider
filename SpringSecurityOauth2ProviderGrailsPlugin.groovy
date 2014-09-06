@@ -65,7 +65,7 @@ import javax.servlet.Filter
 class SpringSecurityOauth2ProviderGrailsPlugin {
 	static final Logger log = LoggerFactory.getLogger(this)
 
-	def version = "1.0.5-SNAPSHOT"
+	def version = "2.0-SNAPSHOT"
 	String grailsVersion = '2.3 > *'
 
 	List pluginExcludes = [
@@ -96,6 +96,9 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 
 	String author = 'Brian Saville'
 	String authorEmail = 'bsaville@adaptivecomputing.com'
+	def developers = [
+			[ name: "Bobby Vandiver", email: "" ],
+	]
 	String title = 'OAuth2 Provider support for the Spring Security plugin.'
 	String description = '''\
 OAuth2 Provider support for the Spring Security plugin.
