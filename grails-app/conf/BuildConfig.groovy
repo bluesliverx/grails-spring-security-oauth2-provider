@@ -3,6 +3,7 @@ grails.project.source.level = 1.6
 
 grails.project.work.dir = 'target'
 grails.project.docs.output.dir = 'docs'
+grails.release.scm.enabled = false
 
 // Code Narc
 codenarc.reports = {
