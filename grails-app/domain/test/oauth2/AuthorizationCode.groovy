@@ -7,7 +7,7 @@ class AuthorizationCode {
 
     static constraints = {
         code nullable: false, blank: false, unique: true
-        authentication nullable: false, maxSize: 1024 * 4, validator: { val, obj -> val.size() > 0 }
+        authentication nullable: false, minSize: 1, maxSize: 1024 * 4
     }
 
     static mapping = {
