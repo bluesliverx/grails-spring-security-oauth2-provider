@@ -427,8 +427,8 @@ OAuth2 Provider support for the Spring Security plugin.
     }
 
     private setupTokenEndpointFilterChain = { conf, ctx ->
-        def springSecurityFilterChain = ctx.springSecurityFilterChain
-        def originalFilterChains = springSecurityFilterChain.filterChains
+        def springSecurityFilterChainProxy = ctx.springSecurityFilterChainProxy
+        List<SecurityFilterChain> originalFilterChains = springSecurityFilterChainProxy.filterChains
 
         def tokenEndpointUrl =  conf.oauthProvider.tokenEndpointUrl
         def statelessUrlPattern = conf.oauthProvider.tokenEndpointFilterChain.baseUrlPattern
@@ -459,19 +459,7 @@ OAuth2 Provider support for the Spring Security plugin.
         def tokenEndpointFilterChain =
                 new DefaultSecurityFilterChain(new AntPathRequestMatcher(tokenEndpointUrl), tokenEndpointFilters)
 
-        def constructorArgumentValues = new ConstructorArgumentValues()
-        constructorArgumentValues.addGenericArgumentValue(originalFilterChains.plus(0, tokenEndpointFilterChain))
-
-        def propertyValues = new MutablePropertyValues()
-        propertyValues.add('filterChainValidator', new RuntimeBeanReference('filterChainValidator'))
-        propertyValues.add('firewall', new RuntimeBeanReference('httpFirewall'))
-
-        ctx.registerBeanDefinition('springSecurityFilterChainProxy', new GenericBeanDefinition(
-                beanClass: FilterChainProxy,
-                constructorArgumentValues: constructorArgumentValues,
-                propertyValues: propertyValues,
-                autowireMode: AbstractBeanDefinition.AUTOWIRE_BY_NAME
-        ))
+        springSecurityFilterChainProxy.filterChains = originalFilterChains.plus(0, tokenEndpointFilterChain)
     }
 
     private def findFilterChainForUrl(String url, List<SecurityFilterChain> filterChains) {
