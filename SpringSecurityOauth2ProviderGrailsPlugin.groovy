@@ -97,7 +97,7 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 	String author = 'Brian Saville'
 	String authorEmail = 'bsaville@adaptivecomputing.com'
 	def developers = [
-			[ name: "Bobby Vandiver", email: "" ],
+			[ name: "Bobby Vandiver", email: "bobby.vandiver88@gmail.com" ],
 	]
 	String title = 'OAuth2 Provider support for the Spring Security plugin.'
 	String description = '''\
