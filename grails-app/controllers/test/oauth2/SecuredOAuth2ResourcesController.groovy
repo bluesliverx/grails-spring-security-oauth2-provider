@@ -2,7 +2,7 @@ package test.oauth2
 
 import grails.plugin.springsecurity.annotation.Secured
 
-class SecuredController {
+class SecuredOAuth2ResourcesController {
 
     @Secured(["#oauth2.clientHasRole('ROLE_CLIENT')"])
     def clientRoleExpression() {

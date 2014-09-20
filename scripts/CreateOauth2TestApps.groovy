@@ -160,7 +160,7 @@ private void copyTestResources() {
             include name: 'CleanupController.groovy'
             include name: 'LogoutController.groovy'
             include name: 'RedirectController.groovy'
-            include name: 'SecuredController.groovy'
+            include name: 'SecuredOAuth2ResourcesController.groovy'
         }
     }
 

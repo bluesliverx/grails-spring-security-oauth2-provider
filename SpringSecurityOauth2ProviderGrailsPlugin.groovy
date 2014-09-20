@@ -79,7 +79,7 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 		'web-app/**',
 		'grails-app/views/login/**',
         'grails-app/views/logout/**',
-		'grails-app/views/secured/**',
+		'grails-app/views/securedOAuth2Resources/**',
         'grails-app/views/redirect/**',
 		'grails-app/views/index.gsp',
 		'grails-app/views/error.gsp',

@@ -6,11 +6,11 @@ import pages.DeniedPage
 import pages.LoginPage
 import spock.lang.Unroll
 
-class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpec {
+class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessControlFunctionalSpec {
 
     void "invalid bearer token in request"() {
         when:
-        def response = requestRawResponse('secured/clientRole', 'invalid-bearer-token')
+        def response = requestRawResponse('securedOAuth2Resources/clientRole', 'invalid-bearer-token')
 
         then:
         response.status == 401
@@ -24,10 +24,10 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('secured/clientRoleExpression')
+        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/clientRoleExpression')
 
         and:
-        requestPage('secured/clientRoleExpression', token) == 'client role expression'
+        requestPage('securedOAuth2Resources/clientRoleExpression', token) == 'client role expression'
 
         where:
         _   |   grantType
@@ -44,10 +44,10 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('secured/clientRole')
+        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/clientRole')
 
         and:
-        forbiddenPage('secured/clientRole', token)
+        forbiddenPage('securedOAuth2Resources/clientRole', token)
 
         where:
         _   |   grantType
@@ -62,10 +62,10 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('secured/clientRole')
+        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/clientRole')
 
         and:
-        requestPage('secured/clientRole', token) == 'client role'
+        requestPage('securedOAuth2Resources/clientRole', token) == 'client role'
     }
 
     @Unroll
@@ -75,10 +75,10 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('secured/clientHasAnyRole')
+        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/clientHasAnyRole')
 
         and:
-        requestPage('secured/clientHasAnyRole', token) == 'client has any role'
+        requestPage('securedOAuth2Resources/clientHasAnyRole', token) == 'client has any role'
 
         where:
         grantType                           |   clientId                |   clientSecret
@@ -101,10 +101,10 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('secured/client')
+        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/client')
 
         and:
-        forbiddenPage('secured/client', token)
+        forbiddenPage('securedOAuth2Resources/client', token)
 
         where:
         _   |   grantType
@@ -121,10 +121,10 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('secured/client')
+        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/client')
 
         and:
-        requestPage('secured/client', token) == 'is client'
+        requestPage('securedOAuth2Resources/client', token) == 'is client'
 
         where:
         clientId                |   clientSecret
@@ -139,10 +139,10 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('secured/user')
+        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/user')
 
         and:
-        requestPage('secured/user', token) == 'is user'
+        requestPage('securedOAuth2Resources/user', token) == 'is user'
 
         where:
         _   |   grantType
@@ -159,10 +159,10 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('secured/user')
+        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/user')
 
         and:
-        forbiddenPage('secured/user', token)
+        forbiddenPage('securedOAuth2Resources/user', token)
 
         where:
         clientId                |   clientSecret
@@ -177,10 +177,10 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('secured/denyClient')
+        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/denyClient')
 
         and:
-        forbiddenPage('secured/denyClient', token)
+        forbiddenPage('securedOAuth2Resources/denyClient', token)
 
         where:
         _   |   grantType
@@ -196,7 +196,7 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         login()
 
         when:
-        go 'secured/denyClient'
+        go 'securedOAuth2Resources/denyClient'
 
         then:
         $().text() == 'no client can see'
@@ -209,7 +209,7 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         def token = getAccessToken(request)
 
         expect:
-        requestPage('secured/anyone', token) == 'anyone can see'
+        requestPage('securedOAuth2Resources/anyone', token) == 'anyone can see'
 
         where:
         _   |   grantType
@@ -221,7 +221,7 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
 
     void "permitAll allows web user"() {
         when:
-        go 'secured/anyone'
+        go 'securedOAuth2Resources/anyone'
 
         then:
         $().text() == 'anyone can see'
@@ -231,7 +231,7 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         login()
 
         and:
-        go 'secured/anyone'
+        go 'securedOAuth2Resources/anyone'
 
         then:
         $().text() == 'anyone can see'
@@ -244,7 +244,7 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
         def token = getAccessToken(request)
 
         expect:
-        forbiddenPage('secured/nobody', token)
+        forbiddenPage('securedOAuth2Resources/nobody', token)
 
         where:
         _   |   grantType
@@ -256,7 +256,7 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
 
     void "locked down endpoint cannot be access by web user"() {
         when:
-        go 'secured/nobody'
+        go 'securedOAuth2Resources/nobody'
 
         and:
         at LoginPage
@@ -274,10 +274,10 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
 
         expect:
         if(allowed) {
-            requestPage('secured/trustedClient', token) == 'trusted client'
+            requestPage('securedOAuth2Resources/trustedClient', token) == 'trusted client'
         }
         else {
-            forbiddenPage('secured/trustedClient', token)
+            forbiddenPage('securedOAuth2Resources/trustedClient', token)
         }
 
         where:
@@ -297,10 +297,10 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
 
         expect:
         if(allowed) {
-            requestPage('secured/trustedUser', token) == 'trusted user'
+            requestPage('securedOAuth2Resources/trustedUser', token) == 'trusted user'
         }
         else {
-            forbiddenPage('secured/trustedUser', token)
+            forbiddenPage('securedOAuth2Resources/trustedUser', token)
         }
 
         where:
@@ -325,10 +325,10 @@ class SecuredControllerFunctionalSpec extends AbstractAccessControlFunctionalSpe
 
         expect:
         if(allowed) {
-            requestPage('secured/userRoleOrReadScope', token) == 'trusted user'
+            requestPage('securedOAuth2Resources/userRoleOrReadScope', token) == 'trusted user'
         }
         else {
-            forbiddenPage('secured/userRoleOrReadScope', token)
+            forbiddenPage('securedOAuth2Resources/userRoleOrReadScope', token)
         }
 
         where:
