@@ -28,15 +28,15 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
         browser.clearCookies()
     }
 
-    protected void attemptRequestWithoutTokenRedirectsToDenied(String relativeUrl) {
+    protected void attemptUnauthenticatedRequestRedirectsToDenied(String relativeUrl) {
         def requestUrl = browser.baseUrl + relativeUrl
         go requestUrl
         isAt DeniedPage
     }
 
-    protected String requestPage(String relativeUrl, String token) {
+    protected String requestPage(String relativeUrl, String token = null) {
         def requestUrl = browser.baseUrl + relativeUrl
-        def headers = [Authorization: "Bearer $token"]
+        def headers = token ? [Authorization: "Bearer $token"] : [:]
         def response = restClient.get(uri: requestUrl, headers: headers) as HttpResponseDecorator
         response.data
     }
@@ -54,10 +54,10 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
         }
     }
 
-    protected HttpResponseDecorator requestRawResponse(String relativeUrl, String token) {
+    protected HttpResponseDecorator requestRawResponse(String relativeUrl, String token = null) {
         try {
             def requestUrl = browser.baseUrl + relativeUrl
-            def headers = [Authorization: "Bearer $token"]
+            def headers = token ? [Authorization: "Bearer $token"] : [:]
             restClient.get(uri: requestUrl, headers: headers) as HttpResponseDecorator
         }
         catch(HttpResponseException e) {
@@ -157,6 +157,11 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
         to params, AuthorizationPage
         at LoginPage
 
+        login()
+    }
+
+    protected void formLogin() {
+        to LoginPage
         login()
     }
 

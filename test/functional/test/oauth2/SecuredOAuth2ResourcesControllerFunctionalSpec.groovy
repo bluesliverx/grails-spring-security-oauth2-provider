@@ -24,7 +24,7 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/clientRoleExpression')
+        attemptUnauthenticatedRequestRedirectsToDenied('securedOAuth2Resources/clientRoleExpression')
 
         and:
         requestPage('securedOAuth2Resources/clientRoleExpression', token) == 'client role expression'
@@ -44,7 +44,7 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/clientRole')
+        attemptUnauthenticatedRequestRedirectsToDenied('securedOAuth2Resources/clientRole')
 
         and:
         forbiddenPage('securedOAuth2Resources/clientRole', token)
@@ -62,7 +62,7 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/clientRole')
+        attemptUnauthenticatedRequestRedirectsToDenied('securedOAuth2Resources/clientRole')
 
         and:
         requestPage('securedOAuth2Resources/clientRole', token) == 'client role'
@@ -75,7 +75,7 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/clientHasAnyRole')
+        attemptUnauthenticatedRequestRedirectsToDenied('securedOAuth2Resources/clientHasAnyRole')
 
         and:
         requestPage('securedOAuth2Resources/clientHasAnyRole', token) == 'client has any role'
@@ -101,7 +101,7 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/client')
+        attemptUnauthenticatedRequestRedirectsToDenied('securedOAuth2Resources/client')
 
         and:
         forbiddenPage('securedOAuth2Resources/client', token)
@@ -121,7 +121,7 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/client')
+        attemptUnauthenticatedRequestRedirectsToDenied('securedOAuth2Resources/client')
 
         and:
         requestPage('securedOAuth2Resources/client', token) == 'is client'
@@ -139,7 +139,7 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/user')
+        attemptUnauthenticatedRequestRedirectsToDenied('securedOAuth2Resources/user')
 
         and:
         requestPage('securedOAuth2Resources/user', token) == 'is user'
@@ -159,7 +159,7 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/user')
+        attemptUnauthenticatedRequestRedirectsToDenied('securedOAuth2Resources/user')
 
         and:
         forbiddenPage('securedOAuth2Resources/user', token)
@@ -177,7 +177,7 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         def token = getAccessToken(request)
 
         expect:
-        attemptRequestWithoutTokenRedirectsToDenied('securedOAuth2Resources/denyClient')
+        attemptUnauthenticatedRequestRedirectsToDenied('securedOAuth2Resources/denyClient')
 
         and:
         forbiddenPage('securedOAuth2Resources/denyClient', token)
