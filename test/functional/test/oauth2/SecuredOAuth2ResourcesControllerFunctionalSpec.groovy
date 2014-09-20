@@ -2,7 +2,7 @@ package test.oauth2
 
 import helper.AccessTokenRequest
 import helper.GrantTypes
-import pages.DeniedPage
+import pages.IndexPage
 import pages.LoginPage
 import spock.lang.Unroll
 
@@ -263,7 +263,7 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         login()
 
         then:
-        at DeniedPage
+        at IndexPage
     }
 
     @Unroll

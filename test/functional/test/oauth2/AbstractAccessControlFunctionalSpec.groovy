@@ -54,6 +54,33 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
         }
     }
 
+    protected boolean currentSecurityContextHasGrantedAuthority(String authority) {
+        def url = 'securityBackdoor/containsGrantedAuthority'
+        def params = [grantedAuthority: authority]
+
+        def status = requestRawResponseWithParams(url, params).status
+
+        if(status == 200) {
+            return true
+        }
+        else if(status == 404) {
+            return false
+        }
+        else {
+            throw new IllegalStateException("Security backdoor returned [$status]")
+        }
+    }
+
+    private HttpResponseDecorator requestRawResponseWithParams(String relativeUrl, Map params) {
+        try {
+            def requestUrl = browser.baseUrl + relativeUrl
+            restClient.get(uri: requestUrl, query: params) as HttpResponseDecorator
+        }
+        catch(HttpResponseException e) {
+            return e.response
+        }
+    }
+
     protected HttpResponseDecorator requestRawResponse(String relativeUrl, String token = null) {
         try {
             def requestUrl = browser.baseUrl + relativeUrl
@@ -163,6 +190,7 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
     protected void formLogin() {
         to LoginPage
         login()
+        at IndexPage
     }
 
     protected void login() {

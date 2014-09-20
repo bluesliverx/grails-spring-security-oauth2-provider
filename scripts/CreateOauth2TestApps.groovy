@@ -141,6 +141,12 @@ private void runQuickstart() {
         'daoAuthenticationProvider',
         'anonymousAuthenticationProvider',
         'rememberMeAuthenticationProvider'
+]
+
+grails.plugin.springsecurity.filterChain.chainMap = [
+        '/oauth/token': 'JOINED_FILTERS,-oauth2ProviderFilter,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter',
+        '/securedOAuth2Resources/**': 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter',
+        '/**': 'JOINED_FILTERS,-statelessSecurityContextPersistenceFilter,-oauth2ProviderFilter,-clientCredentialsTokenEndpointFilter'
 ]'''}
 }
 
@@ -155,23 +161,20 @@ private void copyTestResources() {
     changeRedirectUriConstant('grails-app/conf/BootStrap.groovy')
 
     /* Controllers */
-    ant.copy(todir: "$testProjectRoot/grails-app/controllers/test/oauth2", overwrite: true) {
-        fileset(dir: 'grails-app/controllers/test/oauth2') {
-            include name: 'CleanupController.groovy'
-            include name: 'LogoutController.groovy'
-            include name: 'RedirectController.groovy'
-            include name: 'SecuredOAuth2ResourcesController.groovy'
-        }
-    }
+    ant.copydir src: "grails-app/controllers", dest: "$testProjectRoot/grails-app/controllers", forceoverwrite: true
 
     /* Views */
-    ['logout', 'redirect', 'secured'].each { name ->
+    ['logout', 'redirect', 'securedOAuth2Resources'].each { name ->
         ant.mkdir dir: "$testProjectRoot/grails-app/views/$name"
 
         ant.copy file: "grails-app/views/$name/index.gsp",
                  tofile: "$testProjectRoot/grails-app/views/$name/index.gsp",
                  overwrite: true
     }
+
+    ant.copy file: "grails-app/views/index.gsp",
+            tofile: "$testProjectRoot/grails-app/views/index.gsp",
+            overwrite: true
 
     /* Tests */
     ant.copydir src: "test/functional", dest: "$testProjectRoot/test/functional", forceoverwrite: true

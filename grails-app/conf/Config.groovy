@@ -2,7 +2,8 @@
 log4j = {
     debug  'grails.plugin.springsecurity.oauthprovider',
             'grails.plugin.springsecurity',
-            'org.springframework.security'
+            'org.springframework.security',
+            'test.oauth2'
 
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
             'org.codehaus.groovy.grails.web.pages',          // GSP
@@ -38,6 +39,12 @@ grails.plugin.springsecurity.providerNames = [
         'daoAuthenticationProvider',
         'anonymousAuthenticationProvider',
         'rememberMeAuthenticationProvider'
+]
+
+grails.plugin.springsecurity.filterChain.chainMap = [
+        '/oauth/token': 'JOINED_FILTERS,-oauth2ProviderFilter,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter',
+        '/securedOAuth2Resources/**': 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter',
+        '/**': 'JOINED_FILTERS,-statelessSecurityContextPersistenceFilter,-oauth2ProviderFilter,-clientCredentialsTokenEndpointFilter'
 ]
 
 // Added by the Spring Security OAuth2 Provider plugin:
