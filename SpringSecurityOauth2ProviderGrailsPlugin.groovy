@@ -157,6 +157,10 @@ OAuth2 Provider support for the Spring Security plugin.
         configureResourceProtection.delegate = delegate
         configureResourceProtection(conf)
 
+        /* Access to OAuth2 resources and the token endpoint must be stateless */
+        configureStatelessFilter.delegate = delegate
+        configureStatelessFilter(conf)
+
 		println "... done configuring Spring Security OAuth2 provider"
 	}
 
@@ -389,14 +393,20 @@ OAuth2 Provider support for the Spring Security plugin.
 
         SpringSecurityUtils.registerFilter 'oauth2ProviderFilter',
                 conf.oauthProvider.filterStartPosition + 1
+    }
 
-        // Access to OAuth 2.0 token endpoint and resources must be stateless
+    private configureStatelessFilter = { conf ->
         statelessSecurityContextPersistenceFilter(StatelessSecurityContextPersistenceFilter)
 
-        // We add the stateless filter to the chain by default and require the plugin consumer to remove
-        // either the session based or stateless security context filter from the filter chain where appropriate
-        SpringSecurityUtils.registerFilter 'statelessSecurityContextPersistenceFilter',
-                SecurityFilterPosition.SECURITY_CONTEXT_FILTER.order + 1
+        // Should the stateless filter be registered in the filter chain
+        boolean registerStatelessFilter = conf.oauthProvider.registerStatelessFilter as boolean
+
+        if(registerStatelessFilter) {
+            // We add the stateless filter to the chain by default and require the plugin consumer to remove
+            // either the session based or stateless security context filter from the filter chain where appropriate
+            SpringSecurityUtils.registerFilter 'statelessSecurityContextPersistenceFilter',
+                    conf.oauthProvider.statelessFilterStartPosition + 1
+        }
     }
 
     def onConfigChange = { event ->
