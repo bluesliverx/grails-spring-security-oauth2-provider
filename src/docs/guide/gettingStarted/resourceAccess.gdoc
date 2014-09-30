@@ -1,11 +1,11 @@
-Access to resources is controlled by the Spring Security Core plugin's access control mechanisms. Additionally, the plugin has full support for the OAuth 2.0 SPeL extensions provided by the underlying Spring library. Refer to the methods in [OAuth2SecurityExpressionMethods|https://github.com/spring-projects/spring-security-oauth/blob/1.0.5.RELEASE/spring-security-oauth2/src/main/java/org/springframework/security/oauth2/provider/expression/OAuth2SecurityExpressionMethods.java] for what is available in the plugin.
+Access to resources is controlled by the Spring Security Core plugin's access control mechanisms. Additionally, the plugin has full support for the OAuth 2.0 SPeL extensions provided by the underlying Spring library. Refer to the methods in [OAuth2SecurityExpressionMethods|https://github.com/spring-projects/spring-security-oauth/blob/2.0.2.RELEASE/spring-security-oauth2/src/main/java/org/springframework/security/oauth2/provider/expression/OAuth2SecurityExpressionMethods.java] for what is available in the plugin.
 
 Using SPeL is the only tested and confirmed way to enforce OAuth 2.0 specific restrictions on resource access.
 
 The following controller illustrates the use of OAuth 2.0 SPeL:
 
 {code}
-class SecuredController {
+class SecuredOAuth2ResourcesController {
 
     @Secured(["#oauth2.clientHasRole('ROLE_CLIENT')"])
     def clientRoleExpression() {
@@ -62,3 +62,15 @@ class SecuredController {
     }
 }
 {code}
+
+The filter chains must be configured to ensure stateless access to the token endpoint and any OAuth 2.0 resources:
+
+{code}
+grails.plugin.springsecurity.filterChain.chainMap = [
+        '/oauth/token': 'JOINED_FILTERS,-oauth2ProviderFilter,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter',
+        '/securedOAuth2Resources/**': 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter',
+        '/**': 'JOINED_FILTERS,-statelessSecurityContextPersistenceFilter,-oauth2ProviderFilter,-clientCredentialsTokenEndpointFilter'
+]
+{code}
+
+Please consult the section on [Filter Chain Configuration|guide:filterChainConfig] for more information.

@@ -5,6 +5,7 @@ package com.yourapp
 
 class AccessToken {
 
+    String authenticationKey
     byte[] authentication
 
     String username
@@ -26,7 +27,8 @@ class AccessToken {
         expiration nullable: true
         scope nullable: false
         refreshToken nullable: true
-        authentication nullable: false, maxSize: 1024 * 4, validator: { val, obj -> val.size() > 0 }
+        authenticationKey nullable: false, blank: false, unique: true
+        authentication nullable: false, minSize: 1, maxSize: 1024 * 4
     }
 
     static mapping = {

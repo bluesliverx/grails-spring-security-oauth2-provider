@@ -1,4 +1,4 @@
-Information from the Grails client domain class will be extracted to create a @ClientDetails@ instance for the underlying Spring Security OAuth2 implementation.
+Information from the Grails client domain class will be extracted to create a @ClientDetails@ instance for the underlying Spring Security OAuth 2.0 implementation.
 
 The generated class will look like this:
 
@@ -44,7 +44,7 @@ class Client {
 
         redirectUris nullable: true
         additionalInformation nullable: true
-   }
+    }
 
     def beforeInsert() {
         encodeClientSecret()
@@ -58,7 +58,7 @@ class Client {
 
     protected void encodeClientSecret() {
         clientSecret = clientSecret ?: NO_CLIENT_SECRET
-        clientSecret = springSecurityService.encodePassword(clientSecret)
+        clientSecret = springSecurityService?.passwordEncoder ? springSecurityService.encodePassword(clientSecret) : clientSecret
     }
 }
 {code}

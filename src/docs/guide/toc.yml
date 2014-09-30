@@ -39,4 +39,4 @@ configuration:
   grantTypes: Supported Grant Types
   authorization: Additional Authorization Constraints
   defaultClientConfig: Default Client Configuration
-  tokenEndpointFilterChain: Token Endpoint Filter Chain
+  filterChainConfig: Filter Chain Configuration

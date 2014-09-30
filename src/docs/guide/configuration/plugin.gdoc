@@ -1,9 +1,11 @@
 The following properties define whether the plugin is active and where the required filters are registered in the Spring Security filter chain:
 
 {table}
-*Property*                  |   *Default Value*                                     |   *Meaning*
-active                      |   @true@                                              |   Whether the plugin is enabled.
-filterStartPosition         |   @SecurityFilterPosition.X509_FILTER.order@          |   The position in the filter chain of the @OAuth2AuthenticationProcessingFilter@, which handles authentication for resource access by extracting an access token from the incoming request.
-clientFilterStartPosition   |   @SecurityFilterPosition.DIGEST_AUTH_FILTER.order@   |   The position in the filter chain of the @ClientCredentialsTokenEndpointFilter@, which handles client authentication.
-realmName                   |   @Grails OAuth2 Realm@                               |   Realm name included in the WWW-Authenticate header in a challenge response.
+*Property*                      |   *Default Value*                                         |   *Meaning*
+active                          |   @true@                                                  |   Whether the plugin is enabled.
+filterStartPosition             |   @SecurityFilterPosition.X509_FILTER.order@              |   The position in the filter chain of the @OAuth2AuthenticationProcessingFilter@, which handles authentication for resource access by extracting an access token from the incoming request.
+clientFilterStartPosition       |   @SecurityFilterPosition.DIGEST_AUTH_FILTER.order@       |   The position in the filter chain of the @ClientCredentialsTokenEndpointFilter@, which handles client authentication.
+statelessFilterStartPosition    |   @SecurityFilterPosition.SECURITY_CONTEXT_FILTER.order@  |   The position in the filter chain of the @StatelessSecurityContextPersistenceFilter@, which is used to ensure access to OAuth 2.0 resources and the token endpoint are stateless.
+registerStatelessFilter         |   @true@                                                  |   When this is @true@, the plugin will register the @statelessSecurityContextPersistenceFilter@ in the filter chain after the @securityContextPersistenceFilter@ provided by the Spring Security Core plugin. See [below|guide:filterChainConfig] for additional configuration of the filter chain(s) required to properly secure access to OAuth 2.0 resources.
+realmName                       |   @Grails OAuth2 Realm@                                   |   Realm name included in the WWW-Authenticate header in a challenge response.
 {table}
