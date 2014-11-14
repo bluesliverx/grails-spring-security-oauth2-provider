@@ -49,6 +49,7 @@ class GormTokenStoreService implements TokenStore {
 
     @Override
     void storeAccessToken(OAuth2AccessToken token, OAuth2Authentication authentication) {
+        removeAccessTokenIfItExists(token)
         def (accessTokenLookup, GormAccessToken) = getAccessTokenLookupAndClass()
 
         def authenticationKeyPropertyName = accessTokenLookup.authenticationKeyPropertyName
@@ -73,6 +74,12 @@ class GormTokenStoreService implements TokenStore {
                 (scopePropertyName): token.scope
         ]
         GormAccessToken.newInstance(ctorArgs).save(failOnError: true)
+    }
+
+    private void removeAccessTokenIfItExists(OAuth2AccessToken token) {
+        if(readAccessToken(token?.value) != null) {
+            removeAccessToken(token)
+        }
     }
 
     @Override
