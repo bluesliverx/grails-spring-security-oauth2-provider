@@ -73,7 +73,7 @@ class GormTokenStoreService implements TokenStore {
                 (refreshTokenPropertyName): token.refreshToken?.value,
                 (scopePropertyName): token.scope
         ]
-        GormAccessToken.newInstance(ctorArgs).save(failOnError: true)
+        GormAccessToken.newInstance(ctorArgs).save()
     }
 
     private void removeAccessTokenIfItExists(OAuth2AccessToken token) {
