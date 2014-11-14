@@ -39,7 +39,7 @@ public class OAuth2AuthorizationEndpointExceptionResolver extends AbstractHandle
             Throwable cause = authorizationEndpointException.getCause();
             ServletWebRequest webRequest = new ServletWebRequest(request, response);
 
-            logger.debug("Handling authorization endpoint exception: " + authorizationEndpointException.getCause());
+            logger.debug("Handling authorization endpoint exception", authorizationEndpointException);
 
             if(isClientRegistration(cause)) {
                 ClientRegistrationException cre = (ClientRegistrationException) cause;
