@@ -497,12 +497,12 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
 
         and:
         if(useRefreshToken) {
-            accessToken.refreshToken instanceof ExpiringOAuth2RefreshToken
-            accessToken.refreshToken.value == refreshTokenValue
-            accessToken.refreshToken.expiration == gormRefreshToken.expiration
+            assert accessToken.refreshToken instanceof ExpiringOAuth2RefreshToken
+            assert accessToken.refreshToken.value == refreshTokenValue
+            assert accessToken.refreshToken.expiration == gormRefreshToken.expiration
         }
         else {
-            accessToken.refreshToken == null
+            assert accessToken.refreshToken == null
         }
 
         where:
