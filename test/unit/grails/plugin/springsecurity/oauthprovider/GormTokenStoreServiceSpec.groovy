@@ -2,6 +2,7 @@ package grails.plugin.springsecurity.oauthprovider
 
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.test.mixin.TestFor
+import org.springframework.security.oauth2.common.DefaultExpiringOAuth2RefreshToken
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken
 import org.springframework.security.oauth2.provider.token.AuthenticationKeyGenerator
@@ -48,6 +49,7 @@ class GormTokenStoreServiceSpec extends Specification {
                 className: refreshTokenClassName,
                 authenticationPropertyName: 'authentication',
                 valuePropertyName: 'value',
+                expirationPropertyName: 'expiration',
         ]
         SpringSecurityUtils.securityConfig.oauthProvider.refreshTokenLookup = refreshTokenLookup
     }
@@ -91,7 +93,7 @@ class GormTokenStoreServiceSpec extends Specification {
 
         where:
         _   |   methodName                          |   args
-        _   |   'storeRefreshToken'                 |   [null, null]
+        _   |   'storeRefreshToken'                 |   [new DefaultExpiringOAuth2RefreshToken('token', new Date()), null]
         _   |   'readRefreshToken'                  |   ['token']
         _   |   'readAuthenticationForRefreshToken' |   [new DefaultOAuth2RefreshToken('token')]
         _   |   'removeRefreshToken'                |   [new DefaultOAuth2RefreshToken('token')]

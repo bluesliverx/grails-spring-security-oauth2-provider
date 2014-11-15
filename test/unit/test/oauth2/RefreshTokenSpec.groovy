@@ -46,4 +46,18 @@ class RefreshTokenSpec extends Specification {
         []          |   false
         null        |   false
     }
+
+    @Unroll
+    void "expiration is required -- [#value] is valid [#valid]"() {
+        when:
+        def token = new RefreshToken(expiration: value)
+
+        then:
+        token.validate(['expiration']) == valid
+
+        where:
+        value       |   valid
+        new Date()  |   true
+        null        |   false
+    }
 }

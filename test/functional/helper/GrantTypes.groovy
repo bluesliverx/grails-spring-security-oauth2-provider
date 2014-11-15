@@ -4,5 +4,6 @@ enum GrantTypes {
     AuthorizationCode,
     Implicit,
     ResourceOwnerCredentials,
-    ClientCredentials
+    ClientCredentials,
+    RefreshToken
 }

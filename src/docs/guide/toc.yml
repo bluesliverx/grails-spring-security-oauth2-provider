@@ -30,7 +30,7 @@ domainClassProperties:
   clientLookup: Client Class Properties
   accessTokenLookup: Access Token Class Properties
   refreshTokenLookup: Refresh Token Class Properties
-  authorizationCodeLookup: Access Token Class Properties
+  authorizationCodeLookup: Authorization Code Class Properties
 configuration:
   title: Configuration
   plugin: Plugin

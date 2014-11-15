@@ -5,4 +5,5 @@ class AccessTokenRequest {
     String clientId
     String clientSecret
     String scope
+    String refreshToken
 }

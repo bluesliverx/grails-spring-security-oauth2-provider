@@ -47,7 +47,8 @@ class BootStrap {
 
         new Client(
                 clientId: 'password-only',
-                authorizedGrantTypes: ['password', 'test']
+                authorizedGrantTypes: ['password'],
+                scopes: ['test']
         ).save(flush: true)
 
         new Client(
@@ -87,6 +88,14 @@ class BootStrap {
                 authorizedGrantTypes: ['implicit'],
                 scopes: ['test'],
                 redirectUris: [REDIRECT_URI]
+        ).save(flush: true)
+
+        new Client(
+                clientId: 'token-expiration',
+                authorizedGrantTypes: ['password', 'refresh_token'],
+                accessTokenValiditySeconds: 20,
+                refreshTokenValiditySeconds: 40,
+                scopes: ['test']
         ).save(flush: true)
     }
 }

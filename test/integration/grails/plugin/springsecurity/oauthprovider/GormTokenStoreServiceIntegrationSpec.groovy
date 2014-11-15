@@ -1,6 +1,7 @@
 package grails.plugin.springsecurity.oauthprovider
 
 import grails.test.spock.IntegrationSpec
+import org.springframework.security.oauth2.common.ExpiringOAuth2RefreshToken
 import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.security.oauth2.common.OAuth2RefreshToken
 import org.springframework.security.oauth2.provider.OAuth2Authentication
@@ -81,7 +82,10 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
     }
 
     private RefreshToken createGormRefreshToken(Map overrides = [:]) {
-        def token = new RefreshToken(value: refreshValue, authentication: serializedAuthentication)
+        def token = new RefreshToken(
+                value: refreshValue,
+                expiration: new Date(),
+                authentication: serializedAuthentication)
         addOverrides(token, overrides)
         token.save(failOnError: true)
     }
@@ -210,8 +214,11 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
         expectAuthenticationSerialization()
 
         and:
-        def oAuth2RefreshToken = Stub(OAuth2RefreshToken) {
+        def expiration = new Date()
+
+        def oAuth2RefreshToken = Stub(ExpiringOAuth2RefreshToken) {
             getValue() >> refreshValue
+            getExpiration() >> expiration
         }
 
         when:
@@ -224,11 +231,26 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
         and:
         gormToken.value == refreshValue
         gormToken.authentication == serializedAuthentication
+        gormToken.expiration == expiration
+    }
+
+    void "refresh token being stored must be an ExpiringOAuth2RefreshToken"() {
+        given:
+        def oAuth2RefreshToken = Stub(OAuth2RefreshToken) {
+            getValue() >> refreshValue
+        }
+
+        when:
+        gormTokenStoreService.storeRefreshToken(oAuth2RefreshToken, oAuth2Authentication)
+
+        then:
+        def e = thrown(IllegalArgumentException)
+        e.message == "Refresh token must be capable of expiring"
     }
 
     void "read refresh token by value"() {
         given:
-        new RefreshToken(authentication: serializedAuthentication, value: refreshValue).save()
+        createGormRefreshToken()
         assert RefreshToken.findByValue(refreshValue)
 
         when:
@@ -263,7 +285,7 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
         given:
         expectAuthenticationDeserialization()
 
-        def gormRefreshToken = new RefreshToken(value: refreshValue, authentication: serializedAuthentication).save()
+        def gormRefreshToken = createGormRefreshToken()
         def oAuth2RefreshToken = gormTokenStoreService.createOAuth2RefreshToken(gormRefreshToken)
 
         assert RefreshToken.findByValue(refreshValue)
@@ -274,7 +296,7 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
 
     void "read authentication removes refresh token if deserialization throws"() {
         given:
-        def gormRefreshToken = new RefreshToken(value: refreshValue, authentication: serializedAuthentication).save()
+        def gormRefreshToken = createGormRefreshToken()
         def oAuth2RefreshToken = gormTokenStoreService.createOAuth2RefreshToken(gormRefreshToken)
 
         assert RefreshToken.findByValue(refreshValue)
@@ -455,8 +477,7 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
     @Unroll
     void "test createOAuth2AccessToken with refresh token [#useRefreshToken]"() {
         given:
-        if(useRefreshToken)
-            createGormRefreshToken(value: refreshTokenValue)
+        def gormRefreshToken = useRefreshToken ? createGormRefreshToken(value: refreshTokenValue) : null
 
         def expiration = new Date()
         def gormAccessToken = createGormAccessToken(refreshToken: refreshTokenValue, expiration: expiration, scope: ['read'])
@@ -475,10 +496,14 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
         accessToken.scope.contains('read')
 
         and:
-        if(useRefreshToken)
+        if(useRefreshToken) {
+            accessToken.refreshToken instanceof ExpiringOAuth2RefreshToken
             accessToken.refreshToken.value == refreshTokenValue
-        else
+            accessToken.refreshToken.expiration == gormRefreshToken.expiration
+        }
+        else {
             accessToken.refreshToken == null
+        }
 
         where:
         useRefreshToken     |   refreshTokenValue
@@ -488,15 +513,16 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
 
     void "test createOAuth2RefreshToken"() {
         given:
-        def gormRefreshToken = new RefreshToken(value: 'gormRefreshToken')
+        def gormRefreshToken = createGormRefreshToken()
 
         when:
         def refreshToken = gormTokenStoreService.createOAuth2RefreshToken(gormRefreshToken)
 
         then:
-        refreshToken instanceof OAuth2RefreshToken
+        refreshToken instanceof ExpiringOAuth2RefreshToken
 
         and:
-        refreshToken.value == 'gormRefreshToken'
+        refreshToken.value == gormRefreshToken.value
+        refreshToken.expiration == gormRefreshToken.expiration
     }
 }

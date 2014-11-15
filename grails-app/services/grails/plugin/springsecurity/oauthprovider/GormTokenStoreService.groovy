@@ -2,8 +2,10 @@ package grails.plugin.springsecurity.oauthprovider
 
 import grails.plugin.springsecurity.SpringSecurityUtils
 import org.codehaus.groovy.grails.commons.GrailsApplication
+import org.springframework.security.oauth2.common.DefaultExpiringOAuth2RefreshToken
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken
+import org.springframework.security.oauth2.common.ExpiringOAuth2RefreshToken
 import org.springframework.security.oauth2.common.OAuth2AccessToken
 import org.springframework.security.oauth2.common.OAuth2RefreshToken
 import org.springframework.security.oauth2.provider.OAuth2Authentication
@@ -112,14 +114,20 @@ class GormTokenStoreService implements TokenStore {
 
     @Override
     void storeRefreshToken(OAuth2RefreshToken refreshToken, OAuth2Authentication authentication) {
+        if(!(refreshToken instanceof ExpiringOAuth2RefreshToken)) {
+            throw new IllegalArgumentException("Refresh token must be capable of expiring")
+        }
+        def expiringRefreshToken = (ExpiringOAuth2RefreshToken) refreshToken
         def (refreshTokenLookup, GormRefreshToken) = getRefreshTokenLookupAndClass()
 
         def authenticationPropertyName = refreshTokenLookup.authenticationPropertyName
         def valuePropertyName = refreshTokenLookup.valuePropertyName
+        def expirationPropertyName = refreshTokenLookup.expirationPropertyName
 
         def ctorArgs = [
                 (authenticationPropertyName): oauth2AuthenticationSerializer.serialize(authentication),
-                (valuePropertyName): refreshToken.value,
+                (valuePropertyName): expiringRefreshToken.value,
+                (expirationPropertyName): expiringRefreshToken.expiration
         ]
         GormRefreshToken.newInstance(ctorArgs).save()
     }
@@ -266,18 +274,22 @@ class GormTokenStoreService implements TokenStore {
             def refreshValuePropertyName = refreshTokenLookup.valuePropertyName
 
             def gormRefreshToken = GormRefreshToken.findWhere((refreshValuePropertyName): refreshValue)
-            return gormRefreshToken ? new DefaultOAuth2RefreshToken(refreshValue) : null
+            return createOAuth2RefreshToken(gormRefreshToken)
         } else {
             return null
         }
     }
 
-    private OAuth2RefreshToken createOAuth2RefreshToken(gormRefreshToken) {
+    private ExpiringOAuth2RefreshToken createOAuth2RefreshToken(gormRefreshToken) {
         def refreshTokenLookup = SpringSecurityUtils.securityConfig.oauthProvider.refreshTokenLookup
+
         def valuePropertyName = refreshTokenLookup.valuePropertyName
+        def expirationPropertyName = refreshTokenLookup.expirationPropertyName
 
         def value = gormRefreshToken?."$valuePropertyName"
-        value ? new DefaultOAuth2RefreshToken(value) : null
+        def expiration = gormRefreshToken?."$expirationPropertyName"
+
+        value ? new DefaultExpiringOAuth2RefreshToken(value, expiration) : null
     }
 
     private def getAccessTokenLookupAndClass() {

@@ -1,6 +1,7 @@
 {table}
-*Property*                  |   *Default Value*     |   *Meaning*
-className                   |   @null@              |   Refresh token class name.
-authenticationPropertyName  |   @'authentication'@  |   Refresh token class serialized authentication field.
-valuePropertyName           |   @'value'@           |   Refresh token class value field.
+*Property*                                      |   *Default Value*     |   *Meaning*
+refreshTokenLookup.className                    |   @null@              |   Refresh token class name.
+refreshTokenLookup.authenticationPropertyName   |   @'authentication'@  |   Refresh token class serialized authentication field.
+refreshTokenLookup.valuePropertyName            |   @'value'@           |   Refresh token class value field.
+refreshTokenLookup.expirationPropertyName       |   @'expiration'@      |   Refresh
 {table}

@@ -92,12 +92,41 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
         }
     }
 
-    protected String getAccessToken(AccessTokenRequest request) {
+    protected HttpResponseDecorator requestRawTokenResponse(AccessTokenRequest request) {
+        Map params = createParamsFromRequest(request)
+        String grantType
 
+        switch(request.grantType) {
+            case GrantTypes.ResourceOwnerCredentials:
+                grantType = 'password'
+                break
+
+            case GrantTypes.ClientCredentials:
+                grantType = 'client_credentials'
+                break
+
+            case GrantTypes.RefreshToken:
+                grantType = 'refresh_token'
+                break;
+
+            default:
+                throw new IllegalStateException('Unable to request raw token response')
+        }
+
+        params << [grant_type: grantType]
+
+        try {
+            AccessTokenRequester.requestAccessToken(params)
+        }
+        catch(HttpResponseException e) {
+            e.response
+        }
+    }
+
+    protected String getAccessToken(AccessTokenRequest request) {
         Map params = createParamsFromRequest(request)
 
         switch(request.grantType) {
-
             case GrantTypes.AuthorizationCode:
                 return authorizationCodeGrant(params)
 
@@ -115,6 +144,18 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
         }
     }
 
+    protected String getRefreshToken(AccessTokenRequest request) {
+        Map params = createParamsFromRequest(request)
+
+        switch(request.grantType) {
+            case GrantTypes.ResourceOwnerCredentials:
+                return resourceOwnerPasswordCredentialsGrantRefreshToken(params)
+
+            default:
+                throw new IllegalStateException('Unable to request refresh token')
+        }
+    }
+
     private Map createParamsFromRequest(AccessTokenRequest request) {
         Map params = [
                 client_id: request.clientId,
@@ -123,6 +164,10 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
 
         if(request?.clientSecret) {
             params << [client_secret: request.clientSecret]
+        }
+
+        if(request?.refreshToken) {
+            params << [refresh_token: request.refreshToken]
         }
 
         return params
@@ -173,6 +218,11 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
     private String resourceOwnerPasswordCredentialsGrant(Map params) {
         params << [grant_type: 'password', username: 'user', password: 'test']
         AccessTokenRequester.getAccessToken(params)
+    }
+
+    private String resourceOwnerPasswordCredentialsGrantRefreshToken(Map params) {
+        params << [grant_type: 'password', username: 'user', password: 'test']
+        AccessTokenRequester.getRefreshToken(params)
     }
 
     private String clientCredentialsGrant(Map params) {
