@@ -1,16 +1,12 @@
 package grails.plugin.springsecurity.oauthprovider
 
 import grails.plugin.springsecurity.SpringSecurityUtils
-import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
-import org.springframework.security.oauth2.provider.ClientDetails
-import org.springframework.security.oauth2.provider.NoSuchClientException
 import spock.lang.Specification
 import spock.lang.Unroll
 import test.oauth2.Client
 
 @TestFor(GormClientDetailsService)
-@Mock([Client])
 class GormClientDetailsServiceSpec extends Specification {
 
     void setup() {
@@ -19,7 +15,7 @@ class GormClientDetailsServiceSpec extends Specification {
         SpringSecurityUtils.securityConfig = [oauthProvider: [:]] as ConfigObject
         setUpDefaultClientConfig()
 
-        setClientClassName('test.oauth2.Client')
+        setClientClassName(Client.class.name)
     }
 
     void cleanup() {
@@ -57,6 +53,12 @@ class GormClientDetailsServiceSpec extends Specification {
         SpringSecurityUtils.securityConfig.oauthProvider.defaultClientConfig = clientConfig
     }
 
+    private void overrideDefaultClientConfig(Map overrides = [:]) {
+        overrides.each { key, value ->
+            SpringSecurityUtils.securityConfig.oauthProvider.defaultClientConfig."$key" = value
+        }
+    }
+
     private def getClientLookup() {
         return SpringSecurityUtils.securityConfig.oauthProvider.clientLookup
     }
@@ -65,80 +67,7 @@ class GormClientDetailsServiceSpec extends Specification {
         return SpringSecurityUtils.securityConfig.oauthProvider.defaultClientConfig
     }
 
-    void "request valid client using dynamic look up"() {
-        given:
-        new Client(
-                clientId: 'gormClient',
-                clientSecret: 'grails',
-                accessTokenValiditySeconds: 1234,
-                refreshTokenValiditySeconds: 5678,
-                authorities: ['ROLE_CLIENT'] as Set,
-                authorizedGrantTypes: ['implicit'] as Set,
-                resourceIds: ['someResource'] as Set,
-                scopes: ['kaleidoscope'] as Set,
-                redirectUris: ['http://anywhereButHere'] as Set,
-                additionalInformation: [text: 'words', number: 1234]
-        ).save()
-
-        and:
-        boolean encodeCalled = false
-        Client.metaClass.encodeClientSecret { -> encodeCalled = true }
-
-        when:
-        def details = service.loadClientByClientId('gormClient')
-
-        then:
-        details instanceof ClientDetails
-
-        and:
-        encodeCalled
-
-        and:
-        details.clientId == 'gormClient'
-        details.clientSecret == 'grails'
-
-        and:
-        details.accessTokenValiditySeconds == 1234
-        details.refreshTokenValiditySeconds == 5678
-
-        and:
-        details.authorities.size() == 1
-        details.authorities.find { it.authority == 'ROLE_CLIENT' }
-
-        and:
-        details.authorizedGrantTypes.size() == 1
-        details.authorizedGrantTypes.contains('implicit')
-
-        and:
-        details.resourceIds.size() == 1
-        details.resourceIds.contains('someResource')
-
-        and:
-        details.scope.size() == 1
-        details.scope.contains('kaleidoscope')
-
-        and:
-        details.registeredRedirectUri.size() == 1
-        details.registeredRedirectUri.contains('http://anywhereButHere')
-
-        and:
-        details.additionalInformation.size() == 2
-        details.additionalInformation.text == 'words'
-        details.additionalInformation.number == 1234
-
-        cleanup:
-        Client.metaClass = null
-    }
-
-    void "requested client not found"() {
-        when:
-        service.loadClientByClientId('gormClient')
-
-        then:
-        def e = thrown(NoSuchClientException)
-        e.message == 'No client with requested id: gormClient'
-    }
-
+    @Unroll
     void "invalid client domain class name [#className]"() {
         given:
         setClientClassName(className)
@@ -170,7 +99,7 @@ class GormClientDetailsServiceSpec extends Specification {
     @Unroll
     void "[#type] token validity can be null -- honor default if not specified"() {
         given:
-        setUpDefaultClientConfig([(name): 13490])
+        overrideDefaultClientConfig([(name): 13490])
 
         and:
         def client = new Client()
@@ -189,7 +118,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
     void "scopes can be optional -- honor default if not specified"() {
         given:
-        setUpDefaultClientConfig([scope: ['read']])
+        overrideDefaultClientConfig([scope: ['read']])
 
         and:
         def client = new Client(scopes: null)
@@ -245,7 +174,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
     void "no grant types specified for client or in default config"() {
         given:
-        setUpDefaultClientConfig([authorizedGrantTypes: []])
+        overrideDefaultClientConfig([authorizedGrantTypes: []])
 
         and:
         def client = new Client(authorizedGrantTypes: null)
@@ -259,7 +188,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
     void "grant types not required -- honor default if not specified"() {
         given:
-        setUpDefaultClientConfig([authorizedGrantTypes: ['foo', 'bar']])
+        overrideDefaultClientConfig([authorizedGrantTypes: ['foo', 'bar']])
 
         and:
         def client = new Client(authorizedGrantTypes: null)
@@ -290,7 +219,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
     void "redirect uris are not required -- honor default if not specified"() {
         given:
-        setUpDefaultClientConfig([registeredRedirectUri: ['http://somewhere.com']])
+        overrideDefaultClientConfig([registeredRedirectUri: ['http://somewhere.com']])
 
         and:
         def client = new Client(redirectUris: null)
@@ -318,7 +247,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
     void "resource ids are optional -- honor default if not specified"() {
         given:
-        setUpDefaultClientConfig([resourceIds: ['someResource']])
+        overrideDefaultClientConfig([resourceIds: ['someResource']])
 
         and:
         def client = new Client(resourceIds: null)
@@ -333,7 +262,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
     void "additional information is optional -- honor default if not specified"() {
         given:
-        setUpDefaultClientConfig([additionalInformation: [foo: 'bar']])
+        overrideDefaultClientConfig([additionalInformation: [foo: 'bar']])
 
         and:
         def client = new Client(additionalInformation: null)
