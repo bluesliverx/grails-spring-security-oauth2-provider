@@ -14,6 +14,7 @@
  */
 
 import grails.plugin.springsecurity.SecurityFilterPosition
+import grails.plugin.springsecurity.oauthprovider.UserApprovalSupport
 
 security {
 	oauthProvider {
@@ -61,6 +62,15 @@ security {
         approval {
             // When revoking approvals, should they be expired or deleted outright
             handleRevocationAsExpiry = false
+
+            // Method of auto-approval support to use
+            auto = UserApprovalSupport.EXPLICIT
+
+            // How long are stored approvals valid
+            approvalValiditySeconds = 60 * 60 * 24 * 30 // default 30 days
+
+            // Request parameter prefix for scope approval
+            scopePrefix = 'scope.'
         }
 
 		defaultClientConfig {
