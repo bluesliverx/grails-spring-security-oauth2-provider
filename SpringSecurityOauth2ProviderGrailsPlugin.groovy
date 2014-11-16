@@ -414,6 +414,18 @@ OAuth2 Provider support for the Spring Security plugin.
         loadSecurityConfig()
     }
 
+    def doWithApplicationContext = { ctx ->
+        def conf = loadSecurityConfig()
+        if(!conf) {
+            return
+        }
+
+        ctx.with {
+            boolean handleRevocationAsExpiry = conf.oauthProvider.approval.handleRevocationAsExpiry as boolean
+            gormApprovalStoreService.handleRevocationAsExpiry = handleRevocationAsExpiry
+        }
+    }
+
     private static ConfigObject loadSecurityConfig() {
         def conf = SpringSecurityUtils.securityConfig
         if (!conf || !conf.active) {

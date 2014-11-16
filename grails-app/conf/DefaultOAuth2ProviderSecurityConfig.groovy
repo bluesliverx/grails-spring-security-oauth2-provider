@@ -58,6 +58,11 @@ security {
             requireScope = true
         }
 
+        approval {
+            // When revoking approvals, should they be expired or deleted outright
+            handleRevocationAsExpiry = false
+        }
+
 		defaultClientConfig {
 			resourceIds = []
 			authorizedGrantTypes = []
@@ -107,6 +112,16 @@ security {
             scopesPropertyName = 'scopes'
             redirectUrisPropertyName = 'redirectUris'
             additionalInformationPropertyName = 'additionalInformation'
+        }
+
+        approvalLookup {
+            className = null
+            usernamePropertyName = 'username'
+            clientIdPropertyName = 'clientId'
+            scopePropertyName = 'scope'
+            approvedPropertyName = 'approved'
+            expirationPropertyName = 'expiration'
+            lastModifiedPropertyName = 'lastModified'
         }
 	}
 }
