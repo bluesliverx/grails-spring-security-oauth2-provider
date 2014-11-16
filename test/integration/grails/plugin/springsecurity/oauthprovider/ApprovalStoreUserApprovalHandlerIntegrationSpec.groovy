@@ -26,19 +26,10 @@ class ApprovalStoreUserApprovalHandlerIntegrationSpec extends IntegrationSpec {
     String username
 
     def gormApprovalStoreService
-    def gormClientDetailsService
-    def oauth2RequestFactory
+    def approvalStoreUserApprovalHandler
 
     void setup() {
-        def conf = SpringSecurityUtils.securityConfig
-
-        handler = new ApprovalStoreUserApprovalHandler(
-                clientDetailsService: gormClientDetailsService,
-                approvalStore: gormApprovalStoreService,
-                requestFactory: oauth2RequestFactory,
-                approvalExpiryInSeconds: conf.oauthProvider.approval.approvalValiditySeconds,
-                scopePrefix: conf.oauthProvider.approval.scopePrefix
-        )
+        handler = approvalStoreUserApprovalHandler
 
         clientId = 'client'
         username = 'user'

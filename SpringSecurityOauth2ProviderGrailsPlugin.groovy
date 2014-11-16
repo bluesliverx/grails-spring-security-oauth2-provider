@@ -294,30 +294,39 @@ OAuth2 Provider support for the Spring Security plugin.
         /* The request parameter sent from the userApprovalPage, indicating approval was given or denied */
         String approvalParameterName = conf.oauthProvider.userApprovalParameter
 
+        /* Explicit approval required every time */
+        defaultUserApprovalHandler(DefaultUserApprovalHandler) {
+            approvalParameter = approvalParameterName
+        }
+
+        /* Approval based on existing access tokens */
+        tokenStoreUserApprovalHandler(TokenStoreUserApprovalHandler) {
+            tokenStore = ref('tokenStore')
+            clientDetailsService = ref('clientDetailsService')
+            approvalParameter = approvalParameterName
+            requestFactory = ref('oauth2RequestFactory')
+        }
+
+        /* Approval based on remembered approvals */
+        approvalStoreUserApprovalHandler(ApprovalStoreUserApprovalHandler) {
+            clientDetailsService = ref('clientDetailsService')
+            approvalStore = ref('approvalStore')
+            requestFactory = ref('oauth2RequestFactory')
+            approvalExpiryInSeconds = conf.oauthProvider.approval.approvalValiditySeconds
+            scopePrefix = conf.oauthProvider.approval.scopePrefix
+        }
+
         /* The method of authorization auto approval to use */
         UserApprovalSupport support = conf.oauthProvider.approval.auto
 
         if(support == EXPLICIT) {
-            userApprovalHandler(DefaultUserApprovalHandler) {
-                approvalParameter = approvalParameterName
-            }
+            springConfig.addAlias 'userApprovalHandler', 'defaultUserApprovalHandler'
         }
         else if(support == TOKEN_STORE) {
-            userApprovalHandler(TokenStoreUserApprovalHandler) {
-                tokenStore = ref('tokenStore')
-                clientDetailsService = ref('clientDetailsService')
-                approvalParameter = approvalParameterName
-                requestFactory = ref('oauth2RequestFactory')
-            }
+            springConfig.addAlias 'userApprovalHandler', 'tokenStoreUserApprovalHandler'
         }
         else if(support == APPROVAL_STORE) {
-            userApprovalHandler(ApprovalStoreUserApprovalHandler) {
-                clientDetailsService = ref('clientDetailsService')
-                approvalStore = ref('approvalStore')
-                requestFactory = ref('oauth2RequestFactory')
-                approvalExpiryInSeconds = conf.oauthProvider.approval.approvalValiditySeconds
-                scopePrefix = conf.oauthProvider.approval.scopePrefix
-            }
+            springConfig.addAlias 'userApprovalHandler', 'approvalStoreUserApprovalHandler'
         }
     }
 
