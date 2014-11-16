@@ -55,25 +55,31 @@ class GormClientDetailsService implements ClientDetailsService {
         def authorizedGrantTypesPropertyName = clientLookup.authorizedGrantTypesPropertyName
         def resourceIdsPropertyName = clientLookup.resourceIdsPropertyName
         def scopesPropertyName = clientLookup.scopesPropertyName
+        def autoApproveScopesPropertyName = clientLookup.autoApproveScopesPropertyName
         def redirectUrisPropertyName = clientLookup.redirectUrisPropertyName
         def additionalInformationPropertyName = clientLookup.additionalInformationPropertyName
 
         // Load client properties or defaults
-        def resourceIds = client."$resourceIdsPropertyName" ?: defaultClientConfig.resourceIds
-        def scopes = client."$scopesPropertyName" ?: defaultClientConfig.scope
-        def authorizedGrantTypes = client."$authorizedGrantTypesPropertyName" ?: defaultClientConfig.authorizedGrantTypes
-        def redirectUris = client."$redirectUrisPropertyName" ?: defaultClientConfig.registeredRedirectUri as Set<String>
+        def resourceIds = getPropertyOrDefault(client, resourceIdsPropertyName, defaultClientConfig.resourceIds) as Collection<String>
+        def scopes = getPropertyOrDefault(client, scopesPropertyName, defaultClientConfig.scope) as Collection<String>
+        def authorizedGrantTypes = getPropertyOrDefault(client, authorizedGrantTypesPropertyName, defaultClientConfig.authorizedGrantTypes) as Collection<String>
+        def redirectUris = getPropertyOrDefault(client, redirectUrisPropertyName, defaultClientConfig.registeredRedirectUri) as Set<String>
 
         def clientId = client."$clientIdPropertyName"
-        def authorities = client."$authoritiesPropertyName"
+        def authorities = getPropertyOrDefault(client, authoritiesPropertyName, defaultClientConfig.authorities) as Collection<String>
 
         def details = new BaseClientDetails(clientId, csv(resourceIds), csv(scopes), csv(authorizedGrantTypes), csv(authorities), csv(redirectUris))
         details.clientSecret = client."$clientSecretPropertyName"
-        details.accessTokenValiditySeconds  = client."$accessTokenValiditySecondsPropertyName" ?: defaultClientConfig.accessTokenValiditySeconds
-        details.refreshTokenValiditySeconds = client."$refreshTokenValiditySecondsPropertyName" ?: defaultClientConfig.refreshTokenValiditySeconds
-        details.additionalInformation = client."$additionalInformationPropertyName" ?: defaultClientConfig.additionalInformation
+        details.autoApproveScopes = getPropertyOrDefault(client, autoApproveScopesPropertyName, defaultClientConfig.autoApproveScopes) as Set<String>
+        details.accessTokenValiditySeconds  = getPropertyOrDefault(client, accessTokenValiditySecondsPropertyName, defaultClientConfig.accessTokenValiditySeconds) as Integer
+        details.refreshTokenValiditySeconds = getPropertyOrDefault(client, refreshTokenValiditySecondsPropertyName, defaultClientConfig.refreshTokenValiditySeconds) as Integer
+        details.additionalInformation = getPropertyOrDefault(client, additionalInformationPropertyName, defaultClientConfig.additionalInformation) as Map
         correctAuthorizedGrantTypes(details, authorizedGrantTypes)
         return details
+    }
+
+    private Object getPropertyOrDefault(client, propertyName, defaultProperty) {
+        return client."$propertyName" != null ? client."$propertyName" : defaultProperty
     }
 
     /*

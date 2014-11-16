@@ -76,7 +76,8 @@ security {
 		defaultClientConfig {
 			resourceIds = []
 			authorizedGrantTypes = []
-			scope = []
+            scope = []
+            autoApproveScopes = []
 			registeredRedirectUri = null
 			authorities = []
 			accessTokenValiditySeconds = null
@@ -120,6 +121,7 @@ security {
             authorizedGrantTypesPropertyName = 'authorizedGrantTypes'
             resourceIdsPropertyName = 'resourceIds'
             scopesPropertyName = 'scopes'
+            autoApproveScopesPropertyName = 'autoApproveScopes'
             redirectUrisPropertyName = 'redirectUris'
             additionalInformationPropertyName = 'additionalInformation'
         }

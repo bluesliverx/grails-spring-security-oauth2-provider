@@ -33,6 +33,7 @@ class GormClientDetailsServiceSpec extends Specification {
                 authorizedGrantTypesPropertyName: 'authorizedGrantTypes',
                 resourceIdsPropertyName: 'resourceIds',
                 scopesPropertyName: 'scopes',
+                autoApproveScopesPropertyName: 'autoApproveScopes',
                 redirectUrisPropertyName: 'redirectUris',
                 additionalInformationPropertyName: 'additionalInformation'
         ]
@@ -44,6 +45,7 @@ class GormClientDetailsServiceSpec extends Specification {
                 resourceIds: [],
                 authorizedGrantTypes: [],
                 scope: [],
+                autoApproveScopes: [],
                 registeredRedirectUri: null,
                 authorities: [],
                 accessTokenValiditySeconds: null,
@@ -116,6 +118,33 @@ class GormClientDetailsServiceSpec extends Specification {
         'refresh'   |   'refreshTokenValiditySeconds'   |   'getRefreshTokenValiditySeconds'
     }
 
+    @Unroll
+    void "default config [#defaultKey] only honored if client [#clientKey] is null and not [#clientValue]"() {
+        given:
+        overrideDefaultClientConfig([(defaultKey): defaultValue])
+
+        and:
+        def client = new Client((clientKey): clientValue)
+
+        when:
+        def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
+
+        then:
+        details."$detailsKey" == detailsValue
+
+        where:
+        defaultKey                      |   defaultValue    |   clientKey                       |   clientValue     |   detailsKey                      |   detailsValue
+        'resourceIds'                   |   ['something']   |   'resourceIds'                   |   [] as Set       |   'resourceIds'                   |   [] as Set
+        'authorizedGrantTypes'          |   ['password']    |   'authorizedGrantTypes'          |   [] as Set       |   'authorizedGrantTypes'          |   [] as Set
+        'scope'                         |   ['read']        |   'scopes'                        |   [] as Set       |   'scope'                         |   [] as Set
+        'autoApproveScopes'             |   ['auto']        |   'autoApproveScopes'             |   [] as Set       |   'autoApproveScopes'             |   [] as Set
+        'registeredRedirectUri'         |   ['http://foo']  |   'redirectUris'                  |   [] as Set       |   'registeredRedirectUris'        |   null
+        'authorities'                   |   ['ROLE_USER']   |   'authorities'                   |   [] as List      |   'authorities'                   |   [] as List
+        'accessTokenValiditySeconds'    |   1234            |   'accessTokenValiditySeconds'    |   0               |   'accessTokenValiditySeconds'    |   0
+        'refreshTokenValiditySeconds'   |   1234            |   'refreshTokenValiditySeconds'   |   0               |   'refreshTokenValiditySeconds'   |   0
+        'additionalInformation'         |   [foo: 'bar']    |   'additionalInformation'         |   [:]             |   'additionalInformation'         |   [:]
+    }
+
     void "scopes can be optional -- honor default if not specified"() {
         given:
         overrideDefaultClientConfig([scope: ['read']])
@@ -145,6 +174,21 @@ class GormClientDetailsServiceSpec extends Specification {
         details.scope.contains('read')
         details.scope.contains('write')
         details.scope.contains('trust')
+    }
+
+    void "auto approve scopes can be optional -- honor defaults if not specified"() {
+        given:
+        overrideDefaultClientConfig([autoApproveScopes: ['read', 'write']])
+
+        and:
+        def client = new Client(autoApproveScopes: null)
+
+        when:
+        def details = service.createClientDetails(client, clientLookup, defaultClientConfig)
+
+        then:
+        details.isAutoApprove('read')
+        details.isAutoApprove('write')
     }
 
     @Unroll

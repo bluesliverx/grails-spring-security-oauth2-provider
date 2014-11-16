@@ -19,6 +19,7 @@ class Client {
             authorizedGrantTypes: String,
             resourceIds: String,
             scopes: String,
+            autoApproveScopes: String,
             redirectUris: String
     ]
 
@@ -35,7 +36,9 @@ class Client {
         authorizedGrantTypes nullable: true
 
         resourceIds nullable: true
+
         scopes nullable: true
+        autoApproveScopes nullable: true
 
         redirectUris nullable: true
         additionalInformation nullable: true

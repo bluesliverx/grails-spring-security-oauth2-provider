@@ -20,6 +20,7 @@ class GormClientDetailsServiceIntegrationSpec extends IntegrationSpec {
                 authorizedGrantTypes: ['implicit'] as Set,
                 resourceIds: ['someResource'] as Set,
                 scopes: ['kaleidoscope'] as Set,
+                autoApproveScopes: ['abracadabra'] as Set,
                 redirectUris: ['http://anywhereButHere'] as Set,
                 additionalInformation: [text: 'words', number: 1234]
         ).save()
@@ -53,6 +54,10 @@ class GormClientDetailsServiceIntegrationSpec extends IntegrationSpec {
         and:
         details.scope.size() == 1
         details.scope.contains('kaleidoscope')
+
+        and:
+        details.isAutoApprove('abracadabra')
+        !details.isAutoApprove('kaleidoscope')
 
         and:
         details.registeredRedirectUri.size() == 1

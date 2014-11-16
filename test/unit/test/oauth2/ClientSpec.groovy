@@ -70,6 +70,21 @@ class ClientSpec extends Specification {
     }
 
     @Unroll
+    void "valid auto approve scopes [#scopes]"() {
+        when:
+        def client = new Client(autoApproveScopes: scopes)
+
+        then:
+        client.validate(['autoApproveScopes'])
+
+        where:
+        _   |   scopes
+        _   |   null
+        _   |   [] as Set
+        _   |   ['read', 'write', 'trust'] as Set
+    }
+
+    @Unroll
     void "valid authorities [#authorities]"() {
         when:
         def client = new Client(authorities: authorities)
