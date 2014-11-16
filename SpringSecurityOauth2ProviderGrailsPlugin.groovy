@@ -307,6 +307,7 @@ OAuth2 Provider support for the Spring Security plugin.
                 tokenStore = ref('tokenStore')
                 clientDetailsService = ref('clientDetailsService')
                 approvalParameter = approvalParameterName
+                requestFactory = ref('oauth2RequestFactory')
             }
         }
         else if(support == APPROVAL_STORE) {
