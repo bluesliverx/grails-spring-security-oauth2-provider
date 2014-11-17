@@ -67,12 +67,12 @@ class AccessTokenSpec extends Specification {
         type << [null, '']
     }
 
-    void "allow expiration to be null"() {
+    void "do not allow expiration to be null"() {
         when:
         def token = new AccessToken(expiration: null)
 
         then:
-        token.validate(['expiration'])
+        !token.validate(['expiration'])
     }
 
     void "scope is required"() {

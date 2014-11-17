@@ -74,6 +74,7 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
                 tokenType: 'bearer',
                 clientId: client.clientId,
                 scope: ['test'],
+                expiration: new Date(),
                 authenticationKey: authenticationKey,
                 authentication: serializedAuthentication
         )
