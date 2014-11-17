@@ -1,0 +1,25 @@
+This class represents a prior scoped approval granted to a client by a user.
+
+{code}
+package com.yourapp
+
+class Approval {
+
+    String username
+    String clientId
+
+    String scope
+    boolean approved
+
+    Date expiration
+    Date lastModified
+
+    static constraints = {
+        username nullable: false, blank: false
+        clientId nullable: false, blank: false
+        scope nullable: false, blank: false
+        expiration nullable: false
+        lastModified nullable: false
+    }
+}
+{code}

@@ -1,0 +1,19 @@
+h1. s2-init-oauth2-provider
+
+h2. Purpose
+
+Creates the domain class required to use the GORM backed @ApprovalStore@ in the specified package.
+
+The general format is:
+
+bc.
+grails s2-init-oauth2-approval <package> <approval>
+
+h2. Examples
+
+bc.
+grails s2-init-oauth2-approval com.yourapp Approval
+
+h2. Description
+
+* Updates @grails-app/conf/Config.groovy@ with the domain class configuration setting and creates the domain class in @grails-app/domain@

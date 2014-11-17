@@ -5,6 +5,7 @@ An application can use the following properties to define the default values tha
 defaultClientConfig.resourceIds                 |   @\[\]@          |   Resources the client is authorized to access. This is currently unused as access to resources is controlled by Spring Security Core's rules.
 defaultClientConfig.authorizedGrantTypes        |   @\[\]@          |   Grant types the client supports.
 defaultClientConfig.scope                       |   @\[\]@          |   Scope to use for each access token request.
+defaultClientConfig.autoApproveScopes           |   @\[\]@          |   Scopes to auto-approve for authorization requests. Including a value of @true@ in the list will auto-approve all scopes for clients using the default configuration.
 defaultClientConfig.registeredRedirectUri       |   @null@          |   URI to redirect the user-agent to during an authorization code or implicit grant.
 defaultClientConfig.authorities                 |   @\[\]@          |   Roles and authorities granted to the client.
 defaultClientConfig.accessTokenValiditySeconds  |   @null@          |   The length of time that an access token will be valid after it has been issued. This is used instead of the length configured for token services if available.

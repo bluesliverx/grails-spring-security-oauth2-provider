@@ -9,6 +9,7 @@ clientLookup.authoritiesPropertyName                |   @'authorities'@         
 clientLookup.authorizedGrantTypesPropertyName       |   @'authorizedGrantTypes'@        |   Client class authorized grant types field.
 clientLookup.resourceIdsPropertyName                |   @'resourceIds'@                 |   Client class allowed resource IDs field.
 clientLookup.scopesPropertyName                     |   @'scopes'@                      |   Client class scopes field.
+clientLookup.autoApproveScopesPropertyName          |   @'autoApproveScopes'@           |   Client class auto-approved scopes field. Including a value of @true@ in the list will auto-approve all scopes for the configured client.
 clientLookup.redirectUrisPropertyName               |   @'redirectUris'@                |   Client class redirect URIs field.
 clientLookup.additionalInformationPropertyName      |   @'additionalInformation'@       |   Client class additional information field.
 {table}

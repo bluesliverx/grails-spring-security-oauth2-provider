@@ -25,6 +25,9 @@ domainClasses:
   accessTokenClass: Access Token Class
   refreshTokenClass: Refresh Token Class
   authorizationCodeClass: Authorization Code Class
+optionalDomainClasses:
+  title: Optional Domain Classes
+  approvalClass: Approval Class
 domainClassProperties:
   title: Domain Class Properties
   clientLookup: Client Class Properties
@@ -38,5 +41,6 @@ configuration:
   tokenServices: Token Services
   grantTypes: Supported Grant Types
   authorization: Additional Authorization Constraints
+  approvalHandler: User Approval Configuration
   defaultClientConfig: Default Client Configuration
   filterChainConfig: Filter Chain Configuration

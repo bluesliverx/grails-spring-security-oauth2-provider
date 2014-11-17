@@ -1,0 +1,33 @@
+The plugin provides support for the three @UserApprovalHandler@ implementations provided by the underlying Spring OAuth library. This only applies to the authorization endpoint and allows you to configure the method of auto-approval used by the application. The following properties determine which method of auto-approval to use and how it is configured:
+
+{table}
+*Property*                      |   *Default Value*             |   *Meaning*
+auto                            |   @EXPLICIT@                  |   Determines which method of auto-approval to use. The value is determined by @grails.plugin.springsecurity.UserApprovalSupport@ and must be @EXPLICIT@, @TOKEN_STORE@ or @APPROVAL_STORE@.
+handleRevocationAsExpiry        |   @false@                     |   When configured to use an approval store for auto-approval, this determines if approval revocation should expire the corresponding approval instance (@true@) or delete the approval (@false@) outright.
+approvalValiditySeconds         |   @60 \* 60 \* 24 \* 30@      |   When configured to use an approval store for auto-approval, the length of time that an approval will be valid after it has been granted.
+scopePrefix                     |   @'scope.'@                  |   When configured to use an approval store for auto-approval, the prefix added to approved scopes as part of the auto-approval process.
+{table}
+
+The @auto@ property determines which of the three @UserApprovalHandler@ provided by Spring OAuth will be used.
+
+The default option is to require explicit approval for every authorization and is equivalent to setting @auto@ to @EXPLICIT@:
+
+{code}
+grails.plugin.springsecurity.oauthprovider.approval.auto = UserApproval.EXPLICIT
+{code}
+
+Auto-approval based on previously issued access tokens is supported via the @TokenStoreUserApprovalHandler@ provided by Spring OAuth and can be configured by setting @auto@ to @TOKEN_STORE@:
+
+{code}
+grails.plugin.springsecurity.oauthprovider.approval.auto = UserApproval.TOKEN_STORE
+{code}
+
+Auto-approval based on prior approvals is supported via the @ApprovalStoreUserApprovalHandler@ provided by Spring OAuth and can be configured by setting @auto@ to @APPROVAL_STORE@:
+
+{code}
+grails.plugin.springsecurity.oauthprovider.approval.auto = UserApproval.APPROVAL_STORE
+{code}
+
+The plugin will configure the @TokenStoreUserApprovalHandler@ and @ApprovalStoreUserApprovalHandler@ to use the GORM backed @TokenStore@ and @ApprovalStore@ respectively.
+
+Please consult Spring OAuth directly for more information on the usage of the @TokenStore@ and @ApprovalStore@ methods of auto-approval.
