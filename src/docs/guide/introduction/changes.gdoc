@@ -1,3 +1,9 @@
+* 2.0-RC2
+** Resolves session vulnerability (issue #42)
+** Upgrade to Spring Security OAuth2 2.0.4.RELEASE
+** Supports authorization auto-approval
+** Minor tweaks to domain models
+
 * 2.0-RC1
 ** Complete overhaul of the plugin
 ** Requires/supports Spring Security Core 2.0-RC4
