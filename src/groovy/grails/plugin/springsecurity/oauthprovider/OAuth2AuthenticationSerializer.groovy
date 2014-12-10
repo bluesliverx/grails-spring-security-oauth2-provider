@@ -10,6 +10,9 @@ class OAuth2AuthenticationSerializer {
     }
 
     OAuth2Authentication deserialize(byte[] authentication) {
+        if (authentication == null) {
+            return null
+        }
         new ByteArrayInputStream(authentication).withObjectInputStream(getClass().classLoader) { ois ->
             ois.readObject() as OAuth2Authentication
         }
