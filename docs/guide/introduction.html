@@ -36,10 +36,13 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0"><a href="../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/domainClassProperties.html"><strong>5</strong><span>Domain Class Properties</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/optionalDomainClasses.html"><strong>5</strong><span>Optional Domain Classes</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/configuration.html"><strong>6</strong><span>Configuration</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/domainClassProperties.html"><strong>6</strong><span>Domain Class Properties</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/configuration.html"><strong>7</strong><span>Configuration</span></a>
                     </div>
                     
                 </div>
@@ -97,11 +100,18 @@ function addJsClass() {
                 
 
 <h1 id="introduction">1 Introduction to the Spring Security OAuth2 Plugin</h1>
-The OAuth2 plugin adds <a href="http://oauth.net/2/" target="blank">OAuth 2.0</a> support to a Grails application that uses Spring Security. It depends on <a href="http://grails.org/plugin/spring-security-core" target="blank">Spring Security Core plugin</a>.<p class="paragraph"/>Under the covers, <a href="http://projects.spring.io/spring-security-oauth/" target="blank">Spring Security OAuth version 1.0.5</a> is used by the plugin to provide OAuth 2.0 services. This documentation specifies a few specific steps you will have to take in order to ensure proper integration with the underlying library.<p class="paragraph"/>This plugin provides support for Grails domain classes necessary for providing OAuth 2.0 authorization. The standard grant types described in <a href="http://tools.ietf.org/html/rfc6749" target="blank">RFC 6749</a> are supported by the plugin. Access to protected resources is currently controlled by Spring Security Core's methods, i.e. request maps, annotations, intercept maps.
+The OAuth2 plugin adds <a href="http://oauth.net/2/" target="blank">OAuth 2.0</a> support to a Grails application that uses Spring Security. It depends on <a href="http://grails.org/plugin/spring-security-core" target="blank">Spring Security Core plugin</a>.<p class="paragraph"/>Under the covers, <a href="http://projects.spring.io/spring-security-oauth/" target="blank">Spring Security OAuth version 2.0.2.RELEASE</a> is used by the plugin to provide OAuth 2.0 services. This documentation specifies a few specific steps you will have to take in order to ensure proper integration with the underlying library.<p class="paragraph"/>This plugin provides support for Grails domain classes necessary for providing OAuth 2.0 authorization. The standard grant types described in <a href="http://tools.ietf.org/html/rfc6749" target="blank">RFC 6749</a> are supported by the plugin. Access to protected resources is controlled by a combination of Spring Security Core's methods, i.e. request maps, annotations, intercept maps and careful configuration of the Spring Security filter chains.
 
 
 <h2 id="changes">1.1 Change Log</h2>
 <ul class="star">
+<li>2.0-RC2</li>
+<ul class="star">
+<li>Resolves session vulnerability (issue #42)</li>
+<li>Upgrade to Spring Security OAuth2 2.0.4.RELEASE</li>
+<li>Supports authorization auto-approval</li>
+<li>Minor tweaks to domain models</li>
+</ul>
 <li>2.0-RC1</li>
 <ul class="star">
 <li>Complete overhaul of the plugin</li>
@@ -141,6 +151,9 @@ The OAuth2 plugin adds <a href="http://oauth.net/2/" target="blank">OAuth 2.0</a
                     
                     <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Scripts</h1><div class="menu-sub">
                         
+                            
+                            <div class="menu-item"><a href="../ref/Scripts/s2-init-oauth2-approval.html">s2-init-oauth2-approval</a>
+                            </div>
                             
                             <div class="menu-item"><a href="../ref/Scripts/s2-init-oauth2-provider.html">s2-init-oauth2-provider</a>
                             </div>

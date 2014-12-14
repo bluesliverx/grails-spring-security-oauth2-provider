@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>5.4 Access Token Class Properties 2.0-SNAPSHOT</title>
+    <title>6.4 Authorization Code Class Properties 2.0-SNAPSHOT</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -36,10 +36,13 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClassProperties.html"><strong>5</strong><span>Domain Class Properties</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/optionalDomainClasses.html"><strong>5</strong><span>Optional Domain Classes</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../../guide/configuration.html"><strong>6</strong><span>Configuration</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClassProperties.html"><strong>6</strong><span>Domain Class Properties</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/configuration.html"><strong>7</strong><span>Configuration</span></a>
                     </div>
                     
                 </div>
@@ -66,18 +69,18 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../../guide/domainClasses.html">&lt;&lt; <strong>4</strong><span>Required Domain Classes</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/optionalDomainClasses.html">&lt;&lt; <strong>5</strong><span>Optional Domain Classes</span></a></div>
                 
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/configuration.html"><strong>6</strong><span>Configuration</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/configuration.html"><strong>7</strong><span>Configuration</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>5.4 Access Token Class Properties - Reference Documentation</h1>
+                    <h1>6.4 Authorization Code Class Properties - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Brian Saville</p>
 
@@ -90,15 +93,15 @@ function addJsClass() {
 
                 
 
-<h2 id="authorizationCodeLookup">5.4 Access Token Class Properties</h2>
-<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>className</td><td><code>null</code></td><td>Authorization code class name.</td></tr><tr class="table-even"><td>authenticationPropertyName</td><td><code>'authentication'</code></td><td>Authorization code class serialized authentication field.</td></tr><tr class="table-odd"><td>codePropertyName</td><td><code>'code'</code></td><td>Authorization code class code field.</td></tr></table>
+<h2 id="authorizationCodeLookup">6.4 Authorization Code Class Properties</h2>
+<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>authorizationCodeLookup.className</td><td><code>null</code></td><td>Authorization code class name.</td></tr><tr class="table-even"><td>authorizationCodeLookup.authenticationPropertyName</td><td><code>'authentication'</code></td><td>Authorization code class serialized authentication field.</td></tr><tr class="table-odd"><td>authorizationCodeLookup.codePropertyName</td><td><code>'code'</code></td><td>Authorization code class code field.</td></tr></table>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../../guide/domainClasses.html">&lt;&lt; <strong>4</strong><span>Required Domain Classes</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/optionalDomainClasses.html">&lt;&lt; <strong>5</strong><span>Optional Domain Classes</span></a></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/configuration.html"><strong>6</strong><span>Configuration</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/configuration.html"><strong>7</strong><span>Configuration</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
@@ -113,6 +116,9 @@ function addJsClass() {
                     
                     <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Scripts</h1><div class="menu-sub">
                         
+                            
+                            <div class="menu-item"><a href="../../ref/Scripts/s2-init-oauth2-approval.html">s2-init-oauth2-approval</a>
+                            </div>
                             
                             <div class="menu-item"><a href="../../ref/Scripts/s2-init-oauth2-provider.html">s2-init-oauth2-provider</a>
                             </div>

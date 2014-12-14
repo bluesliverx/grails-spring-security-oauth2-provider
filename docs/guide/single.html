@@ -31,9 +31,11 @@ function addJsClass(el) {
                             
                             <div class="toc-item" style="margin-left:0"><a href="#domainClasses"><strong>4</strong><span>Required Domain Classes</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0"><a href="#domainClassProperties"><strong>5</strong><span>Domain Class Properties</span></a></div>
+                            <div class="toc-item" style="margin-left:0"><a href="#optionalDomainClasses"><strong>5</strong><span>Optional Domain Classes</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0"><a href="#configuration"><strong>6</strong><span>Configuration</span></a></div>
+                            <div class="toc-item" style="margin-left:0"><a href="#domainClassProperties"><strong>6</strong><span>Domain Class Properties</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0"><a href="#configuration"><strong>7</strong><span>Configuration</span></a></div>
                             
                         </div>
                     </div>
@@ -117,31 +119,37 @@ function addJsClass(el) {
                             
                             <div class="toc-item" style="margin-left:10px"><a href="#authorizationCodeClass"><strong>4.4</strong><span>Authorization Code Class</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0px"><a href="#domainClassProperties"><strong>5</strong><span>Domain Class Properties</span></a></div>
+                            <div class="toc-item" style="margin-left:0px"><a href="#optionalDomainClasses"><strong>5</strong><span>Optional Domain Classes</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#clientLookup"><strong>5.1</strong><span>Client Class Properties</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#approvalClass"><strong>5.1</strong><span>Approval Class</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#accessTokenLookup"><strong>5.2</strong><span>Access Token Class Properties</span></a></div>
+                            <div class="toc-item" style="margin-left:0px"><a href="#domainClassProperties"><strong>6</strong><span>Domain Class Properties</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#refreshTokenLookup"><strong>5.3</strong><span>Refresh Token Class Properties</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#clientLookup"><strong>6.1</strong><span>Client Class Properties</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#authorizationCodeLookup"><strong>5.4</strong><span>Access Token Class Properties</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#accessTokenLookup"><strong>6.2</strong><span>Access Token Class Properties</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:0px"><a href="#configuration"><strong>6</strong><span>Configuration</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#refreshTokenLookup"><strong>6.3</strong><span>Refresh Token Class Properties</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#plugin"><strong>6.1</strong><span>Plugin</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#authorizationCodeLookup"><strong>6.4</strong><span>Authorization Code Class Properties</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#endpoints"><strong>6.2</strong><span>Endpoint URLs</span></a></div>
+                            <div class="toc-item" style="margin-left:0px"><a href="#configuration"><strong>7</strong><span>Configuration</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#tokenServices"><strong>6.3</strong><span>Token Services</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#plugin"><strong>7.1</strong><span>Plugin</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#grantTypes"><strong>6.4</strong><span>Supported Grant Types</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#endpoints"><strong>7.2</strong><span>Endpoint URLs</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#authorization"><strong>6.5</strong><span>Additional Authorization Constraints</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#tokenServices"><strong>7.3</strong><span>Token Services</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#defaultClientConfig"><strong>6.6</strong><span>Default Client Configuration</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#grantTypes"><strong>7.4</strong><span>Supported Grant Types</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#tokenEndpointFilterChain"><strong>6.7</strong><span>Token Endpoint Filter Chain</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#authorization"><strong>7.5</strong><span>Additional Authorization Constraints</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:10px"><a href="#approvalHandler"><strong>7.6</strong><span>User Approval Configuration</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:10px"><a href="#defaultClientConfig"><strong>7.7</strong><span>Default Client Configuration</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:10px"><a href="#filterChainConfig"><strong>7.8</strong><span>Filter Chain Configuration</span></a></div>
                             
                             <div style="clear:both" ></div>
                         </div>
@@ -149,11 +157,18 @@ function addJsClass(el) {
                         
 
 <h1 id="introduction">1 Introduction to the Spring Security OAuth2 Plugin</h1>
-The OAuth2 plugin adds <a href="http://oauth.net/2/" target="blank">OAuth 2.0</a> support to a Grails application that uses Spring Security. It depends on <a href="http://grails.org/plugin/spring-security-core" target="blank">Spring Security Core plugin</a>.<p class="paragraph"/>Under the covers, <a href="http://projects.spring.io/spring-security-oauth/" target="blank">Spring Security OAuth version 1.0.5</a> is used by the plugin to provide OAuth 2.0 services. This documentation specifies a few specific steps you will have to take in order to ensure proper integration with the underlying library.<p class="paragraph"/>This plugin provides support for Grails domain classes necessary for providing OAuth 2.0 authorization. The standard grant types described in <a href="http://tools.ietf.org/html/rfc6749" target="blank">RFC 6749</a> are supported by the plugin. Access to protected resources is currently controlled by Spring Security Core's methods, i.e. request maps, annotations, intercept maps.
+The OAuth2 plugin adds <a href="http://oauth.net/2/" target="blank">OAuth 2.0</a> support to a Grails application that uses Spring Security. It depends on <a href="http://grails.org/plugin/spring-security-core" target="blank">Spring Security Core plugin</a>.<p class="paragraph"/>Under the covers, <a href="http://projects.spring.io/spring-security-oauth/" target="blank">Spring Security OAuth version 2.0.2.RELEASE</a> is used by the plugin to provide OAuth 2.0 services. This documentation specifies a few specific steps you will have to take in order to ensure proper integration with the underlying library.<p class="paragraph"/>This plugin provides support for Grails domain classes necessary for providing OAuth 2.0 authorization. The standard grant types described in <a href="http://tools.ietf.org/html/rfc6749" target="blank">RFC 6749</a> are supported by the plugin. Access to protected resources is controlled by a combination of Spring Security Core's methods, i.e. request maps, annotations, intercept maps and careful configuration of the Spring Security filter chains.
 
 
 <h2 id="changes">1.1 Change Log</h2>
 <ul class="star">
+<li>2.0-RC2</li>
+<ul class="star">
+<li>Resolves session vulnerability (issue #42)</li>
+<li>Upgrade to Spring Security OAuth2 2.0.4.RELEASE</li>
+<li>Supports authorization auto-approval</li>
+<li>Minor tweaks to domain models</li>
+</ul>
 <li>2.0-RC1</li>
 <ul class="star">
 <li>Complete overhaul of the plugin</li>
@@ -182,7 +197,7 @@ The following assumes that the Spring Security Core plugin has been installed an
 
 <h2 id="installPlugin">2.1 Install Plugin</h2>
 Install the OAuth2 plugin by adding a dependency in <code>grails-app/conf/BuildConfig.groovy</code>:<p class="paragraph"/><div class="code"><pre>plugins &#123;
-    compile &#34;:spring&#45;security&#45;oauth2&#45;provider:1.0.5&#45;SNAPSHOT&#34;
+    compile &#34;:spring&#45;security&#45;oauth2&#45;provider:2.0&#45;RC1&#34;
 &#125;</pre></div><p class="paragraph"/>This has a dependency on the Spring Security Core plugin, which will be installed if necessary.
 
 
@@ -232,7 +247,7 @@ At this point your application is a proper OAuth 2.0 provider. You can now regis
 
 
 <h2 id="resourceAccess">2.8 Controlling Access to Resources</h2>
-Access to resources is controlled by the Spring Security Core plugin's access control mechanisms. Additionally, the plugin has full support for the OAuth 2.0 SPeL extensions provided by the underlying Spring library. Refer to the methods in <a href="https://github.com/spring-projects/spring-security-oauth/blob/1.0.5.RELEASE/spring-security-oauth2/src/main/java/org/springframework/security/oauth2/provider/expression/OAuth2SecurityExpressionMethods.java" target="blank">OAuth2SecurityExpressionMethods</a> for what is available in the plugin.<p class="paragraph"/>Using SPeL is the only tested and confirmed way to enforce OAuth 2.0 specific restrictions on resource access.<p class="paragraph"/>The following controller illustrates the use of OAuth 2.0 SPeL:<p class="paragraph"/><div class="code"><pre>class SecuredController &#123;<p class="paragraph"/>    @Secured(&#91;<span class="java&#45;quote">"&#35;oauth2.clientHasRole('ROLE_CLIENT')"</span>&#93;)
+Access to resources is controlled by the Spring Security Core plugin's access control mechanisms. Additionally, the plugin has full support for the OAuth 2.0 SPeL extensions provided by the underlying Spring library. Refer to the methods in <a href="https://github.com/spring-projects/spring-security-oauth/blob/2.0.2.RELEASE/spring-security-oauth2/src/main/java/org/springframework/security/oauth2/provider/expression/OAuth2SecurityExpressionMethods.java" target="blank">OAuth2SecurityExpressionMethods</a> for what is available in the plugin.<p class="paragraph"/>Using SPeL is the only tested and confirmed way to enforce OAuth 2.0 specific restrictions on resource access.<p class="paragraph"/>The following controller illustrates the use of OAuth 2.0 SPeL:<p class="paragraph"/><div class="code"><pre>class SecuredOAuth2ResourcesController &#123;<p class="paragraph"/>    @Secured(&#91;<span class="java&#45;quote">"&#35;oauth2.clientHasRole('ROLE_CLIENT')"</span>&#93;)
     def clientRoleExpression() &#123;
         render <span class="java&#45;quote">"client role expression"</span>
     &#125;<p class="paragraph"/>    @Secured(&#91;<span class="java&#45;quote">"ROLE_CLIENT"</span>&#93;)
@@ -265,7 +280,11 @@ Access to resources is controlled by the Spring Security Core plugin's access co
     def userRoleOrReadScope() &#123;
         render <span class="java&#45;quote">"user role or read scope"</span>
     &#125;
-&#125;</pre></div>
+&#125;</pre></div><p class="paragraph"/>The filter chains must be configured to ensure stateless access to the token endpoint and any OAuth 2.0 resources:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.filterChain.chainMap = &#91;
+        '/oauth/token': 'JOINED_FILTERS,&#45;oauth2ProviderFilter,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter',
+        '/securedOAuth2Resources/&#42;&#42;': 'JOINED_FILTERS,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter',
+        '/&#42;&#42;': 'JOINED_FILTERS,&#45;statelessSecurityContextPersistenceFilter,&#45;oauth2ProviderFilter,&#45;clientCredentialsTokenEndpointFilter'
+&#93;</pre></div><p class="paragraph"/>Please consult the section on <a href="../guide/single.html#filterChainConfig" class="guide">Filter Chain Configuration</a> for more information.
 
 
 <h2 id="troubleShooting">2.9 Trouble Shooting</h2>
@@ -339,22 +358,23 @@ The plugin uses regular Grails domain classes backed by GORM. There are four req
 
 
 <h2 id="clientClass">4.1 Client Class</h2>
-Information from the Grails client domain class will be extracted to create a <code>ClientDetails</code> instance for the underlying Spring Security OAuth2 implementation.<p class="paragraph"/>The generated class will look like this:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class Client &#123;<p class="paragraph"/>    <span class="java&#45;keyword">private</span> <span class="java&#45;keyword">static</span> <span class="java&#45;keyword">final</span> <span class="java&#45;object">String</span> NO_CLIENT_SECRET = ''<p class="paragraph"/>    <span class="java&#45;keyword">transient</span> springSecurityService<p class="paragraph"/>    <span class="java&#45;object">String</span> clientId
+Information from the Grails client domain class will be extracted to create a <code>ClientDetails</code> instance for the underlying Spring Security OAuth 2.0 implementation.<p class="paragraph"/>The generated class will look like this:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class Client &#123;<p class="paragraph"/>    <span class="java&#45;keyword">private</span> <span class="java&#45;keyword">static</span> <span class="java&#45;keyword">final</span> <span class="java&#45;object">String</span> NO_CLIENT_SECRET = ''<p class="paragraph"/>    <span class="java&#45;keyword">transient</span> springSecurityService<p class="paragraph"/>    <span class="java&#45;object">String</span> clientId
     <span class="java&#45;object">String</span> clientSecret<p class="paragraph"/>    <span class="java&#45;object">Integer</span> accessTokenValiditySeconds
     <span class="java&#45;object">Integer</span> refreshTokenValiditySeconds<p class="paragraph"/>    Map&#60;<span class="java&#45;object">String</span>, <span class="java&#45;object">Object</span>&#62; additionalInformation<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasMany = &#91;
             authorities: <span class="java&#45;object">String</span>,
             authorizedGrantTypes: <span class="java&#45;object">String</span>,
             resourceIds: <span class="java&#45;object">String</span>,
             scopes: <span class="java&#45;object">String</span>,
+            autoApproveScopes: <span class="java&#45;object">String</span>,
             redirectUris: <span class="java&#45;object">String</span>
     &#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> transients = &#91;'springSecurityService'&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
         clientId blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
         clientSecret nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        accessTokenValiditySeconds nullable: <span class="java&#45;keyword">true</span>
         refreshTokenValiditySeconds nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        authorities nullable: <span class="java&#45;keyword">true</span>
-        authorizedGrantTypes nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        resourceIds nullable: <span class="java&#45;keyword">true</span>
-        scopes nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        redirectUris nullable: <span class="java&#45;keyword">true</span>
+        authorizedGrantTypes nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        resourceIds nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        scopes nullable: <span class="java&#45;keyword">true</span>
+        autoApproveScopes nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        redirectUris nullable: <span class="java&#45;keyword">true</span>
         additionalInformation nullable: <span class="java&#45;keyword">true</span>
-   &#125;<p class="paragraph"/>    def beforeInsert() &#123;
+    &#125;<p class="paragraph"/>    def beforeInsert() &#123;
         encodeClientSecret()
     &#125;<p class="paragraph"/>    def beforeUpdate() &#123;
         <span class="java&#45;keyword">if</span>(isDirty('clientSecret')) &#123;
@@ -362,13 +382,14 @@ Information from the Grails client domain class will be extracted to create a <c
         &#125;
     &#125;<p class="paragraph"/>    <span class="java&#45;keyword">protected</span> void encodeClientSecret() &#123;
         clientSecret = clientSecret ?: NO_CLIENT_SECRET
-        clientSecret = springSecurityService.encodePassword(clientSecret)
+        clientSecret = springSecurityService?.passwordEncoder ? springSecurityService.encodePassword(clientSecret) : clientSecret
     &#125;
 &#125;</pre></div><p class="paragraph"/>The client secret is encoded using the same strategy that is configured by the Core plugin for handling passwords. Optional client secrets are also supported out of the box.
 
 
 <h2 id="accessTokenClass">4.2 Access Token Class</h2>
-This class represents an access token than has been issued to a client on behalf of a user. The authentication object serialized is an instance of <code>OAuth2Authentication</code> from Spring Security OAuth 2.0.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class AccessToken &#123;<p class="paragraph"/>    <span class="java&#45;object">byte</span>&#91;&#93; authentication<p class="paragraph"/>    <span class="java&#45;object">String</span> username
+This class represents an access token than has been issued to a client on behalf of a user. The authentication object serialized is an instance of <code>OAuth2Authentication</code> from Spring Security OAuth 2.0.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class AccessToken &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> authenticationKey
+    <span class="java&#45;object">byte</span>&#91;&#93; authentication<p class="paragraph"/>    <span class="java&#45;object">String</span> username
     <span class="java&#45;object">String</span> clientId<p class="paragraph"/>    <span class="java&#45;object">String</span> value
     <span class="java&#45;object">String</span> tokenType<p class="paragraph"/>    Date expiration<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasOne = &#91;refreshToken: <span class="java&#45;object">String</span>&#93;
     <span class="java&#45;keyword">static</span> hasMany = &#91;scope: <span class="java&#45;object">String</span>&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
@@ -376,10 +397,11 @@ This class represents an access token than has been issued to a client on behalf
         clientId nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>
         value nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
         tokenType nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>
-        expiration nullable: <span class="java&#45;keyword">true</span>
+        expiration nullable: <span class="java&#45;keyword">false</span>
         scope nullable: <span class="java&#45;keyword">false</span>
         refreshToken nullable: <span class="java&#45;keyword">true</span>
-        authentication nullable: <span class="java&#45;keyword">false</span>, maxSize: 1024 &#42; 4, validator: &#123; val, obj &#45;&#62; val.size() &#62; 0 &#125;
+        authenticationKey nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
+        authentication nullable: <span class="java&#45;keyword">false</span>, minSize: 1, maxSize: 1024 &#42; 4
     &#125;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
         version <span class="java&#45;keyword">false</span>
         scope lazy: <span class="java&#45;keyword">false</span>
@@ -388,10 +410,12 @@ This class represents an access token than has been issued to a client on behalf
 
 
 <h2 id="refreshTokenClass">4.3 Refresh Token Class</h2>
-This class represents a refresh token issued as part of one of the grants that supports issuing a refresh token. The length of time the refresh token is valid is determined by the token services and can be configured. See <a href="../guide/single.html#tokenServices" class="guide">token services configuration</a> for more. The authentication object serialized is an instance of <code>OAuth2Authentication</code> from Spring Security OAuth 2.0.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class RefreshToken &#123;<p class="paragraph"/>    <span class="java&#45;object">byte</span>&#91;&#93; authentication
-    <span class="java&#45;object">String</span> value<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
+This class represents a refresh token issued as part of one of the grants that supports issuing a refresh token. The length of time the refresh token is valid is determined by the token services and can be configured. See <a href="../guide/single.html#tokenServices" class="guide">token services configuration</a> for more. The authentication object serialized is an instance of <code>OAuth2Authentication</code> from Spring Security OAuth 2.0.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class RefreshToken &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> value
+    Date expiration
+    <span class="java&#45;object">byte</span>&#91;&#93; authentication<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
         value nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
-        authentication nullable: <span class="java&#45;keyword">false</span>, maxSize: 1024 &#42; 4, validator: &#123; val, obj &#45;&#62; val.size() &#62; 0 &#125;
+        expiration nullable: <span class="java&#45;keyword">false</span>
+        authentication nullable: <span class="java&#45;keyword">false</span>, minSize: 1, maxSize: 1024 &#42; 4
     &#125;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
         version <span class="java&#45;keyword">false</span>
     &#125;
@@ -399,46 +423,65 @@ This class represents a refresh token issued as part of one of the grants that s
 
 
 <h2 id="authorizationCodeClass">4.4 Authorization Code Class</h2>
-This class represents an authorization code that has been issued via the authorization endpoint as part of an authorization code grant. The authentication object serialized is an instance of <code>AuthorizationRequestHolder</code> from Spring Security OAuth 2.0.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class AuthorizationCode &#123;<p class="paragraph"/>    <span class="java&#45;object">byte</span>&#91;&#93; authentication
+This class represents an authorization code that has been issued via the authorization endpoint as part of an authorization code grant. The authentication object serialized is an instance of <code>OAuth2Authentication</code> from Spring Security OAuth 2.0.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class AuthorizationCode &#123;<p class="paragraph"/>    <span class="java&#45;object">byte</span>&#91;&#93; authentication
     <span class="java&#45;object">String</span> code<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
         code nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
-        authentication nullable: <span class="java&#45;keyword">false</span>, maxSize: 1024 &#42; 4, validator: &#123; val, obj &#45;&#62; val.size() &#62; 0 &#125;
+        authentication nullable: <span class="java&#45;keyword">false</span>, minSize: 1, maxSize: 1024 &#42; 4
     &#125;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
         version <span class="java&#45;keyword">false</span>
     &#125;
 &#125;</pre></div>
 
 
-<h1 id="domainClassProperties">5 Domain Class Properties</h1>
+<h1 id="optionalDomainClasses">5 Optional Domain Classes</h1>
+The plugin provides support for using a GORM backed <code>ApprovalStore</code> with the <code>ApprovalStoreUserApprovalHandler</code> provided by the underlying Spring OAuth library. This class is only required if the consuming application is configured to use the <code>UserApprovalSupport.APPROVAL_STORE</code> method of auto-approval.<p class="paragraph"/>The <a href="../ref/Scripts/s2-init-oauth2-approval.html" class="Scripts">s2-init-oauth2-approval</a> script will create the required domain class for you in a specified package and update <code>grails-app/conf/Config.groovy</code> so the plugin recognizes it. You can customize the generated class to fit your needs. If you change the default property names, you will need to update <code>grails-app/conf/Config.groovy</code> so the plugin is aware of the changes. See the section on <a href="../guide/single.html#domainClassProperties" class="guide">domain class properties</a> for more information.<p class="paragraph"/>The below discussion assumes the <a href="../ref/Scripts/s2-init-oauth2-approval.html" class="Scripts">s2-init-oauth2-approval</a> script has been run with <code>com.yourapp</code> specified as the package and <code>Approval</code> as the name of the domain class.
+
+
+<h2 id="approvalClass">5.1 Approval Class</h2>
+This class represents a prior scoped approval granted to a client by a user.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class Approval &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> username
+    <span class="java&#45;object">String</span> clientId<p class="paragraph"/>    <span class="java&#45;object">String</span> scope
+    <span class="java&#45;object">boolean</span> approved<p class="paragraph"/>    Date expiration
+    Date lastModified<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
+        username nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>
+        clientId nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>
+        scope nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>
+        expiration nullable: <span class="java&#45;keyword">false</span>
+        lastModified nullable: <span class="java&#45;keyword">false</span>
+    &#125;
+&#125;</pre></div>
+
+
+
+<h1 id="domainClassProperties">6 Domain Class Properties</h1>
 No default class name is assumed for the required domain classes. They must be specified in <code>grails-app/conf/Config.groovy</code>. This is done automatically by the <a href="../ref/Scripts/s2-init-oauth2-provider.html" class="Scripts">s2-init-oauth2-provider</a> script. The following properties exist in the <code>grails.plugin.springsecurity.oauthProvider</code> namespace.
 
 
 
-<h2 id="clientLookup">5.1 Client Class Properties</h2>
-<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>clientLookup.className</td><td><code>null</code></td><td>Client class name.</td></tr><tr class="table-even"><td>clientLookup.clientIdPropertyName</td><td><code>'clientId'</code></td><td>Client class client ID field.</td></tr><tr class="table-odd"><td>clientLookup.clientSecretPropertyName</td><td><code>'clientSecret'</code></td><td>Client class client secret field.</td></tr><tr class="table-even"><td>clientLookup.accessTokenValiditySecondsPropertyName</td><td><code>'accessTokenValiditySeconds'</code></td><td>Client class access token validity length field.</td></tr><tr class="table-odd"><td>clientLookup.refreshTokenValiditySecondsPropertyName</td><td><code>'refreshTokenValiditySeconds'</code></td><td>Client class refresh token validity length field.</td></tr><tr class="table-even"><td>clientLookup.authoritiesPropertyName</td><td><code>'authorities'</code></td><td>Client class authorities field.</td></tr><tr class="table-odd"><td>clientLookup.authorizedGrantTypesPropertyName</td><td><code>'authorizedGrantTypes'</code></td><td>Client class authorized grant types field.</td></tr><tr class="table-even"><td>clientLookup.resourceIdsPropertyName</td><td><code>'resourceIds'</code></td><td>Client class allowed resource IDs field.</td></tr><tr class="table-odd"><td>clientLookup.scopesPropertyName</td><td><code>'scopes'</code></td><td>Client class scopes field.</td></tr><tr class="table-even"><td>clientLookup.redirectUrisPropertyName</td><td><code>'redirectUris'</code></td><td>Client class redirect URIs field.</td></tr><tr class="table-odd"><td>clientLookup.additionalInformationPropertyName</td><td><code>'additionalInformation'</code></td><td>Client class additional information field.</td></tr></table>
+<h2 id="clientLookup">6.1 Client Class Properties</h2>
+<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>clientLookup.className</td><td><code>null</code></td><td>Client class name.</td></tr><tr class="table-even"><td>clientLookup.clientIdPropertyName</td><td><code>'clientId'</code></td><td>Client class client ID field.</td></tr><tr class="table-odd"><td>clientLookup.clientSecretPropertyName</td><td><code>'clientSecret'</code></td><td>Client class client secret field.</td></tr><tr class="table-even"><td>clientLookup.accessTokenValiditySecondsPropertyName</td><td><code>'accessTokenValiditySeconds'</code></td><td>Client class access token validity length field.</td></tr><tr class="table-odd"><td>clientLookup.refreshTokenValiditySecondsPropertyName</td><td><code>'refreshTokenValiditySeconds'</code></td><td>Client class refresh token validity length field.</td></tr><tr class="table-even"><td>clientLookup.authoritiesPropertyName</td><td><code>'authorities'</code></td><td>Client class authorities field.</td></tr><tr class="table-odd"><td>clientLookup.authorizedGrantTypesPropertyName</td><td><code>'authorizedGrantTypes'</code></td><td>Client class authorized grant types field.</td></tr><tr class="table-even"><td>clientLookup.resourceIdsPropertyName</td><td><code>'resourceIds'</code></td><td>Client class allowed resource IDs field.</td></tr><tr class="table-odd"><td>clientLookup.scopesPropertyName</td><td><code>'scopes'</code></td><td>Client class scopes field.</td></tr><tr class="table-even"><td>clientLookup.autoApproveScopesPropertyName</td><td><code>'autoApproveScopes'</code></td><td>Client class auto-approved scopes field. Including a value of <code>true</code> in the list will auto-approve all scopes for the configured client.</td></tr><tr class="table-odd"><td>clientLookup.redirectUrisPropertyName</td><td><code>'redirectUris'</code></td><td>Client class redirect URIs field.</td></tr><tr class="table-even"><td>clientLookup.additionalInformationPropertyName</td><td><code>'additionalInformation'</code></td><td>Client class additional information field.</td></tr></table>
 
 
-<h2 id="accessTokenLookup">5.2 Access Token Class Properties</h2>
+<h2 id="accessTokenLookup">6.2 Access Token Class Properties</h2>
 <table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>accessTokenLookup.className</td><td><code>null</code></td><td>Access token class name.</td></tr><tr class="table-even"><td>accessTokenLookup.authenticationKeyPropertyName</td><td><code>'authenticationKey'</code></td><td>Access token class serialized authentication key used to locate tokens via serialized authentication field.</td></tr><tr class="table-odd"><td>accessTokenLookup.authenticationPropertyName</td><td><code>'authentication'</code></td><td>Access token class serialized authentication field.</td></tr><tr class="table-even"><td>accessTokenLookup.usernamePropertyName</td><td><code>'username'</code></td><td>Access token class username field.</td></tr><tr class="table-odd"><td>accessTokenLookup.clientIdPropertyName</td><td><code>'clientId'</code></td><td>Access token class client ID field.</td></tr><tr class="table-even"><td>accessTokenLookup.valuePropertyName</td><td><code>'value'</code></td><td>Access token class value field.</td></tr><tr class="table-odd"><td>accessTokenLookup.tokenTypePropertyName</td><td><code>'tokenType'</code></td><td>Access token class token type field.</td></tr><tr class="table-even"><td>accessTokenLookup.expirationPropertyName</td><td><code>'expiration'</code></td><td>Access token class expiration field.</td></tr><tr class="table-odd"><td>accessTokenLookup.refreshTokenPropertyName</td><td><code>'refreshToken'</code></td><td>Access token class refresh token value field.</td></tr><tr class="table-even"><td>accessTokenLookup.scopePropertyName</td><td><code>'scope'</code></td><td>Access token class scope field.</td></tr></table><p class="paragraph"/>Currently only <code>'bearer'</code> tokens are supported.
 
 
-<h2 id="refreshTokenLookup">5.3 Refresh Token Class Properties</h2>
-<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>className</td><td><code>null</code></td><td>Refresh token class name.</td></tr><tr class="table-even"><td>authenticationPropertyName</td><td><code>'authentication'</code></td><td>Refresh token class serialized authentication field.</td></tr><tr class="table-odd"><td>valuePropertyName</td><td><code>'value'</code></td><td>Refresh token class value field.</td></tr></table>
+<h2 id="refreshTokenLookup">6.3 Refresh Token Class Properties</h2>
+<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>refreshTokenLookup.className</td><td><code>null</code></td><td>Refresh token class name.</td></tr><tr class="table-even"><td>refreshTokenLookup.authenticationPropertyName</td><td><code>'authentication'</code></td><td>Refresh token class serialized authentication field.</td></tr><tr class="table-odd"><td>refreshTokenLookup.valuePropertyName</td><td><code>'value'</code></td><td>Refresh token class value field.</td></tr><tr class="table-even"><td>refreshTokenLookup.expirationPropertyName</td><td><code>'expiration'</code></td><td>Refresh</td></tr></table>
 
 
-<h2 id="authorizationCodeLookup">5.4 Access Token Class Properties</h2>
-<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>className</td><td><code>null</code></td><td>Authorization code class name.</td></tr><tr class="table-even"><td>authenticationPropertyName</td><td><code>'authentication'</code></td><td>Authorization code class serialized authentication field.</td></tr><tr class="table-odd"><td>codePropertyName</td><td><code>'code'</code></td><td>Authorization code class code field.</td></tr></table>
+<h2 id="authorizationCodeLookup">6.4 Authorization Code Class Properties</h2>
+<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>authorizationCodeLookup.className</td><td><code>null</code></td><td>Authorization code class name.</td></tr><tr class="table-even"><td>authorizationCodeLookup.authenticationPropertyName</td><td><code>'authentication'</code></td><td>Authorization code class serialized authentication field.</td></tr><tr class="table-odd"><td>authorizationCodeLookup.codePropertyName</td><td><code>'code'</code></td><td>Authorization code class code field.</td></tr></table>
 
 
-<h1 id="configuration">6 Configuration</h1>
+<h1 id="configuration">7 Configuration</h1>
 The plugin is pessimistic by default, locking down as much as possible to guard against accidental security breaches. However, these constraints can be modified if so desired in <code>grails-app/conf/Config.groovy</code>. The properties below exist in the <code>grails.plugin.springsecurity.oauthProvider</code> namespace.
 
 
-<h2 id="plugin">6.1 Plugin</h2>
-The following properties define whether the plugin is active and where the required filters are registered in the Spring Security filter chain:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>active</td><td><code>true</code></td><td>Whether the plugin is enabled.</td></tr><tr class="table-even"><td>filterStartPosition</td><td><code>SecurityFilterPosition.X509_FILTER.order</code></td><td>The position in the filter chain of the <code>OAuth2AuthenticationProcessingFilter</code>, which handles authentication for resource access by extracting an access token from the incoming request.</td></tr><tr class="table-odd"><td>clientFilterStartPosition</td><td><code>SecurityFilterPosition.DIGEST_AUTH_FILTER.order</code></td><td>The position in the filter chain of the <code>ClientCredentialsTokenEndpointFilter</code>, which handles client authentication.</td></tr><tr class="table-even"><td>realmName</td><td><code>Grails OAuth2 Realm</code></td><td>Realm name included in the WWW-Authenticate header in a challenge response.</td></tr></table>
+<h2 id="plugin">7.1 Plugin</h2>
+The following properties define whether the plugin is active and where the required filters are registered in the Spring Security filter chain:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>active</td><td><code>true</code></td><td>Whether the plugin is enabled.</td></tr><tr class="table-even"><td>filterStartPosition</td><td><code>SecurityFilterPosition.X509_FILTER.order</code></td><td>The position in the filter chain of the <code>OAuth2AuthenticationProcessingFilter</code>, which handles authentication for resource access by extracting an access token from the incoming request.</td></tr><tr class="table-odd"><td>clientFilterStartPosition</td><td><code>SecurityFilterPosition.DIGEST_AUTH_FILTER.order</code></td><td>The position in the filter chain of the <code>ClientCredentialsTokenEndpointFilter</code>, which handles client authentication.</td></tr><tr class="table-even"><td>statelessFilterStartPosition</td><td><code>SecurityFilterPosition.SECURITY_CONTEXT_FILTER.order</code></td><td>The position in the filter chain of the <code>StatelessSecurityContextPersistenceFilter</code>, which is used to ensure access to OAuth 2.0 resources and the token endpoint are stateless.</td></tr><tr class="table-odd"><td>registerStatelessFilter</td><td><code>true</code></td><td>When this is <code>true</code>, the plugin will register the <code>statelessSecurityContextPersistenceFilter</code> in the filter chain after the <code>securityContextPersistenceFilter</code> provided by the Spring Security Core plugin. See <a href="../guide/single.html#filterChainConfig" class="guide">below</a> for additional configuration of the filter chain(s) required to properly secure access to OAuth 2.0 resources.</td></tr><tr class="table-even"><td>realmName</td><td><code>Grails OAuth2 Realm</code></td><td>Realm name included in the WWW-Authenticate header in a challenge response.</td></tr></table>
 
 
-<h2 id="endpoints">6.2 Endpoint URLs</h2>
+<h2 id="endpoints">7.2 Endpoint URLs</h2>
 The endpoint URLs used by the underlying Spring Security OAuth 2.0 implementation can be changed using the following properties:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>authorizationEndpointUrl</td><td><code>'/oauth/authorize'</code></td><td>Authorization endpoint URL.</td></tr><tr class="table-even"><td>tokenEndpointUrl</td><td><code>'/oauth/token'</code></td><td>Token endpoint URL.</td></tr><tr class="table-odd"><td>userApprovalEndpointUrl</td><td><code>'/oauth/confirm_access'</code></td><td>URL of the view to display for confirming access to protected resources.</td></tr><tr class="table-even"><td>userApprovalParameter</td><td><code>'user_oauth_approval'</code></td><td>The name of the parameter submitted in the confirmation request. The value of this parameter is used to determine whether a user has confirmed (<code>true</code>) or denied (<code>false</code>) access.</td></tr><tr class="table-odd"><td>errorEndpointUrl</td><td><code>'/oauth/error'</code></td><td>URL of the view to display if an error occurs while interacting with the authorization endpoint and the error cannot be returned as part of the query or fragment of the client's redirect URI. This is usually the case when there is a problem with the requesting client's redirect URI.</td></tr></table><p class="paragraph"/>When changing the URL for the <code>authorizationEndpointUrl</code> or <code>tokenEndpointUrl</code>, you <strong class="bold">must</strong> update Spring Security Core's configuration. Using the <code>staticRules</code> configuration and the default configuration as an example, your <code>grails-app/conf/Config.groovy</code> will look like this:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.controllerAnnotations.staticRules = &#91;
         '/oauth/authorize.dispatch':      &#91;<span class="java&#45;quote">"isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"</span>&#93;,
         '/oauth/token.dispatch':          &#91;<span class="java&#45;quote">"isFullyAuthenticated() and request.getMethod().equals('POST')"</span>&#93;,
@@ -448,25 +491,33 @@ The endpoint URLs used by the underlying Spring Security OAuth 2.0 implementatio
         ...</pre></div><p class="paragraph"/>The URL mapping must include the <code>.dispatch</code> suffix in order integrate with the underlying Spring MVC controller.
 
 
-<h2 id="tokenServices">6.3 Token Services</h2>
-The following properties apply to how tokens are issued and how long they are valid. If a client has defined a specific token validity length, the client's length will take priority over the values configured for the token services.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>tokenServices.accessTokenValiditySeconds</td><td><code>60 &#42; 60 &#42; 12</code></td><td>The length of time that an access token will be valid after it has been issued.</td></tr><tr class="table-even"><td>tokenServices.refreshTokenValiditySeconds</td><td><code>60 &#42; 10</code></td><td>The length of time that a refresh token will be valid after it has been issued.</td></tr><tr class="table-odd"><td>tokenServices.reuseRefreshToken</td><td><code>false</code></td><td>Whether a new refresh token should be generated if one is currently available.</td></tr><tr class="table-even"><td>tokenServices.supportRefreshToken</td><td><code>true</code></td><td>Whether a refresh token can be issued upon request.</td></tr></table><p class="paragraph"/>
+<h2 id="tokenServices">7.3 Token Services</h2>
+The following properties apply to how tokens are issued and how long they are valid. If a client has defined a specific token validity length, the client's length will take priority over the values configured for the token services.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>tokenServices.accessTokenValiditySeconds</td><td><code>60 &#42; 60 &#42; 12</code></td><td>The length of time that an access token will be valid after it has been issued.</td></tr><tr class="table-even"><td>tokenServices.refreshTokenValiditySeconds</td><td><code>60 &#42; 60 &#42; 24 &#42; 30</code></td><td>The length of time that a refresh token will be valid after it has been issued.</td></tr><tr class="table-odd"><td>tokenServices.reuseRefreshToken</td><td><code>false</code></td><td>Whether a new refresh token should be generated if one is currently available.</td></tr><tr class="table-even"><td>tokenServices.supportRefreshToken</td><td><code>true</code></td><td>Whether a refresh token can be issued upon request.</td></tr></table><p class="paragraph"/>
 
 
-<h2 id="grantTypes">6.4 Supported Grant Types</h2>
+<h2 id="grantTypes">7.4 Supported Grant Types</h2>
 The following properties determine which of the standard grant types the application can support. Individual clients <strong class="bold">must</strong> declare which of the enabled grant types they support.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>grantTypes.authorizationCode</td><td><code>true</code></td><td>Whether the Authorization Code Grant is supported.</td></tr><tr class="table-even"><td>grantTypes.implicit</td><td><code>true</code></td><td>Whether the Implicit Grant is supported.</td></tr><tr class="table-odd"><td>grantTypes.clientCredentials</td><td><code>true</code></td><td>Whether the Client Credentials Grant is supported.</td></tr><tr class="table-even"><td>grantTypes.password</td><td><code>true</code></td><td>Whether the Resource Owner Password Credentials is supported.</td></tr><tr class="table-odd"><td>grantTypes.refreshToken</td><td><code>true</code></td><td>Whether Refresh Token Grant is supported.</td></tr></table>
 
 
 
-<h2 id="authorization">6.5 Additional Authorization Constraints</h2>
+<h2 id="authorization">7.5 Additional Authorization Constraints</h2>
 The plugin enforces the following restrictions on authorization request params:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>authorization.requireRegisteredRedirectUri</td><td><code>true</code></td><td>Whether a client is required to have registered a redirect URI before performing an authorization request. This addresses  <em class="italic">RFC 6749 Section 10.6: Authorization Code Redirection URI Manipulation</em>  and  <em class="italic">RFC 6749 Section 10.15: Open Redirectors</em> .</td></tr><tr class="table-even"><td>authorization.requireScope</td><td><code>true</code></td><td>Whether the scope for each access token requested is required.</td></tr></table>
 
 
-<h2 id="defaultClientConfig">6.6 Default Client Configuration</h2>
-An application can use the following properties to define the default values that will be used when creating a <code>ClientDetails</code> instance if a client has not specified a value. The default configuration will not allow a client to retrieve an access token unless they have explicitly registered support for the requested grant type.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>defaultClientConfig.resourceIds</td><td><code>&#91;&#93;</code></td><td>Resources the client is authorized to access. This is currently unused as access to resources is controlled by Spring Security Core's rules.</td></tr><tr class="table-even"><td>defaultClientConfig.authorizedGrantTypes</td><td><code>&#91;&#93;</code></td><td>Grant types the client supports.</td></tr><tr class="table-odd"><td>defaultClientConfig.scope</td><td><code>&#91;&#93;</code></td><td>Scope to use for each access token request.</td></tr><tr class="table-even"><td>defaultClientConfig.registeredRedirectUri</td><td><code>null</code></td><td>URI to redirect the user-agent to during an authorization code or implicit grant.</td></tr><tr class="table-odd"><td>defaultClientConfig.authorities</td><td><code>&#91;&#93;</code></td><td>Roles and authorities granted to the client.</td></tr><tr class="table-even"><td>defaultClientConfig.accessTokenValiditySeconds</td><td><code>null</code></td><td>The length of time that an access token will be valid after it has been issued. This is used instead of the length configured for token services if available.</td></tr><tr class="table-odd"><td>defaultClientConfig.refreshTokenValiditySeconds</td><td><code>null</code></td><td>The length of time that a refresh token will be valid after it has been issued. This is used instead of the length configured for token services if available.</td></tr><tr class="table-even"><td>defaultClientConfig.additionalInformation</td><td><code>&#91;:&#93;</code></td><td>Additional information about the client. This is not required by OAuth 2.0 but is exposed in the underlying Spring library.</td></tr></table>
+<h2 id="approvalHandler">7.6 User Approval Configuration</h2>
+The plugin provides support for the three <code>UserApprovalHandler</code> implementations provided by the underlying Spring OAuth library. This only applies to the authorization endpoint and allows you to configure the method of auto-approval used by the application. The following properties determine which method of auto-approval to use and how it is configured:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>auto</td><td><code>EXPLICIT</code></td><td>Determines which method of auto-approval to use. The value is determined by <code>grails.plugin.springsecurity.UserApprovalSupport</code> and must be <code>EXPLICIT</code>, <code>TOKEN_STORE</code> or <code>APPROVAL_STORE</code>.</td></tr><tr class="table-even"><td>handleRevocationAsExpiry</td><td><code>false</code></td><td>When configured to use an approval store for auto-approval, this determines if approval revocation should expire the corresponding approval instance (<code>true</code>) or delete the approval (<code>false</code>) outright.</td></tr><tr class="table-odd"><td>approvalValiditySeconds</td><td><code>60 &#42; 60 &#42; 24 &#42; 30</code></td><td>When configured to use an approval store for auto-approval, the length of time that an approval will be valid after it has been granted.</td></tr><tr class="table-even"><td>scopePrefix</td><td><code>'scope.'</code></td><td>When configured to use an approval store for auto-approval, the prefix added to approved scopes as part of the auto-approval process.</td></tr></table><p class="paragraph"/>The <code>auto</code> property determines which of the three <code>UserApprovalHandler</code> provided by Spring OAuth will be used.<p class="paragraph"/>The default option is to require explicit approval for every authorization and is equivalent to setting <code>auto</code> to <code>EXPLICIT</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.oauthprovider.approval.auto = UserApproval.EXPLICIT</pre></div><p class="paragraph"/>Auto-approval based on previously issued access tokens is supported via the <code>TokenStoreUserApprovalHandler</code> provided by Spring OAuth and can be configured by setting <code>auto</code> to <code>TOKEN_STORE</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.oauthprovider.approval.auto = UserApproval.TOKEN_STORE</pre></div><p class="paragraph"/>Auto-approval based on prior approvals is supported via the <code>ApprovalStoreUserApprovalHandler</code> provided by Spring OAuth and can be configured by setting <code>auto</code> to <code>APPROVAL_STORE</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.oauthprovider.approval.auto = UserApproval.APPROVAL_STORE</pre></div><p class="paragraph"/>The plugin will configure the <code>TokenStoreUserApprovalHandler</code> and <code>ApprovalStoreUserApprovalHandler</code> to use the GORM backed <code>TokenStore</code> and <code>ApprovalStore</code> respectively.<p class="paragraph"/>Please consult Spring OAuth directly for more information on the usage of the <code>TokenStore</code> and <code>ApprovalStore</code> methods of auto-approval.
 
 
-<h2 id="tokenEndpointFilterChain">6.7 Token Endpoint Filter Chain</h2>
-Spring Security Core plugin's <code>securityContextPersistenceFilter</code> stores state in the HTTP session. Access to the token endpoint must be stateless. The default behavior of the OAuth2 plugin is to attempt to create a new filter chain based on an existing chain definition and then replace the <code>securityContextPersistenceFilter</code> with a <code>statelessSecurityContextPersistenceFilter</code>.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>tokenEndpointFilterChain.baseUrlPattern</td><td><code>'/&#42;&#42;'</code></td><td>URL pattern used to identify the existing filter chain to use as a base for the token endpoint's filter chain. The referenced filter chain <strong class="bold">must</strong> include the <code>securityContextPersistenceFilter</code> for this to function properly.</td></tr><tr class="table-even"><td>tokenEndpointFilterChain.disabled</td><td><code>false</code></td><td>Whether to disable this functionality.</td></tr></table>
+<h2 id="defaultClientConfig">7.7 Default Client Configuration</h2>
+An application can use the following properties to define the default values that will be used when creating a <code>ClientDetails</code> instance if a client has not specified a value. The default configuration will not allow a client to retrieve an access token unless they have explicitly registered support for the requested grant type.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>defaultClientConfig.resourceIds</td><td><code>&#91;&#93;</code></td><td>Resources the client is authorized to access. This is currently unused as access to resources is controlled by Spring Security Core's rules.</td></tr><tr class="table-even"><td>defaultClientConfig.authorizedGrantTypes</td><td><code>&#91;&#93;</code></td><td>Grant types the client supports.</td></tr><tr class="table-odd"><td>defaultClientConfig.scope</td><td><code>&#91;&#93;</code></td><td>Scope to use for each access token request.</td></tr><tr class="table-even"><td>defaultClientConfig.autoApproveScopes</td><td><code>&#91;&#93;</code></td><td>Scopes to auto-approve for authorization requests. Including a value of <code>true</code> in the list will auto-approve all scopes for clients using the default configuration.</td></tr><tr class="table-odd"><td>defaultClientConfig.registeredRedirectUri</td><td><code>null</code></td><td>URI to redirect the user-agent to during an authorization code or implicit grant.</td></tr><tr class="table-even"><td>defaultClientConfig.authorities</td><td><code>&#91;&#93;</code></td><td>Roles and authorities granted to the client.</td></tr><tr class="table-odd"><td>defaultClientConfig.accessTokenValiditySeconds</td><td><code>null</code></td><td>The length of time that an access token will be valid after it has been issued. This is used instead of the length configured for token services if available.</td></tr><tr class="table-even"><td>defaultClientConfig.refreshTokenValiditySeconds</td><td><code>null</code></td><td>The length of time that a refresh token will be valid after it has been issued. This is used instead of the length configured for token services if available.</td></tr><tr class="table-odd"><td>defaultClientConfig.additionalInformation</td><td><code>&#91;:&#93;</code></td><td>Additional information about the client. This is not required by OAuth 2.0 but is exposed in the underlying Spring library.</td></tr></table>
+
+
+<h2 id="filterChainConfig">7.8 Filter Chain Configuration</h2>
+Spring Security Core plugin's <code>securityContextPersistenceFilter</code> stores state in the HTTP session. Access to the token endpoint and OAuth 2.0 resources must be stateless.<p class="paragraph"/>By default, the OAuth2 plugin will register the <code>statelessSecurityContextPersistenceFilter</code> in the filter chain after the <code>securityContextPersistenceFilter</code> provided by the Spring Security Core plugin. This is provided as a convenience for the plugin consumer, so they can remove one filter or the other to easily achieve stateful or stateless request handling. See the example below. This automatic filter registration can be disabled by setting the <code>registerStatelessFilter</code> configuration option to <code>false</code>.<p class="paragraph"/>The plugin also registers an <code>OAuth2AuthenticationProcessingFilter</code> under the bean name <code>oauth2ProviderFilter</code>. This filter provides token authentication using the underlying token store for resource access.<p class="paragraph"/>Finally, the plugin registers a <code>ClientCredentialsTokenEndpointFilter</code> under the bean name <code>clientCredentialsTokenEndpointFilter</code>. This filter is responsible for authenticating the client specified in any OAuth 2.0 requests.<p class="paragraph"/>The following filter chain configuration is recommended:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.filterChain.chainMap = &#91;
+           '/oauth/token': 'JOINED_FILTERS,&#45;oauth2ProviderFilter,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter',
+           '/securedOAuth2Resources/&#42;&#42;': 'JOINED_FILTERS,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter',
+           '/&#42;&#42;': 'JOINED_FILTERS,&#45;statelessSecurityContextPersistenceFilter,&#45;oauth2ProviderFilter,&#45;clientCredentialsTokenEndpointFilter'
+   &#93;</pre></div><p class="paragraph"/>The <code>oauth2ProviderFilter</code> and stateful <code>securityContextPersistenceFilter</code> are removed from the token endpoint's filter chain. With the <code>securityContextPersistenceFilter</code> removed, the <code>statelessSecurityContextPersistenceFilter</code> will be used to ensure access token requests are stateless.<p class="paragraph"/>The <code>securityContextPersistenceFilter</code> is also removed from the filter chain for OAuth 2.0 resources. However, the <code>oauth2ProviderFilter</code> must not be removed, as this filter is responsible for authenticating the OAuth 2.0 access token included in the request.<p class="paragraph"/>It is recommend that filter chain(s) for non-OAuth 2.0 resources have all OAuth 2.0 specific filters removed. These include: <code>statelessSecurityContextPersistenceFilter</code>, <code>oauth2ProviderFilter</code>, and <code>clientCredentialsTokenEndpointFilter</code>. It is also recommended that any unnecessary filters such as the <code>rememberMeAuthenticationFilter</code> are removed from the filter chains for the token endpoint and OAuth 2.0 resources.
 
                     </div>
                 </td>
@@ -480,6 +531,9 @@ Spring Security Core plugin's <code>securityContextPersistenceFilter</code> stor
                     
                     <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Scripts</h1><div class="menu-sub">
                         
+                        
+                        <div class="menu-item"><a href="../ref/Scripts/s2-init-oauth2-approval.html">s2-init-oauth2-approval</a>
+                        </div>
                         
                         <div class="menu-item"><a href="../ref/Scripts/s2-init-oauth2-provider.html">s2-init-oauth2-provider</a>
                         </div>

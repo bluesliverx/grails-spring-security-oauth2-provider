@@ -36,10 +36,13 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0"><a href="../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/domainClassProperties.html"><strong>5</strong><span>Domain Class Properties</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/optionalDomainClasses.html"><strong>5</strong><span>Optional Domain Classes</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/configuration.html"><strong>6</strong><span>Configuration</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/domainClassProperties.html"><strong>6</strong><span>Domain Class Properties</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/configuration.html"><strong>7</strong><span>Configuration</span></a>
                     </div>
                     
                 </div>
@@ -72,7 +75,7 @@ function addJsClass() {
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../guide/domainClassProperties.html"><strong>5</strong><span>Domain Class Properties</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../guide/optionalDomainClasses.html"><strong>5</strong><span>Optional Domain Classes</span> >></a></div>
                 
 
 
@@ -112,22 +115,23 @@ The plugin uses regular Grails domain classes backed by GORM. There are four req
 
 
 <h2 id="clientClass">4.1 Client Class</h2>
-Information from the Grails client domain class will be extracted to create a <code>ClientDetails</code> instance for the underlying Spring Security OAuth2 implementation.<p class="paragraph"/>The generated class will look like this:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class Client &#123;<p class="paragraph"/>    <span class="java&#45;keyword">private</span> <span class="java&#45;keyword">static</span> <span class="java&#45;keyword">final</span> <span class="java&#45;object">String</span> NO_CLIENT_SECRET = ''<p class="paragraph"/>    <span class="java&#45;keyword">transient</span> springSecurityService<p class="paragraph"/>    <span class="java&#45;object">String</span> clientId
+Information from the Grails client domain class will be extracted to create a <code>ClientDetails</code> instance for the underlying Spring Security OAuth 2.0 implementation.<p class="paragraph"/>The generated class will look like this:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class Client &#123;<p class="paragraph"/>    <span class="java&#45;keyword">private</span> <span class="java&#45;keyword">static</span> <span class="java&#45;keyword">final</span> <span class="java&#45;object">String</span> NO_CLIENT_SECRET = ''<p class="paragraph"/>    <span class="java&#45;keyword">transient</span> springSecurityService<p class="paragraph"/>    <span class="java&#45;object">String</span> clientId
     <span class="java&#45;object">String</span> clientSecret<p class="paragraph"/>    <span class="java&#45;object">Integer</span> accessTokenValiditySeconds
     <span class="java&#45;object">Integer</span> refreshTokenValiditySeconds<p class="paragraph"/>    Map&#60;<span class="java&#45;object">String</span>, <span class="java&#45;object">Object</span>&#62; additionalInformation<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasMany = &#91;
             authorities: <span class="java&#45;object">String</span>,
             authorizedGrantTypes: <span class="java&#45;object">String</span>,
             resourceIds: <span class="java&#45;object">String</span>,
             scopes: <span class="java&#45;object">String</span>,
+            autoApproveScopes: <span class="java&#45;object">String</span>,
             redirectUris: <span class="java&#45;object">String</span>
     &#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> transients = &#91;'springSecurityService'&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
         clientId blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
         clientSecret nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        accessTokenValiditySeconds nullable: <span class="java&#45;keyword">true</span>
         refreshTokenValiditySeconds nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        authorities nullable: <span class="java&#45;keyword">true</span>
-        authorizedGrantTypes nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        resourceIds nullable: <span class="java&#45;keyword">true</span>
-        scopes nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        redirectUris nullable: <span class="java&#45;keyword">true</span>
+        authorizedGrantTypes nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        resourceIds nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        scopes nullable: <span class="java&#45;keyword">true</span>
+        autoApproveScopes nullable: <span class="java&#45;keyword">true</span><p class="paragraph"/>        redirectUris nullable: <span class="java&#45;keyword">true</span>
         additionalInformation nullable: <span class="java&#45;keyword">true</span>
-   &#125;<p class="paragraph"/>    def beforeInsert() &#123;
+    &#125;<p class="paragraph"/>    def beforeInsert() &#123;
         encodeClientSecret()
     &#125;<p class="paragraph"/>    def beforeUpdate() &#123;
         <span class="java&#45;keyword">if</span>(isDirty('clientSecret')) &#123;
@@ -135,13 +139,14 @@ Information from the Grails client domain class will be extracted to create a <c
         &#125;
     &#125;<p class="paragraph"/>    <span class="java&#45;keyword">protected</span> void encodeClientSecret() &#123;
         clientSecret = clientSecret ?: NO_CLIENT_SECRET
-        clientSecret = springSecurityService.encodePassword(clientSecret)
+        clientSecret = springSecurityService?.passwordEncoder ? springSecurityService.encodePassword(clientSecret) : clientSecret
     &#125;
 &#125;</pre></div><p class="paragraph"/>The client secret is encoded using the same strategy that is configured by the Core plugin for handling passwords. Optional client secrets are also supported out of the box.
 
 
 <h2 id="accessTokenClass">4.2 Access Token Class</h2>
-This class represents an access token than has been issued to a client on behalf of a user. The authentication object serialized is an instance of <code>OAuth2Authentication</code> from Spring Security OAuth 2.0.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class AccessToken &#123;<p class="paragraph"/>    <span class="java&#45;object">byte</span>&#91;&#93; authentication<p class="paragraph"/>    <span class="java&#45;object">String</span> username
+This class represents an access token than has been issued to a client on behalf of a user. The authentication object serialized is an instance of <code>OAuth2Authentication</code> from Spring Security OAuth 2.0.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class AccessToken &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> authenticationKey
+    <span class="java&#45;object">byte</span>&#91;&#93; authentication<p class="paragraph"/>    <span class="java&#45;object">String</span> username
     <span class="java&#45;object">String</span> clientId<p class="paragraph"/>    <span class="java&#45;object">String</span> value
     <span class="java&#45;object">String</span> tokenType<p class="paragraph"/>    Date expiration<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasOne = &#91;refreshToken: <span class="java&#45;object">String</span>&#93;
     <span class="java&#45;keyword">static</span> hasMany = &#91;scope: <span class="java&#45;object">String</span>&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
@@ -149,10 +154,11 @@ This class represents an access token than has been issued to a client on behalf
         clientId nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>
         value nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
         tokenType nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>
-        expiration nullable: <span class="java&#45;keyword">true</span>
+        expiration nullable: <span class="java&#45;keyword">false</span>
         scope nullable: <span class="java&#45;keyword">false</span>
         refreshToken nullable: <span class="java&#45;keyword">true</span>
-        authentication nullable: <span class="java&#45;keyword">false</span>, maxSize: 1024 &#42; 4, validator: &#123; val, obj &#45;&#62; val.size() &#62; 0 &#125;
+        authenticationKey nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
+        authentication nullable: <span class="java&#45;keyword">false</span>, minSize: 1, maxSize: 1024 &#42; 4
     &#125;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
         version <span class="java&#45;keyword">false</span>
         scope lazy: <span class="java&#45;keyword">false</span>
@@ -161,10 +167,12 @@ This class represents an access token than has been issued to a client on behalf
 
 
 <h2 id="refreshTokenClass">4.3 Refresh Token Class</h2>
-This class represents a refresh token issued as part of one of the grants that supports issuing a refresh token. The length of time the refresh token is valid is determined by the token services and can be configured. See <a href="../guide/single.html#tokenServices" class="guide">token services configuration</a> for more. The authentication object serialized is an instance of <code>OAuth2Authentication</code> from Spring Security OAuth 2.0.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class RefreshToken &#123;<p class="paragraph"/>    <span class="java&#45;object">byte</span>&#91;&#93; authentication
-    <span class="java&#45;object">String</span> value<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
+This class represents a refresh token issued as part of one of the grants that supports issuing a refresh token. The length of time the refresh token is valid is determined by the token services and can be configured. See <a href="../guide/single.html#tokenServices" class="guide">token services configuration</a> for more. The authentication object serialized is an instance of <code>OAuth2Authentication</code> from Spring Security OAuth 2.0.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class RefreshToken &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> value
+    Date expiration
+    <span class="java&#45;object">byte</span>&#91;&#93; authentication<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
         value nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
-        authentication nullable: <span class="java&#45;keyword">false</span>, maxSize: 1024 &#42; 4, validator: &#123; val, obj &#45;&#62; val.size() &#62; 0 &#125;
+        expiration nullable: <span class="java&#45;keyword">false</span>
+        authentication nullable: <span class="java&#45;keyword">false</span>, minSize: 1, maxSize: 1024 &#42; 4
     &#125;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
         version <span class="java&#45;keyword">false</span>
     &#125;
@@ -172,10 +180,10 @@ This class represents a refresh token issued as part of one of the grants that s
 
 
 <h2 id="authorizationCodeClass">4.4 Authorization Code Class</h2>
-This class represents an authorization code that has been issued via the authorization endpoint as part of an authorization code grant. The authentication object serialized is an instance of <code>AuthorizationRequestHolder</code> from Spring Security OAuth 2.0.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class AuthorizationCode &#123;<p class="paragraph"/>    <span class="java&#45;object">byte</span>&#91;&#93; authentication
+This class represents an authorization code that has been issued via the authorization endpoint as part of an authorization code grant. The authentication object serialized is an instance of <code>OAuth2Authentication</code> from Spring Security OAuth 2.0.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.yourapp<p class="paragraph"/>class AuthorizationCode &#123;<p class="paragraph"/>    <span class="java&#45;object">byte</span>&#91;&#93; authentication
     <span class="java&#45;object">String</span> code<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
         code nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
-        authentication nullable: <span class="java&#45;keyword">false</span>, maxSize: 1024 &#42; 4, validator: &#123; val, obj &#45;&#62; val.size() &#62; 0 &#125;
+        authentication nullable: <span class="java&#45;keyword">false</span>, minSize: 1, maxSize: 1024 &#42; 4
     &#125;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
         version <span class="java&#45;keyword">false</span>
     &#125;
@@ -186,7 +194,7 @@ This class represents an authorization code that has been issued via the authori
                 
                     <div class="toc-item prev-left"><a href="../guide/exampleFlows.html">&lt;&lt; <strong>3</strong><span>Example Flows</span></a></div>
                 
-                    <div class="toc-item next-right"><a href="../guide/domainClassProperties.html"><strong>5</strong><span>Domain Class Properties</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../guide/optionalDomainClasses.html"><strong>5</strong><span>Optional Domain Classes</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
@@ -201,6 +209,9 @@ This class represents an authorization code that has been issued via the authori
                     
                     <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Scripts</h1><div class="menu-sub">
                         
+                            
+                            <div class="menu-item"><a href="../ref/Scripts/s2-init-oauth2-approval.html">s2-init-oauth2-approval</a>
+                            </div>
                             
                             <div class="menu-item"><a href="../ref/Scripts/s2-init-oauth2-provider.html">s2-init-oauth2-provider</a>
                             </div>

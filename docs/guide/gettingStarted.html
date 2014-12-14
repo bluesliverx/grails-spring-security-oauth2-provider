@@ -36,10 +36,13 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0"><a href="../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/domainClassProperties.html"><strong>5</strong><span>Domain Class Properties</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/optionalDomainClasses.html"><strong>5</strong><span>Optional Domain Classes</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../guide/configuration.html"><strong>6</strong><span>Configuration</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/domainClassProperties.html"><strong>6</strong><span>Domain Class Properties</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/configuration.html"><strong>7</strong><span>Configuration</span></a>
                     </div>
                     
                 </div>
@@ -128,7 +131,7 @@ The following assumes that the Spring Security Core plugin has been installed an
 
 <h2 id="installPlugin">2.1 Install Plugin</h2>
 Install the OAuth2 plugin by adding a dependency in <code>grails-app/conf/BuildConfig.groovy</code>:<p class="paragraph"/><div class="code"><pre>plugins &#123;
-    compile &#34;:spring&#45;security&#45;oauth2&#45;provider:1.0.5&#45;SNAPSHOT&#34;
+    compile &#34;:spring&#45;security&#45;oauth2&#45;provider:2.0&#45;RC1&#34;
 &#125;</pre></div><p class="paragraph"/>This has a dependency on the Spring Security Core plugin, which will be installed if necessary.
 
 
@@ -178,7 +181,7 @@ At this point your application is a proper OAuth 2.0 provider. You can now regis
 
 
 <h2 id="resourceAccess">2.8 Controlling Access to Resources</h2>
-Access to resources is controlled by the Spring Security Core plugin's access control mechanisms. Additionally, the plugin has full support for the OAuth 2.0 SPeL extensions provided by the underlying Spring library. Refer to the methods in <a href="https://github.com/spring-projects/spring-security-oauth/blob/1.0.5.RELEASE/spring-security-oauth2/src/main/java/org/springframework/security/oauth2/provider/expression/OAuth2SecurityExpressionMethods.java" target="blank">OAuth2SecurityExpressionMethods</a> for what is available in the plugin.<p class="paragraph"/>Using SPeL is the only tested and confirmed way to enforce OAuth 2.0 specific restrictions on resource access.<p class="paragraph"/>The following controller illustrates the use of OAuth 2.0 SPeL:<p class="paragraph"/><div class="code"><pre>class SecuredController &#123;<p class="paragraph"/>    @Secured(&#91;<span class="java&#45;quote">"&#35;oauth2.clientHasRole('ROLE_CLIENT')"</span>&#93;)
+Access to resources is controlled by the Spring Security Core plugin's access control mechanisms. Additionally, the plugin has full support for the OAuth 2.0 SPeL extensions provided by the underlying Spring library. Refer to the methods in <a href="https://github.com/spring-projects/spring-security-oauth/blob/2.0.2.RELEASE/spring-security-oauth2/src/main/java/org/springframework/security/oauth2/provider/expression/OAuth2SecurityExpressionMethods.java" target="blank">OAuth2SecurityExpressionMethods</a> for what is available in the plugin.<p class="paragraph"/>Using SPeL is the only tested and confirmed way to enforce OAuth 2.0 specific restrictions on resource access.<p class="paragraph"/>The following controller illustrates the use of OAuth 2.0 SPeL:<p class="paragraph"/><div class="code"><pre>class SecuredOAuth2ResourcesController &#123;<p class="paragraph"/>    @Secured(&#91;<span class="java&#45;quote">"&#35;oauth2.clientHasRole('ROLE_CLIENT')"</span>&#93;)
     def clientRoleExpression() &#123;
         render <span class="java&#45;quote">"client role expression"</span>
     &#125;<p class="paragraph"/>    @Secured(&#91;<span class="java&#45;quote">"ROLE_CLIENT"</span>&#93;)
@@ -211,7 +214,11 @@ Access to resources is controlled by the Spring Security Core plugin's access co
     def userRoleOrReadScope() &#123;
         render <span class="java&#45;quote">"user role or read scope"</span>
     &#125;
-&#125;</pre></div>
+&#125;</pre></div><p class="paragraph"/>The filter chains must be configured to ensure stateless access to the token endpoint and any OAuth 2.0 resources:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.filterChain.chainMap = &#91;
+        '/oauth/token': 'JOINED_FILTERS,&#45;oauth2ProviderFilter,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter',
+        '/securedOAuth2Resources/&#42;&#42;': 'JOINED_FILTERS,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter',
+        '/&#42;&#42;': 'JOINED_FILTERS,&#45;statelessSecurityContextPersistenceFilter,&#45;oauth2ProviderFilter,&#45;clientCredentialsTokenEndpointFilter'
+&#93;</pre></div><p class="paragraph"/>Please consult the section on <a href="../guide/single.html#filterChainConfig" class="guide">Filter Chain Configuration</a> for more information.
 
 
 <h2 id="troubleShooting">2.9 Trouble Shooting</h2>
@@ -237,6 +244,9 @@ If you encounter a <code>NullPointerException</code> while using the OAuth2 plug
                     
                     <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Scripts</h1><div class="menu-sub">
                         
+                            
+                            <div class="menu-item"><a href="../ref/Scripts/s2-init-oauth2-approval.html">s2-init-oauth2-approval</a>
+                            </div>
                             
                             <div class="menu-item"><a href="../ref/Scripts/s2-init-oauth2-provider.html">s2-init-oauth2-provider</a>
                             </div>

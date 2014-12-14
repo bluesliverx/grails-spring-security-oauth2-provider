@@ -36,10 +36,13 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClassProperties.html"><strong>5</strong><span>Domain Class Properties</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/optionalDomainClasses.html"><strong>5</strong><span>Optional Domain Classes</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../../guide/configuration.html"><strong>6</strong><span>Configuration</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClassProperties.html"><strong>6</strong><span>Domain Class Properties</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/configuration.html"><strong>7</strong><span>Configuration</span></a>
                     </div>
                     
                 </div>
@@ -92,7 +95,7 @@ function addJsClass() {
 
 <h2 id="installPlugin">2.1 Install Plugin</h2>
 Install the OAuth2 plugin by adding a dependency in <code>grails-app/conf/BuildConfig.groovy</code>:<p class="paragraph"/><div class="code"><pre>plugins &#123;
-    compile &#34;:spring&#45;security&#45;oauth2&#45;provider:1.0.5&#45;SNAPSHOT&#34;
+    compile &#34;:spring&#45;security&#45;oauth2&#45;provider:2.0&#45;RC1&#34;
 &#125;</pre></div><p class="paragraph"/>This has a dependency on the Spring Security Core plugin, which will be installed if necessary.
 
 
@@ -116,6 +119,9 @@ Install the OAuth2 plugin by adding a dependency in <code>grails-app/conf/BuildC
                     
                     <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Scripts</h1><div class="menu-sub">
                         
+                            
+                            <div class="menu-item"><a href="../../ref/Scripts/s2-init-oauth2-approval.html">s2-init-oauth2-approval</a>
+                            </div>
                             
                             <div class="menu-item"><a href="../../ref/Scripts/s2-init-oauth2-provider.html">s2-init-oauth2-provider</a>
                             </div>
