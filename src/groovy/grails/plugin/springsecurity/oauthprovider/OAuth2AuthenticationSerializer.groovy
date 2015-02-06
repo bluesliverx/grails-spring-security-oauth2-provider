@@ -1,20 +1,12 @@
 package grails.plugin.springsecurity.oauthprovider
 
 import org.springframework.security.oauth2.provider.OAuth2Authentication
-import org.springframework.security.oauth2.common.util.SerializationUtils
 
-class OAuth2AuthenticationSerializer {
 
-    byte[] serialize(OAuth2Authentication authentication) {
-        SerializationUtils.serialize(authentication)
-    }
+interface OAuth2AuthenticationSerializer {
 
-    OAuth2Authentication deserialize(byte[] authentication) {
-        if (authentication == null) {
-            return null
-        }
-        new ByteArrayInputStream(authentication).withObjectInputStream(getClass().classLoader) { ois ->
-            ois.readObject() as OAuth2Authentication
-        }
-    }
+    Object serialize(OAuth2Authentication authentication)
+
+    OAuth2Authentication deserialize(Object authentication)
+
 }

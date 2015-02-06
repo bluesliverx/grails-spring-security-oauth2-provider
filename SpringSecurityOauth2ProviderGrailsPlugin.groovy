@@ -14,7 +14,7 @@
  */
 
 import grails.plugin.springsecurity.SpringSecurityUtils
-import grails.plugin.springsecurity.oauthprovider.OAuth2AuthenticationSerializer
+import grails.plugin.springsecurity.oauthprovider.DefaultOAuth2AuthenticationSerializer
 import grails.plugin.springsecurity.oauthprovider.UserApprovalSupport
 import grails.plugin.springsecurity.oauthprovider.endpoint.RequiredRedirectResolver
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationEndpoint
@@ -181,7 +181,7 @@ OAuth2 Provider support for the Spring Security plugin.
         springConfig.addAlias 'approvalStore', 'gormApprovalStoreService'
 
         /* Helper classes for Gorm support */
-        oauth2AuthenticationSerializer(OAuth2AuthenticationSerializer)
+        oauth2AuthenticationSerializer(DefaultOAuth2AuthenticationSerializer)
         authenticationKeyGenerator(DefaultAuthenticationKeyGenerator)
     }
 
