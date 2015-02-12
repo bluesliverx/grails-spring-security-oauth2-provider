@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+
+import grails.plugin.springsecurity.SecurityFilterPosition
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugin.springsecurity.oauthprovider.DefaultOAuth2AuthenticationSerializer
 import grails.plugin.springsecurity.oauthprovider.UserApprovalSupport
@@ -52,7 +54,9 @@ import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswo
 import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter
 import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
+import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint
+import org.springframework.security.web.savedrequest.NullRequestCache
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 
@@ -168,8 +172,8 @@ OAuth2 Provider support for the Spring Security plugin.
         configureResourceProtection(conf)
 
         /* Access to OAuth2 resources and the token endpoint must be stateless */
-        configureStatelessFilter.delegate = delegate
-        configureStatelessFilter(conf)
+        configureStatelessFilters.delegate = delegate
+        configureStatelessFilters(conf)
 
 		println "... done configuring Spring Security OAuth2 provider"
 	}
@@ -437,7 +441,7 @@ OAuth2 Provider support for the Spring Security plugin.
                 conf.oauthProvider.filterStartPosition + 1
     }
 
-    private configureStatelessFilter = { conf ->
+    private configureStatelessFilters = { conf ->
         statelessSecurityContextPersistenceFilter(StatelessSecurityContextPersistenceFilter)
 
         // Should the stateless filter be registered in the filter chain
@@ -448,6 +452,25 @@ OAuth2 Provider support for the Spring Security plugin.
             // either the session based or stateless security context filter from the filter chain where appropriate
             SpringSecurityUtils.registerFilter 'statelessSecurityContextPersistenceFilter',
                     conf.oauthProvider.statelessFilterStartPosition + 1
+        }
+
+        oauth2RequestCache(NullRequestCache)
+
+        oauth2ExceptionTranslationFilter(ExceptionTranslationFilter, ref('authenticationEntryPoint'), ref('oauth2RequestCache')) {
+            accessDeniedHandler = ref('accessDeniedHandler')
+            authenticationTrustResolver = ref('authenticationTrustResolver')
+            throwableAnalyzer = ref('throwableAnalyzer')
+        }
+
+        // Should the custom exception translation filter be registered in the filter chain
+        boolean registerExceptionTranslationFilter = conf.oauthProvider.registerExceptionTranslationFilter as boolean
+
+        if(registerExceptionTranslationFilter) {
+            // Similar to the stateless security context filter, this is registered in the filter chain,
+            // allowing the plugin consumer to remove this filter or the Core plugin provided exceptionTranslationFilter
+            // where necessary to meet their needs
+            SpringSecurityUtils.registerFilter 'oauth2ExceptionTranslationFilter',
+                    conf.oauthProvider.exceptionTranslationFilterStartPosition + 1
         }
     }
 

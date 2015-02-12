@@ -23,6 +23,9 @@ security {
 		filterStartPosition = SecurityFilterPosition.X509_FILTER.order
 		clientFilterStartPosition = SecurityFilterPosition.DIGEST_AUTH_FILTER.order
 
+        exceptionTranslationFilterStartPosition = SecurityFilterPosition.EXCEPTION_TRANSLATION_FILTER.order
+        registerExceptionTranslationFilter = true
+
         statelessFilterStartPosition = SecurityFilterPosition.SECURITY_CONTEXT_FILTER.order
         registerStatelessFilter = true
 

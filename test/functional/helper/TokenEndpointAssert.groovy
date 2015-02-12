@@ -47,6 +47,7 @@ class TokenEndpointAssert {
         assert response.contentType == 'application/json'
         assert response.headers['Cache-Control'].value == 'no-store'
         assert response.headers['Pragma'].value == 'no-cache'
+        assert response.headers['Set-Cookie'] == null
 
         if(checkWWWAuthenticate) {
             assert response.headers['WWW-Authenticate'].value.startsWith('Bearer realm="Grails OAuth2 Realm"')
