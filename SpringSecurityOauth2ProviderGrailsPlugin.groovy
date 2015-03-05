@@ -20,6 +20,7 @@ import grails.plugin.springsecurity.oauthprovider.endpoint.RequiredRedirectResol
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationEndpoint
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedTokenEndpoint
 import grails.plugin.springsecurity.oauthprovider.provider.GrailsOAuth2RequestFactory
+import grails.plugin.springsecurity.oauthprovider.provider.GrailsOAuth2RequestValidator
 import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2AuthorizationEndpointExceptionResolver
 import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2TokenEndpointExceptionResolver
 import grails.plugin.springsecurity.oauthprovider.filter.StatelessSecurityContextPersistenceFilter
@@ -130,9 +131,9 @@ OAuth2 Provider support for the Spring Security plugin.
         configureTokenServices.delegate = delegate
         configureTokenServices(conf)
 
-        /* Register oauth2 request factory */
-        configureOAuth2RequestFactory.delegate = delegate
-        configureOAuth2RequestFactory(conf)
+        /* Register OAuth2 request creation and validation support */
+        configureOAuth2RequestSupport.delegate = delegate
+        configureOAuth2RequestSupport(conf)
 
         /* Register token granters */
         configureTokenGranters.delegate = delegate
@@ -196,10 +197,12 @@ OAuth2 Provider support for the Spring Security plugin.
         }
     }
 
-    private configureOAuth2RequestFactory = { conf ->
+    private configureOAuth2RequestSupport = { conf ->
         /* Should every request be required to include the scope of the access token */
         boolean requireScope = conf.oauthProvider.authorization.requireScope as boolean
         oauth2RequestFactory(GrailsOAuth2RequestFactory, ref('clientDetailsService'), requireScope)
+
+        oauth2RequestValidator(GrailsOAuth2RequestValidator)
     }
 
     private configureTokenGranters = { conf ->
@@ -339,6 +342,7 @@ OAuth2 Provider support for the Spring Security plugin.
             redirectResolver = ref('redirectResolver')
             userApprovalHandler = ref('userApprovalHandler')
             OAuth2RequestFactory = ref('oauth2RequestFactory')
+            OAuth2RequestValidator = ref('oauth2RequestValidator')
 
             // The URL where the user approves the grant
             userApprovalPage = conf.oauthProvider.userApprovalEndpointUrl
@@ -352,6 +356,7 @@ OAuth2 Provider support for the Spring Security plugin.
             clientDetailsService = ref('clientDetailsService')
             tokenGranter = ref('oauth2TokenEndpointTokenGranter')
             OAuth2RequestFactory = ref('oauth2RequestFactory')
+            OAuth2RequestValidator = ref('oauth2RequestValidator')
         }
 
         /* Register handler mapping for token and authorization endpoints */

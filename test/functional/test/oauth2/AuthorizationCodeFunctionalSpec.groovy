@@ -249,7 +249,7 @@ class AuthorizationCodeFunctionalSpec extends AbstractAuthorizationEndpointFunct
     }
 
     private Map createTokenEndpointParams(String clientId, String clientSecret = null) {
-        def params = [grant_type: 'authorization_code', code: code, client_id: clientId, scope: 'test']
+        def params = [grant_type: 'authorization_code', code: code, client_id: clientId]
         if(clientSecret) {
             params << [client_secret: clientSecret]
         }
