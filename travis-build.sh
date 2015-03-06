@@ -6,7 +6,7 @@ set -e
 ./grailsw test-app unit: integration: --non-interactive --stacktrace
 ./grailsw package-plugin --non-interactive --stacktrace
 ./grailsw doc --pdf --non-interactive --stacktrace
-# Only publish if the branch starts with a number (i.e. 1.0.0 but not master)
+# Only publish docs if the branch starts with a number (i.e. 1.0.0 but not master)
 if [[ $TRAVIS_BRANCH =~ ^[0-9].*$ && $TRAVIS_REPO_SLUG == 'bluesliverx/grails-spring-security-oauth2-provider' && $TRAVIS_PULL_REQUEST == 'false' ]]; then
   git config --global user.name "$GIT_NAME"
   git config --global user.email "$GIT_EMAIL"
@@ -21,7 +21,9 @@ if [[ $TRAVIS_BRANCH =~ ^[0-9].*$ && $TRAVIS_REPO_SLUG == 'bluesliverx/grails-sp
   git push origin HEAD
   cd ..
   rm -rf gh-pages
-  ./grailsw publish-plugin --no-scm --allow-overwrite --non-interactive --stacktrace
 else
-  echo "Not on versioned branch, so not publishing"
+  echo "Not on versioned branch, so not publishing docs"
 fi
+
+# Publish plugin
+./grailsw publish-plugin --no-scm --allow-overwrite --non-interactive --stacktrace
