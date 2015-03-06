@@ -2,6 +2,10 @@ language: groovy
 jdk:
 - oraclejdk7
 script: "./travis-build.sh"
+branches:
+  only:
+    - master
+    - /^[0-9.]+$/
 env:
   global:
   - GIT_NAME="Brian Saville"
