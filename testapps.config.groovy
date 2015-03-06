@@ -96,3 +96,11 @@ v243 {
     projectDir = projectDirCommon
     grailsHome = grailsHomeRoot + '/' + grailsVersion
 }
+
+v244 {
+    grailsVersion = '2.4.4'
+    pluginVersion = version
+    dotGrails = dotGrailsCommon
+    projectDir = projectDirCommon
+    grailsHome = grailsHomeRoot + '/' + grailsVersion
+}
