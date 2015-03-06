@@ -1,5 +1,14 @@
 language: groovy
 jdk:
-  - oraclejdk7
-script: ./grailsw refresh-dependencies
-     && ./grailsw test-app
+- oraclejdk7
+script: "./travis-build.sh"
+env:
+  global:
+  - GIT_NAME="Brian Saville"
+  - GIT_EMAIL="bksaville@gmail.com"
+  # travis encrypt -a env.global 'GRAILS_CENTRAL_USERNAME=myusername'
+  # travis encrypt -a env.global 'GRAILS_CENTRAL_PASSWORD=mypassword'
+  # travis encrypt -a env.global 'GITHUB_TOKEN=token' # get the token from https://github.com/settings/applications
+  - secure: aHPAUuip+gWj3pba1S6aqMkdVe5DQSN9hL/X0K5vY4HDrsJ3FE15CkcgFT9il02SiyIUJHY3esdnW/gaK55lzPCv0b6GRLrZfE/qSwpVzEyxyfBK15OYNzQm/jH10kJXUVbGhF0hpkLO8x9kVGJJsdKqSH5YsFYXFPEEL7xUo74=
+  - secure: YMCir5j/i6T7IJd3D4QqQifyDlXComWMzCJI9W2QWvHbZ90YmRufIe+HlTtIP7HJEbJsXXR1f94dSiXTie0nbSWById27HwhnX30AcRExItn4MsgOhOeiHLR4946X8JSP6zcy+BiSAlpkxVDCHmEo6FW4onHt/G+spwcFZ1KbP8=
+  - secure: dVM+jJNq6YB0o6Fw48aST6oZ7QusSoMoiUBD71/QOW679J1XIQHwaP2RYRqGY5b6A6ub6X7WaSkJ+d569BTL491S7buJxH0+OqSGrduxCxOIkc/9O9eX26WoZtnseKJy2SjclFJaomusLKtvTLrR3nz0SL2sMuAhkCqu0ksbk6o=

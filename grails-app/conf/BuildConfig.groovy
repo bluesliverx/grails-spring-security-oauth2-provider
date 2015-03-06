@@ -5,6 +5,9 @@ grails.project.work.dir = 'target'
 grails.project.docs.output.dir = 'docs'
 grails.release.scm.enabled = false
 
+grails.project.repos.grailsCentral.username = System.getenv("GRAILS_CENTRAL_USERNAME")
+grails.project.repos.grailsCentral.password = System.getenv("GRAILS_CENTRAL_PASSWORD")
+
 // Code Narc
 codenarc.reports = {
 	XmlReport('xml') {
