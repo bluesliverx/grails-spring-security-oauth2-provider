@@ -92,9 +92,6 @@ grails.project.dependency.resolution = {
 		test ':code-coverage:2.0.3-2', {
 			export = false
 		}
-		test ':codenarc:0.21', {
-			export = false
-		}
 
         runtime ":hibernate:3.6.10.14", {
             export = false
