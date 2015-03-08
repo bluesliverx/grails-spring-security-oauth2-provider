@@ -76,7 +76,7 @@ grails.project.dependency.resolution = {
             export = false
         }
 
-        test 'com.github.detro.ghostdriver:phantomjsdriver:1.1.0', {
+        test 'com.github.detro:phantomjsdriver:1.2.0', {
             transitive = false
             export = false
         }

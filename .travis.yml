@@ -6,6 +6,8 @@ branches:
   only:
     - master
     - /^[0-9.]+$/
+before_script:
+  - rm -rf target
 env:
   global:
   - GIT_NAME="Brian Saville"

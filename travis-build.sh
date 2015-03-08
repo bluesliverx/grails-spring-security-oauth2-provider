@@ -1,13 +1,22 @@
 #!/bin/bash
-# Credit to candrews for his example of a travis ci build for a grails plugin
 set -e
+rm -rf *.zip
 ./grailsw refresh-dependencies --non-interactive --stacktrace
-#./grailsw test-app --non-interactive --stacktrace
-./grailsw test-app unit: integration: --non-interactive --stacktrace
+./grailsw test-app --non-interactive --stacktrace
 ./grailsw package-plugin --non-interactive --stacktrace
 ./grailsw doc --pdf --non-interactive --stacktrace
-# Only publish docs if the branch starts with a number (i.e. 1.0.0 but not master)
-if [[ $TRAVIS_BRANCH =~ ^[0-9].*$ && $TRAVIS_REPO_SLUG == 'bluesliverx/grails-spring-security-oauth2-provider' && $TRAVIS_PULL_REQUEST == 'false' ]]; then
+
+filename=$(find . -name "grails-*.zip" | head -1)
+filename=$(basename $filename)
+plugin=${filename:7}
+plugin=${plugin/.zip/}
+plugin=${plugin/-SNAPSHOT/}
+version="${plugin#*-}";
+plugin=${plugin/"-$version"/}
+
+echo "Publishing plugin grails-spring-security-core with version $version"
+
+if [[ $filename != *-SNAPSHOT* && $TRAVIS_REPO_SLUG == 'bluesliverx/grails-spring-security-oauth2-provider' && $TRAVIS_PULL_REQUEST == 'false' ]]; then
   git config --global user.name "$GIT_NAME"
   git config --global user.email "$GIT_EMAIL"
   git config --global credential.helper "store --file=~/.git-credentials"
@@ -22,8 +31,8 @@ if [[ $TRAVIS_BRANCH =~ ^[0-9].*$ && $TRAVIS_REPO_SLUG == 'bluesliverx/grails-sp
   cd ..
   rm -rf gh-pages
 else
-  echo "Not on versioned branch, so not publishing docs"
+  echo "Not doing a release, so not publishing docs"
 fi
 
 # Publish plugin
-./grailsw publish-plugin --no-scm --allow-overwrite --non-interactive --stacktrace
+./grailsw publish-plugin --allow-overwrite --non-interactive --stacktrace
