@@ -1,9 +1,10 @@
 
 log4j = {
     debug  'grails.plugin.springsecurity.oauthprovider',
-            'grails.plugin.springsecurity',
-            'org.springframework.security',
             'test.oauth2'
+
+	warn	'grails.plugin.springsecurity',
+			'org.springframework.security'
 
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
             'org.codehaus.groovy.grails.web.pages',          // GSP
