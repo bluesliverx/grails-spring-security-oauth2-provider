@@ -2,6 +2,7 @@
 set -e
 rm -rf *.zip
 ./grailsw refresh-dependencies --non-interactive --stacktrace
+./grailsw upgrade --non-interactive
 ./grailsw test-app --non-interactive --stacktrace
 ./grailsw package-plugin --non-interactive --stacktrace
 ./grailsw doc --pdf --non-interactive --stacktrace
