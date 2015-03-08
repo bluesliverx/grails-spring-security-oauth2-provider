@@ -8,6 +8,7 @@ class ErrorDescriptions {
     static final String SCOPE_REQUIRED = 'Empty scope (either the client or the user is not allowed the requested scopes)'
     static final String GRANT_TYPE_REQUIRED = 'A client must have at least one authorized grant type.'
     static final String IMPLICIT_GRANT_TYPE_UNSUPPORTED = 'Implicit grant type not supported from token endpoint'
+    static final String REDIRECT_URI_MISMATCH = 'Redirect URI mismatch.'
 
     static String unsupportedGrantType(String grantType) {
         return "Unsupported grant type: $grantType"

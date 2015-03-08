@@ -240,6 +240,41 @@ class AuthorizationCodeFunctionalSpec extends AbstractAuthorizationEndpointFunct
         _   |   'confidential-client'
     }
 
+    @Unroll
+    void "redirect_uri [#authRedirectUri] in authorization request and redirect_uri [#tokenRedirectUri] in token request"() {
+        given:
+        def params = createAuthorizationEndpointParams('public-client')
+        params << [redirect_uri: authRedirectUri]
+
+        when:
+        authorize(params)
+
+        then:
+        at ConfirmAccessPage
+
+        when:
+        authorizeButton.click()
+
+        then:
+        def tokenEndpointParams = createTokenEndpointParams('public-client')
+        if(tokenRedirectUri) {
+            tokenEndpointParams << [redirect_uri: tokenRedirectUri]
+        }
+
+        if(shouldSucceed) {
+            assertAccessTokenAndRefreshTokenRequest(tokenEndpointParams)
+        }
+        else {
+            assertAccessTokenErrorRequest(tokenEndpointParams, 400, 'invalid_grant', REDIRECT_URI_MISMATCH)
+        }
+
+        where:
+        authRedirectUri     |   tokenRedirectUri    |   shouldSucceed
+        REDIRECT_URI        |   null                |   false
+        REDIRECT_URI        |   REDIRECT_URI + 'a'  |   false
+        REDIRECT_URI        |   REDIRECT_URI        |   true
+    }
+
     private Map createAuthorizationEndpointParams(String clientId, String state = null) {
         def params = [response_type: 'code', client_id: clientId, scope: 'test']
         if(state) {
