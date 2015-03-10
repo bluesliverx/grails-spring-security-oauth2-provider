@@ -51,7 +51,6 @@ class GormTokenStoreService implements TokenStore {
 
     @Override
     void storeAccessToken(OAuth2AccessToken token, OAuth2Authentication authentication) {
-        removeAccessTokenIfItExists(token)
         def (accessTokenLookup, GormAccessToken) = getAccessTokenLookupAndClass()
 
         def authenticationKeyPropertyName = accessTokenLookup.authenticationKeyPropertyName
@@ -64,24 +63,19 @@ class GormTokenStoreService implements TokenStore {
         def refreshTokenPropertyName = accessTokenLookup.refreshTokenPropertyName
         def scopePropertyName = accessTokenLookup.scopePropertyName
 
-        def ctorArgs = [
-                (authenticationKeyPropertyName): authenticationKeyGenerator.extractKey(authentication),
-                (authenticationPropertyName): oauth2AuthenticationSerializer.serialize(authentication),
-                (usernamePropertyName): authentication.isClientOnly() ? null : authentication.name,
-                (clientIdPropertyName): authentication.getOAuth2Request().clientId,
-                (valuePropertyName): token.value,
-                (tokenTypePropertyName): token.tokenType,
-                (expirationPropertyName): token.expiration,
-                (refreshTokenPropertyName): token.refreshToken?.value,
-                (scopePropertyName): token.scope
-        ]
-        GormAccessToken.newInstance(ctorArgs).save()
-    }
+        def gormAccessToken = GormAccessToken.findWhere((valuePropertyName): token.value) ?: GormAccessToken.newInstance()
 
-    private void removeAccessTokenIfItExists(OAuth2AccessToken token) {
-        if(readAccessToken(token?.value) != null) {
-            removeAccessToken(token)
-        }
+        gormAccessToken."$authenticationKeyPropertyName" = authenticationKeyGenerator.extractKey(authentication)
+        gormAccessToken."$authenticationPropertyName" = oauth2AuthenticationSerializer.serialize(authentication)
+        gormAccessToken."$usernamePropertyName" = authentication.isClientOnly() ? null : authentication.name
+        gormAccessToken."$clientIdPropertyName" = authentication.getOAuth2Request().clientId
+        gormAccessToken."$valuePropertyName" = token.value
+        gormAccessToken."$tokenTypePropertyName" = token.tokenType
+        gormAccessToken."$expirationPropertyName" = token.expiration
+        gormAccessToken."$refreshTokenPropertyName" = token.refreshToken?.value
+        gormAccessToken."$scopePropertyName" = token.scope
+
+        gormAccessToken.save()
     }
 
     @Override
