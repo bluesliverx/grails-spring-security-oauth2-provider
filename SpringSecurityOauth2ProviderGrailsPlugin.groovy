@@ -90,9 +90,8 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 	def loadAfter = ["springSecurityCore"]
 
 	def license = "APACHE"
-	def organization = [ name:"Adaptive Computing", url:"http://adaptivecomputing.com" ]
-	def issueManagement = [ system:"GitHub", url:"http://github.com/adaptivecomputing/grails-spring-security-oauth2-provider/issues" ]
-	def scm = [ url:"http://github.com/adaptivecomputing/grails-spring-security-oauth2-provider" ]
+	def issueManagement = [ system:"GitHub", url:"http://github.com/bluesliverx/grails-spring-security-oauth2-provider/issues" ]
+	def scm = [ url:"http://github.com/bluesliverx/grails-spring-security-oauth2-provider" ]
 
 	def developers = [
 			[ name: "Brian Saville", email: "bksaville@gmail.com" ],
@@ -102,7 +101,7 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 	def title = 'OAuth2 Provider support for the Spring Security plugin.'
 	def description = 'OAuth2 Provider support for the Spring Security plugin.'
 
-	def documentation = 'http://adaptivecomputing.github.io/grails-spring-security-oauth2-provider/'
+	def documentation = 'http://bluesliverx.github.io/grails-spring-security-oauth2-provider/'
 
     private List availableMessageConverters = [
             new StringHttpMessageConverter(writeAcceptCharset: false),
