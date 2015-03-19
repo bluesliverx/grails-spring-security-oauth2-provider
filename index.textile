@@ -1,4 +1,0 @@
----
-layout: main
-title: Spring Security OAuth 2 Provider Plugin
----

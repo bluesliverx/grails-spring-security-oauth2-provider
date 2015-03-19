@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>3 Example Flows 2.0-RC3</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/introduction.html"><strong>1</strong><span>Introduction to the Spring Security OAuth2 Plugin</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/exampleFlows.html"><strong>3</strong><span>Example Flows</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/optionalDomainClasses.html"><strong>5</strong><span>Optional Domain Classes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/domainClassProperties.html"><strong>6</strong><span>Domain Class Properties</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/configuration.html"><strong>7</strong><span>Configuration</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        
+    </div>
+    <p>OAuth2 Provider support for the Spring Security plugin.</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>3 Example Flows - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> </p>
+
+                    <p><strong>Version:</strong> 2.0-RC3</p>
+
+                    
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#authorizationCode"><strong>3.1</strong><span>Authorization Code Grant</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#implicit"><strong>3.2</strong><span>Implicit Grant</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#password"><strong>3.3</strong><span>Resource Owner Password Credentials Grant</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#clientCredentials"><strong>3.4</strong><span>Client Credentials Grant</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#refreshToken"><strong>3.5</strong><span>Refresh Token Grant</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="exampleFlows">3 Example Flows</h1>
+The following examples assume you have followed the steps outlined in the <a href="../guide/single.html#gettingStarted" class="guide">Getting Started</a> section for an application named <code>oauth2-test</code> and your <code>grails-app/conf/BootStrap.groovy</code> contains the following:<p class="paragraph"/><div class="code"><pre>def init = &#123; servletContext &#45;&#62;<p class="paragraph"/>    Role roleUser = <span class="java&#45;keyword">new</span> Role(authority: 'ROLE_USER').save(flush: <span class="java&#45;keyword">true</span>)<p class="paragraph"/>    User user = <span class="java&#45;keyword">new</span> User(
+         username: 'my&#45;user',
+         password: 'my&#45;password',
+         enabled: <span class="java&#45;keyword">true</span>,
+         accountExpired: <span class="java&#45;keyword">false</span>,
+         accountLocked: <span class="java&#45;keyword">false</span>,
+         passwordExpired: <span class="java&#45;keyword">false</span>
+    ).save(flush: <span class="java&#45;keyword">true</span>)<p class="paragraph"/>    UserRole.create(user, roleUser, <span class="java&#45;keyword">true</span>)<p class="paragraph"/>    <span class="java&#45;keyword">new</span> Client(
+        clientId: 'my&#45;client',
+        authorizedGrantTypes: &#91;'authorization_code', 'refresh_token', 'implicit', 'password', 'client_credentials'&#93;,
+        authorities: &#91;'ROLE_CLIENT'&#93;,
+        scopes: &#91;'read', 'write'&#93;,
+        redirectUris: &#91;'http://myredirect.com'&#93;
+    ).save(flush: <span class="java&#45;keyword">true</span>)
+&#125;</pre></div><p class="paragraph"/>After retrieving an <code>access_token</code> via one of the flows, you must include this in the <code>Authorization</code> header when accessing protected resources.<p class="paragraph"/>For example, if you receive <code>7b9a989e-3702-4621-a631-fbd1a996fc94</code> as the <code>access_token</code>, you will include this in the <code>Authorization</code> header as <code>Bearer: 7b9a989e-3702-4621-a631-fbd1a996fc94</code> when requesting a protected resource.
+
+
+<h2 id="authorizationCode">3.1 Authorization Code Grant</h2>
+The authorization code grant flow is initiated by directing your browser to the authorization endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/authorize?response_type=code&#38;client_id=my&#45;client&#38;scope=read</pre></div><p class="paragraph"/>You will be redirected to the login page. After signing in, you will be prompted to confirm the request. Doing so will redirect your browser to the following URL:<p class="paragraph"/><div class="code"><pre>http://myredirect.com/?code=139R59</pre></div><p class="paragraph"/>The authorization code included in the query can be exchanged for an access token via the token endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/token?grant_type=authorization_code&#38;code=139R59&#38;client_id=my&#45;client</pre></div><p class="paragraph"/>You'll receive the <code>access_token</code> in the response:<p class="paragraph"/><div class="code"><pre>&#123;
+    <span class="java&#45;quote">"access_token"</span>: <span class="java&#45;quote">"a1ce2915&#45;8d79&#45;4961&#45;8abb&#45;2c6f0fdb4aba"</span>,
+    <span class="java&#45;quote">"token_type"</span>: <span class="java&#45;quote">"bearer"</span>,
+    <span class="java&#45;quote">"refresh_token"</span>: <span class="java&#45;quote">"6540222d&#45;0fb9&#45;4b01&#45;8d45&#45;7be2bdfb68f9"</span>,
+    <span class="java&#45;quote">"expires_in"</span>: 43199,
+    <span class="java&#45;quote">"scope"</span>: <span class="java&#45;quote">"read"</span>
+&#125;</pre></div><p class="paragraph"/>
+
+
+<h2 id="implicit">3.2 Implicit Grant</h2>
+The implicit grant is similar to the authorization code grant and can be initiated by directing your browser to the authorization endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/authorize?response_type=token&#38;client_id=my&#45;client&#38;scope=read</pre></div><p class="paragraph"/>Upon confirmation, your browser will be redirected to the following URL:<p class="paragraph"/><div class="code"><pre>http://myredirect.com/&#35;access_token=4e22ad4f&#45;08ae&#45;49dc&#45;befb&#45;2c9821af04d1&#38;token_type=bearer&#38;expires_in=43199</pre></div><p class="paragraph"/>The <code>access_token</code> can be extracted from the URL fragment.
+
+
+<h2 id="password">3.3 Resource Owner Password Credentials Grant</h2>
+The resource owner password grant is performed by requesting an access token from the token endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/token?grant_type=password&#38;client_id=my&#45;client&#38;username=my&#45;user&#38;password=my&#45;password&#38;scope=read</pre></div><p class="paragraph"/>The <code>access_token</code> is included in the response:<p class="paragraph"/><div class="code"><pre>&#123;
+    <span class="java&#45;quote">"access_token"</span>: <span class="java&#45;quote">"1d49fc35&#45;2af6&#45;477e&#45;8fd4&#45;ab0353a4a76f"</span>,
+    <span class="java&#45;quote">"token_type"</span>: <span class="java&#45;quote">"bearer"</span>,
+    <span class="java&#45;quote">"refresh_token"</span>: <span class="java&#45;quote">"4996ba33&#45;be3f&#45;4555&#45;b3e3&#45;0b094a4e60c0"</span>,
+    <span class="java&#45;quote">"expires_in"</span>: 43199,
+    <span class="java&#45;quote">"scope"</span>: <span class="java&#45;quote">"read"</span>
+&#125;</pre></div>
+
+
+<h2 id="clientCredentials">3.4 Client Credentials Grant</h2>
+The client credentials grant is performed by authenticating the client via the token endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/token?grant_type=client_credentials&#38;client_id=my&#45;client&#38;scope=read</pre></div><p class="paragraph"/>The <code>access_token</code> can be extracted from the response:<p class="paragraph"/><div class="code"><pre>&#123;
+    <span class="java&#45;quote">"access_token"</span>: <span class="java&#45;quote">"7b9a989e&#45;3702&#45;4621&#45;a631&#45;fbd1a996fc94"</span>,
+    <span class="java&#45;quote">"token_type"</span>: <span class="java&#45;quote">"bearer"</span>,
+    <span class="java&#45;quote">"expires_in"</span>: 43199,
+    <span class="java&#45;quote">"scope"</span>: <span class="java&#45;quote">"read"</span>
+&#125;</pre></div>
+
+
+
+<h2 id="refreshToken">3.5 Refresh Token Grant</h2>
+The refresh token grant is performed by exchanging a refresh token received during a previous authorization request for an access token from the token endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/token?grant_type=refresh_token&#38;refresh_token=269afd46&#45;0b41&#45;45c2&#45;a920&#45;7d5af8a38d56&#38;client_id=my&#45;client&#38;scope=read</pre></div><p class="paragraph"/>The above assumes that <code>269afd46-0b41-45c2-a920-7d5af8a38d56</code> is the value of the refresh token the client had obtained prior to this request.<p class="paragraph"/>The <code>access_token</code> is included in the response:<p class="paragraph"/><div class="code"><pre>&#123;
+    <span class="java&#45;quote">"access_token"</span>: <span class="java&#45;quote">"a3da52c7&#45;4bd2&#45;4d42&#45;a58d&#45;efa64b4de453"</span>,
+    <span class="java&#45;quote">"token_type"</span>: <span class="java&#45;quote">"bearer"</span>,
+    <span class="java&#45;quote">"refresh_token"</span>: <span class="java&#45;quote">"6396c283&#45;47ff&#45;41d2&#45;b887&#45;39bde6af5f1e"</span>,
+    <span class="java&#45;quote">"expires_in"</span>: 43199,
+    <span class="java&#45;quote">"scope"</span>: <span class="java&#45;quote">"read"</span>
+&#125;</pre></div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/gettingStarted.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Scripts</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../ref/Scripts/s2-init-oauth2-approval.html">s2-init-oauth2-approval</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Scripts/s2-init-oauth2-provider.html">s2-init-oauth2-provider</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
