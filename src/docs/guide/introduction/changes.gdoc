@@ -1,3 +1,10 @@
+* 2.0-RC3
+** Upgrade to Spring OAuth 2.0.6.RELEASE (issue #63)
+** Fix problems with updating access tokens (issues #49, #50, and #68)
+** Add TravisCI build
+** Ensure Set-Cookie header is not set in response
+** Fix handling of scope parameter (issue #64)
+
 * 2.0-RC2
 ** Resolves session vulnerability (issue #42)
 ** Upgrade to Spring Security OAuth2 2.0.4.RELEASE
