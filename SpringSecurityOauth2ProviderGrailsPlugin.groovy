@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.converter.ByteArrayHttpMessageConverter
 import org.springframework.http.converter.FormHttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.xml.SourceHttpMessageConverter
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.oauth2.provider.CompositeTokenGranter
@@ -108,7 +108,7 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
             new ByteArrayHttpMessageConverter(),
             new FormHttpMessageConverter(),
             new SourceHttpMessageConverter(),
-            new MappingJacksonHttpMessageConverter()
+            new MappingJackson2HttpMessageConverter()
     ]
 
     def doWithSpring = {
