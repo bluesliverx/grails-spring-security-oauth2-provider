@@ -15,9 +15,10 @@ plugin=${plugin/-SNAPSHOT/}
 version="${plugin#*-}";
 plugin=${plugin/"-$version"/}
 
+if [ $TRAVIS_PULL_REQUEST == 'false' ]; then
 echo "Publishing plugin grails-spring-security-core with version $version"
 
-if [[ $filename != *-SNAPSHOT* && $TRAVIS_REPO_SLUG == 'bluesliverx/grails-spring-security-oauth2-provider' && $TRAVIS_PULL_REQUEST == 'false' ]]; then
+if [[ $filename != *-SNAPSHOT* && $TRAVIS_REPO_SLUG == 'bluesliverx/grails-spring-security-oauth2-provider' ]]; then
   git config --global user.name "$GIT_NAME"
   git config --global user.email "$GIT_EMAIL"
   git config --global credential.helper "store --file=~/.git-credentials"
@@ -37,3 +38,5 @@ fi
 
 # Publish plugin
 ./grailsw publish-plugin --allow-overwrite --non-interactive --stacktrace
+
+fi
