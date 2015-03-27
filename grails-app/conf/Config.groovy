@@ -1,12 +1,12 @@
 
 log4j = {
-    debug  'grails.plugin.springsecurity.oauthprovider',
+    debug   'grails.plugin.springsecurity.oauthprovider',
             'test.oauth2'
 
 	warn	'grails.plugin.springsecurity',
 			'org.springframework.security'
 
-    error  'org.codehaus.groovy.grails.web.servlet',        // controllers
+    error   'org.codehaus.groovy.grails.web.servlet',        // controllers
             'org.codehaus.groovy.grails.web.pages',          // GSP
             'org.codehaus.groovy.grails.web.sitemesh',       // layouts
             'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
@@ -44,8 +44,8 @@ grails.plugin.springsecurity.providerNames = [
 
 grails.plugin.springsecurity.filterChain.chainMap = [
         '/oauth/token': 'JOINED_FILTERS,-oauth2ProviderFilter,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter,-exceptionTranslationFilter',
-        '/securedOAuth2Resources/**': 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter,-exceptionTranslationFilter',
-        '/**': 'JOINED_FILTERS,-statelessSecurityContextPersistenceFilter,-oauth2ProviderFilter,-clientCredentialsTokenEndpointFilter,-oauth2ExceptionTranslationFilter'
+        '/securedOAuth2Resources/**': 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter,-oauth2BasicAuthenticationFilter,-exceptionTranslationFilter',
+        '/**': 'JOINED_FILTERS,-statelessSecurityContextPersistenceFilter,-oauth2ProviderFilter,-clientCredentialsTokenEndpointFilter,-oauth2BasicAuthenticationFilter,-oauth2ExceptionTranslationFilter'
 ]
 
 // Added by the Spring Security OAuth2 Provider plugin:

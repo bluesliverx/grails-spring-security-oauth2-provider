@@ -4,6 +4,8 @@ rm -rf *.zip
 ./grailsw refresh-dependencies --non-interactive --stacktrace
 ./grailsw upgrade --non-interactive
 ./grailsw test-app --non-interactive --stacktrace
+echo "Repeating functional tests with HTTP Basic client authentication"
+./grailsw test-app functional: -Dhttp.basic=true --non-interactive --stacktrace
 ./grailsw package-plugin --non-interactive --stacktrace
 ./grailsw doc --pdf --non-interactive --stacktrace
 
