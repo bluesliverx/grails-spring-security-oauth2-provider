@@ -4,6 +4,15 @@ The refresh token grant is performed by exchanging a refresh token received duri
 http://localhost:8080/oauth2-test/oauth/token?grant_type=refresh_token&refresh_token=269afd46-0b41-45c2-a920-7d5af8a38d56&client_id=my-client&scope=read
 {code}
 
+Also consider this CURL example where the client is authenticated using HTTP Basic:
+
+{code}
+curl -X POST -u my-client: \\\
+     -d "grant_type=refresh_token" \\\
+     -d "refresh_token=269afd46-0b41-45c2-a920-7d5af8a38d56" \\\
+     -d "scope=read" http://localhost:8080/oauth2-test/oauth/token
+{code}
+
 The above assumes that @269afd46-0b41-45c2-a920-7d5af8a38d56@ is the value of the refresh token the client had obtained prior to this request.
 
 The @access_token@ is included in the response:

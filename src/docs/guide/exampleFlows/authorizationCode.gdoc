@@ -16,6 +16,14 @@ The authorization code included in the query can be exchanged for an access toke
 http://localhost:8080/oauth2-test/oauth/token?grant_type=authorization_code&code=139R59&client_id=my-client
 {code}
 
+Also consider this CURL example where the client is authenticated using HTTP Basic:
+
+{code}
+curl -X POST -u my-client: \\\
+     -d "grant_type=authorization_code" \\\
+     -d "code=139R59" http://localhost:8080/oauth2-test/oauth/token
+{code}
+
 You'll receive the @access_token@ in the response:
 
 {code}

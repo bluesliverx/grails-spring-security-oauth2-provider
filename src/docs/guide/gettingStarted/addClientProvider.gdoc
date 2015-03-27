@@ -1,4 +1,5 @@
-Next you will need to add the @clientCredentialsAuthenticationProvider@ to the list of providers recognized by the Core plugin in @grails-app/conf/Config.groovy@:
+The recommended way of authenticating clients is by using a HTTP Basic authorization header, for which support is enabled by default.
+However, if you want to support client authentication via request parameters, you will need to add the @clientCredentialsAuthenticationProvider@ to the list of providers recognized by the Core plugin in @grails-app/conf/Config.groovy@:
 
 {code}
 grails.plugin.springsecurity.providerNames = [
