@@ -33,6 +33,7 @@ security {
         registerBasicAuthenticationFilter = true
 
         realmName = 'Grails OAuth2 Realm'
+        credentialsCharset = 'UTF-8'
 
         tokenServices {
 			accessTokenValiditySeconds = 60 * 60 * 12       // default 12 hours

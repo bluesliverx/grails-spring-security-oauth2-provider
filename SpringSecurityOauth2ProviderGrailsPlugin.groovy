@@ -488,7 +488,7 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
             basicClientAuthenticationManager(ProviderManager) {
                 providers = [ ref('clientCredentialsAuthenticationProvider') ]
                 authenticationEventPublisher = ref('authenticationEventPublisher')
-                eraseCredentialsAfterAuthentication = conf.providerManager.eraseCredentialsAfterAuthentication // true
+                eraseCredentialsAfterAuthentication = true
             }
 
             // This allows us to install a custom ExceptionTranslator, to keep the error messages consistent with
@@ -504,11 +504,11 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
             oauth2BasicAuthenticationFilter(BasicAuthenticationFilter, ref('basicClientAuthenticationManager'), ref('basicClientAuthenticationEntryPoint')) {
                 authenticationDetailsSource = ref('oauth2AuthenticationDetailsSource')
                 rememberMeServices = ref('statelessRememberMeServices')
-                credentialsCharset = conf.basic.credentialsCharset
+                credentialsCharset = conf.oauthProvider.credentialsCharset
             }
 
             // We add the basic authentication filter to the chain and require the plugin consumer to remove
-            // basicAuthenticationFilter from the filter chain on the appropriate paths
+            // oauth2BasicAuthenticationFilter from the filter chain on the appropriate paths
             SpringSecurityUtils.registerFilter 'oauth2BasicAuthenticationFilter',
                     conf.oauthProvider.basicAuthenticationFilterStartPosition + 1
         }
