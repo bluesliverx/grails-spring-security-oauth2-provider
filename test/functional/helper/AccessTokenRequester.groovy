@@ -11,8 +11,24 @@ class AccessTokenRequester {
     private static final BASE_URL = System.getProperty(BuildSettings.FUNCTIONAL_BASE_URL_PROPERTY)
     static final TOKEN_ENDPOINT_URL = BASE_URL + 'oauth/token'
 
-    static HttpResponseDecorator requestAccessToken(Map params) {
-        restClient.post(uri: TOKEN_ENDPOINT_URL, query: params)
+    private static boolean useHttpBasic() {
+        System.properties['http.basic'] == 'true'
+    }
+
+    static HttpResponseDecorator requestAccessToken(Map requestParams) {
+        if (useHttpBasic()) {
+            System.out.println("Using HTTP Basic client authentication")
+
+            Map params = requestParams.clone() // Don't mess with the original Map
+            String clientId = params.remove('client_id')
+            String clientSecret = params.remove('client_secret') ?: ''
+
+            requestAccessTokenWithBasicAuth(params, clientId, clientSecret)
+
+        } else {
+            // Default to authentication via request parameters
+            restClient.post(uri: TOKEN_ENDPOINT_URL, query: requestParams)
+        }
     }
 
     static String getAccessToken(Map params) {
@@ -27,7 +43,7 @@ class AccessTokenRequester {
 
     static HttpResponseDecorator requestAccessTokenWithBasicAuth(Map params, String clientId, String clientSecret) {
         def basicAuth = "$clientId:$clientSecret".bytes.encodeBase64()
-        def headers = [Authorization: "Basic $basicAuth"]
+        def headers = clientId ? [Authorization: "Basic $basicAuth"] : [:]
         restClient.post(uri: TOKEN_ENDPOINT_URL, query: params, headers: headers)
     }
 }

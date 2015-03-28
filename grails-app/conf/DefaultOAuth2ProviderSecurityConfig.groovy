@@ -29,7 +29,11 @@ security {
         statelessFilterStartPosition = SecurityFilterPosition.SECURITY_CONTEXT_FILTER.order
         registerStatelessFilter = true
 
+        basicAuthenticationFilterStartPosition = SecurityFilterPosition.BASIC_AUTH_FILTER.order
+        registerBasicAuthenticationFilter = true
+
         realmName = 'Grails OAuth2 Realm'
+        credentialsCharset = 'UTF-8'
 
         tokenServices {
 			accessTokenValiditySeconds = 60 * 60 * 12       // default 12 hours

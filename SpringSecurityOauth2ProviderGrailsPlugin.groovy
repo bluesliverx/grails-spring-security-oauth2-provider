@@ -23,6 +23,7 @@ import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationE
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedTokenEndpoint
 import grails.plugin.springsecurity.oauthprovider.provider.GrailsOAuth2RequestFactory
 import grails.plugin.springsecurity.oauthprovider.provider.GrailsOAuth2RequestValidator
+import grails.plugin.springsecurity.oauthprovider.provider.error.BasicClientExceptionTranslator
 import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2AuthorizationEndpointExceptionResolver
 import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2TokenEndpointExceptionResolver
 import grails.plugin.springsecurity.oauthprovider.filter.StatelessSecurityContextPersistenceFilter
@@ -33,11 +34,13 @@ import org.springframework.http.converter.FormHttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.xml.SourceHttpMessageConverter
+import org.springframework.security.authentication.ProviderManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.oauth2.provider.CompositeTokenGranter
 import org.springframework.security.oauth2.provider.approval.ApprovalStoreUserApprovalHandler
 import org.springframework.security.oauth2.provider.approval.DefaultUserApprovalHandler
 import org.springframework.security.oauth2.provider.approval.TokenStoreUserApprovalHandler
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetailsSource
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter
@@ -56,6 +59,8 @@ import org.springframework.security.oauth2.provider.token.DefaultAuthenticationK
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
 import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint
+import org.springframework.security.web.authentication.NullRememberMeServices
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.security.web.savedrequest.NullRequestCache
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
@@ -170,6 +175,10 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
         /* Access to OAuth2 resources and the token endpoint must be stateless */
         configureStatelessFilters.delegate = delegate
         configureStatelessFilters(conf)
+
+        /* Enable HTTP Basic Authentication for client credentials */
+        configureBasicAuthenticationFilter.delegate = delegate
+        configureBasicAuthenticationFilter(conf)
 
 		println "... done configuring Spring Security OAuth2 provider"
 	}
@@ -467,6 +476,41 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
             // where necessary to meet their needs
             SpringSecurityUtils.registerFilter 'oauth2ExceptionTranslationFilter',
                     conf.oauthProvider.exceptionTranslationFilterStartPosition + 1
+        }
+    }
+
+    private configureBasicAuthenticationFilter = { conf ->
+        // Should the basic authentication filter be registered in the filter chain
+        boolean registerBasicAuthFilter = conf.oauthProvider.registerBasicAuthenticationFilter as boolean
+
+        if(registerBasicAuthFilter) {
+            // Create a separate authentication manager with a single provider for the basic authentication filter
+            basicClientAuthenticationManager(ProviderManager) {
+                providers = [ ref('clientCredentialsAuthenticationProvider') ]
+                authenticationEventPublisher = ref('authenticationEventPublisher')
+                eraseCredentialsAfterAuthentication = true
+            }
+
+            // This allows us to install a custom ExceptionTranslator, to keep the error messages consistent with
+            // the alternative client authentication mechanism (via request parameters)
+            basicClientAuthenticationEntryPoint(OAuth2AuthenticationEntryPoint) {
+                realmName = conf.oauthProvider.realmName
+                exceptionTranslator = new BasicClientExceptionTranslator()
+            }
+
+            oauth2AuthenticationDetailsSource(OAuth2AuthenticationDetailsSource)
+            statelessRememberMeServices(NullRememberMeServices)
+
+            oauth2BasicAuthenticationFilter(BasicAuthenticationFilter, ref('basicClientAuthenticationManager'), ref('basicClientAuthenticationEntryPoint')) {
+                authenticationDetailsSource = ref('oauth2AuthenticationDetailsSource')
+                rememberMeServices = ref('statelessRememberMeServices')
+                credentialsCharset = conf.oauthProvider.credentialsCharset
+            }
+
+            // We add the basic authentication filter to the chain and require the plugin consumer to remove
+            // oauth2BasicAuthenticationFilter from the filter chain on the appropriate paths
+            SpringSecurityUtils.registerFilter 'oauth2BasicAuthenticationFilter',
+                    conf.oauthProvider.basicAuthenticationFilterStartPosition + 1
         }
     }
 
