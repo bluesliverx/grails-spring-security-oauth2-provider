@@ -28,4 +28,4 @@ def init = { servletContext ->
 
 After retrieving an @access_token@ via one of the flows, you must include this in the @Authorization@ header when accessing protected resources.
 
-For example, if you receive @7b9a989e-3702-4621-a631-fbd1a996fc94@ as the @access_token@, you will include this in the @Authorization@ header as @Bearer: 7b9a989e-3702-4621-a631-fbd1a996fc94@ when requesting a protected resource.
+For example, if you receive @7b9a989e-3702-4621-a631-fbd1a996fc94@ as the @access_token@, you will include this in the @Authorization@ header as @Bearer 7b9a989e-3702-4621-a631-fbd1a996fc94@ when requesting a protected resource.
