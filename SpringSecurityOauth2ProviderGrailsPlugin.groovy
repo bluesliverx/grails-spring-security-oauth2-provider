@@ -57,6 +57,7 @@ import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswo
 import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter
 import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain
 import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint
 import org.springframework.security.web.authentication.NullRememberMeServices
@@ -64,6 +65,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.savedrequest.NullRequestCache
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
+import test.FooBarTokenEnhancer
 
 import static grails.plugin.springsecurity.oauthprovider.UserApprovalSupport.*
 
@@ -132,6 +134,10 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
         configureGormSupport.delegate = delegate
         configureGormSupport()
 
+        /* Configure available token enhancers */
+        configureTokenEnhancers.delegate = delegate
+        configureTokenEnhancers(conf)
+
         /* Establish baseline token support */
         configureTokenServices.delegate = delegate
         configureTokenServices(conf)
@@ -195,8 +201,19 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
         authenticationKeyGenerator(DefaultAuthenticationKeyGenerator)
     }
 
+    private configureTokenEnhancers = { conf ->
+        def tokenEnhancerBeanNames = conf.oauthProvider.tokenServices.tokenEnhancerBeanNames
+
+        tokenEnhancerChain(TokenEnhancerChain) {
+            tokenEnhancers = tokenEnhancerBeanNames.collect { beanName ->
+                ref(beanName)
+            }
+        }
+    }
+
     private configureTokenServices = { conf ->
         tokenServices(DefaultTokenServices) {
+            tokenEnhancer = ref("tokenEnhancerChain")
             tokenStore = ref("tokenStore")
             clientDetailsService = ref("clientDetailsService")
             accessTokenValiditySeconds = conf.oauthProvider.tokenServices.accessTokenValiditySeconds
