@@ -57,6 +57,7 @@ import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswo
 import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter
 import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
+import org.springframework.security.oauth2.provider.token.TokenEnhancer
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain
 import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint
@@ -134,9 +135,9 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
         configureGormSupport.delegate = delegate
         configureGormSupport()
 
-        /* Configure available token enhancers */
-        configureTokenEnhancers.delegate = delegate
-        configureTokenEnhancers(conf)
+        /* Configure token enhancer chain */
+        configureTokenEnhancerChain.delegate = delegate
+        configureTokenEnhancerChain(conf)
 
         /* Establish baseline token support */
         configureTokenServices.delegate = delegate
@@ -201,19 +202,18 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
         authenticationKeyGenerator(DefaultAuthenticationKeyGenerator)
     }
 
-    private configureTokenEnhancers = { conf ->
-        def tokenEnhancerBeanNames = conf.oauthProvider.tokenServices.tokenEnhancerBeanNames
-
+    private configureTokenEnhancerChain = { conf ->
         tokenEnhancerChain(TokenEnhancerChain) {
-            tokenEnhancers = tokenEnhancerBeanNames.collect { beanName ->
-                ref(beanName)
-            }
+            tokenEnhancers = [] /* Will be populated in doWithApplicationContext */
         }
+
+        /* Add alias so the tokenEnhancer bean can be changed if desired */
+        springConfig.addAlias 'tokenEnhancer', 'tokenEnhancerChain'
     }
 
     private configureTokenServices = { conf ->
         tokenServices(DefaultTokenServices) {
-            tokenEnhancer = ref("tokenEnhancerChain")
+            tokenEnhancer = ref("tokenEnhancer")
             tokenStore = ref("tokenStore")
             clientDetailsService = ref("clientDetailsService")
             accessTokenValiditySeconds = conf.oauthProvider.tokenServices.accessTokenValiditySeconds
@@ -544,6 +544,19 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
         ctx.with {
             boolean handleRevocationAsExpiry = conf.oauthProvider.approval.handleRevocationAsExpiry as boolean
             gormApprovalStoreService.handleRevocationAsExpiry = handleRevocationAsExpiry
+        }
+
+        registerAvailableTokenEnhancers(conf, ctx)
+    }
+
+    private registerAvailableTokenEnhancers(conf, ctx) {
+        boolean registerTokenEnhancers = conf.oauthProvider.tokenServices.registerTokenEnhancers as boolean
+
+        Map<String, TokenEnhancer> availableEnhancers = ctx.getBeansOfType(TokenEnhancer)
+        availableEnhancers.remove('tokenEnhancerChain')
+
+        if (registerTokenEnhancers && !availableEnhancers.isEmpty()) {
+            ctx.tokenEnhancerChain.tokenEnhancers = availableEnhancers.collect { name, enhancer -> enhancer }
         }
     }
 

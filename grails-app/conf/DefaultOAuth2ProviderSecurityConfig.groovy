@@ -36,7 +36,7 @@ security {
         credentialsCharset = 'UTF-8'
 
         tokenServices {
-			tokenEnhancerBeanNames = []
+			registerTokenEnhancers = true
 			accessTokenValiditySeconds = 60 * 60 * 12       // default 12 hours
 			refreshTokenValiditySeconds = 60 * 60 * 24 * 30 // default 30 days
 			reuseRefreshToken = false

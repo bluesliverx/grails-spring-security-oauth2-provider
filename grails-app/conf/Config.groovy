@@ -55,8 +55,6 @@ grails.plugin.springsecurity.oauthProvider.accessTokenLookup.className = 'test.o
 grails.plugin.springsecurity.oauthProvider.refreshTokenLookup.className = 'test.oauth2.RefreshToken'
 grails.plugin.springsecurity.oauthProvider.approvalLookup.className = 'test.oauth2.UserApproval'
 
-grails.plugin.springsecurity.oauthProvider.tokenServices.tokenEnhancerBeanNames = ['fooBarTokenEnhancer']
-
 // Documentation properties
 grails.doc.license = 'Apache License 2.0'
 grails.doc.title = 'Spring Security OAuth2 Plugin'
