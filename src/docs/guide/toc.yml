@@ -39,6 +39,7 @@ configuration:
   plugin: Plugin
   endpoints: Endpoint URLs
   tokenServices: Token Services
+  tokenEnhancers: Token Enhancers Configuration
   grantTypes: Supported Grant Types
   authorization: Additional Authorization Constraints
   approvalHandler: User Approval Configuration

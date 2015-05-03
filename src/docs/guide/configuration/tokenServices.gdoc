@@ -2,6 +2,7 @@ The following properties apply to how tokens are issued and how long they are va
 
 {table}
 *Property*                                  |   *Default Value*         |   *Meaning*
+tokenServices.registerTokenEnhancers        |   @true@                  |   Whether registered @TokenEnhancer@ instances should be used.
 tokenServices.accessTokenValiditySeconds    |   @60 \* 60 \* 12@        |   The length of time that an access token will be valid after it has been issued.
 tokenServices.refreshTokenValiditySeconds   |   @60 \* 60 \* 24 \* 30@  |   The length of time that a refresh token will be valid after it has been issued.
 tokenServices.reuseRefreshToken             |   @false@                 |   Whether a new refresh token should be generated if one is currently available.

@@ -1,0 +1,5 @@
+By default, the plugin will register a @TokenEnhancerChain@ with an empty list of @TokenEnhancer@ delegates. When the @tokenServices.registerTokenEnhancers@ option is @true@, the plugin will detect and use all registered Spring beans implementing the @TokenEnhancer@ interface.
+
+If more control over the ordering of the enhancers in the chain is desired, set the @tokenServices.registerTokenEnhancers@ option to @false@. The @TokenEnhancerChain@ bean is registered under the name @tokenEnhancerChain@, so the plugin consumer can get a handle to it for more fine grained configuration.
+
+This bean is aliased under the name @tokenEnhancer@. This is the bean that is registered with the @tokenServices@ bean. This is done to allow customization of the registered enhancer with minimal effort. Just override the @tokenEnhancer@ bean.
