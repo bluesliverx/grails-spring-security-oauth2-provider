@@ -110,6 +110,7 @@ security {
             expirationPropertyName = 'expiration'
             refreshTokenPropertyName = 'refreshToken'
             scopePropertyName = 'scope'
+            additionalInformationPropertyName = 'additionalInformation'
         }
 
         refreshTokenLookup {

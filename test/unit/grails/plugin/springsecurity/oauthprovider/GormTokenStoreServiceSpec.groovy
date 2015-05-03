@@ -31,6 +31,7 @@ class GormTokenStoreServiceSpec extends Specification {
     private void setAccessTokenClassName(accessTokenClassName) {
         def accessTokenLookup = [
                 className: accessTokenClassName,
+                additionalInformationPropertyName: 'additionalInformation',
                 authenticationKeyPropertyName: 'authenticationKey',
                 authenticationPropertyName: 'authentication',
                 usernamePropertyName: 'username',

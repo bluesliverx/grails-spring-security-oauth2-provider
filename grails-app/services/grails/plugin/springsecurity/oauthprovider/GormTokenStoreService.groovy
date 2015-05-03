@@ -62,6 +62,7 @@ class GormTokenStoreService implements TokenStore {
         def expirationPropertyName = accessTokenLookup.expirationPropertyName
         def refreshTokenPropertyName = accessTokenLookup.refreshTokenPropertyName
         def scopePropertyName = accessTokenLookup.scopePropertyName
+        def additionalInformationPropertyName = accessTokenLookup.additionalInformationPropertyName
 
         def gormAccessToken = GormAccessToken.findWhere((valuePropertyName): token.value) ?: GormAccessToken.newInstance()
 
@@ -74,6 +75,7 @@ class GormTokenStoreService implements TokenStore {
         gormAccessToken."$expirationPropertyName" = token.expiration
         gormAccessToken."$refreshTokenPropertyName" = token.refreshToken?.value
         gormAccessToken."$scopePropertyName" = token.scope
+        gormAccessToken."$additionalInformationPropertyName" = token.additionalInformation
 
         gormAccessToken.save()
     }
@@ -250,12 +252,14 @@ class GormTokenStoreService implements TokenStore {
         def expirationPropertyName = accessTokenLookup.expirationPropertyName
         def refreshTokenPropertyName = accessTokenLookup.refreshTokenPropertyName
         def scopePropertyName = accessTokenLookup.scopePropertyName
+        def additionalInformationPropertyName = accessTokenLookup.additionalInformationPropertyName
 
         def token = new DefaultOAuth2AccessToken(gormAccessToken."$valuePropertyName")
         token.refreshToken = createRefreshTokenForAccessToken(gormAccessToken, refreshTokenPropertyName)
         token.tokenType = gormAccessToken."$tokenTypePropertyName"
         token.expiration = gormAccessToken."$expirationPropertyName"
         token.scope = gormAccessToken."$scopePropertyName"
+        token.additionalInformation = gormAccessToken."$additionalInformationPropertyName" ?: [:]
         return token
     }
 

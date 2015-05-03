@@ -6,6 +6,7 @@ import spock.lang.Unroll
 
 import static helper.AccessTokenRequester.getAccessToken
 import static helper.AccessTokenRequester.TOKEN_ENDPOINT_URL
+import static helper.AccessTokenRequester.requestAccessToken
 import static helper.ErrorDescriptions.*
 import static helper.TokenEndpointAssert.assertAccessTokenErrorRequest
 
@@ -77,6 +78,24 @@ class TokenEndpointFunctionalSpec extends AbstractTokenEndpointFunctionalSpec {
 
         then:
         oldAccessToken == newAccessToken
+    }
+
+    void "additional information should be returned for each token request"() {
+        given:
+        def params = [grant_type: 'client_credentials', client_id: 'public-client', scope: 'test']
+
+        when:
+        def oldResponse = requestAccessToken(params).data as Map
+
+        and:
+        def newResponse = requestAccessToken(params).data as Map
+
+        then:
+        oldResponse.access_token == newResponse.access_token
+
+        and:
+        oldResponse.foo == 'bar'
+        newResponse.foo == 'bar'
     }
 
     void "invalid grant_type"() {

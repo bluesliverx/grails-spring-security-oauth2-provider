@@ -1,15 +1,16 @@
 {table}
-*Property*                                      |   *Default Value*                 |   *Meaning*
-accessTokenLookup.className                     |   @null@                          |   Access token class name.
-accessTokenLookup.authenticationKeyPropertyName |   @'authenticationKey'@           |   Access token class serialized authentication key used to locate tokens via serialized authentication field.
-accessTokenLookup.authenticationPropertyName    |   @'authentication'@              |   Access token class serialized authentication field.
-accessTokenLookup.usernamePropertyName          |   @'username'@                    |   Access token class username field.
-accessTokenLookup.clientIdPropertyName          |   @'clientId'@                    |   Access token class client ID field.
-accessTokenLookup.valuePropertyName             |   @'value'@                       |   Access token class value field.
-accessTokenLookup.tokenTypePropertyName         |   @'tokenType'@                   |   Access token class token type field.
-accessTokenLookup.expirationPropertyName        |   @'expiration'@                  |   Access token class expiration field.
-accessTokenLookup.refreshTokenPropertyName      |   @'refreshToken'@                |   Access token class refresh token value field.
-accessTokenLookup.scopePropertyName             |   @'scope'@                       |   Access token class scope field.
+*Property*                                          |   *Default Value*                 |   *Meaning*
+accessTokenLookup.className                         |   @null@                          |   Access token class name.
+accessTokenLookup.authenticationKeyPropertyName     |   @'authenticationKey'@           |   Access token class serialized authentication key used to locate tokens via serialized authentication field.
+accessTokenLookup.authenticationPropertyName        |   @'authentication'@              |   Access token class serialized authentication field.
+accessTokenLookup.usernamePropertyName              |   @'username'@                    |   Access token class username field.
+accessTokenLookup.clientIdPropertyName              |   @'clientId'@                    |   Access token class client ID field.
+accessTokenLookup.valuePropertyName                 |   @'value'@                       |   Access token class value field.
+accessTokenLookup.tokenTypePropertyName             |   @'tokenType'@                   |   Access token class token type field.
+accessTokenLookup.expirationPropertyName            |   @'expiration'@                  |   Access token class expiration field.
+accessTokenLookup.refreshTokenPropertyName          |   @'refreshToken'@                |   Access token class refresh token value field.
+accessTokenLookup.scopePropertyName                 |   @'scope'@                       |   Access token class scope field.
+accessTokenLookup.additionalInformationPropertyName |   @'additionalInformation'@       |   Access token class additional information field.
 {table}
 
 Currently only @'bearer'@ tokens are supported.

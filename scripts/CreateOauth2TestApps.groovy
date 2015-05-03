@@ -184,6 +184,15 @@ private void copyTestResources() {
 
     /* Remove cache plugin from BuildConfig due to incompatibility */
     removeCachePlugin('grails-app/conf/BuildConfig.groovy')
+
+    /* Custom TokenEnhancer */
+    ant.copy file: "grails-app/conf/spring/resources.groovy",
+            tofile: "$testProjectRoot/grails-app/conf/spring/resources.groovy",
+            overwrite: true
+
+    ant.copy file: "src/groovy/test/FooBarTokenEnhancer.groovy",
+             tofile: "$testProjectRoot/src/groovy/test/FooBarTokenEnhancer.groovy",
+             overwrite: true
 }
 
 private void changeRedirectUriConstant(String path) {

@@ -21,6 +21,7 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
     String refreshValue
 
     String authenticationKey
+    Map<String, Object> additionalInformation
 
     OAuth2Authentication oAuth2Authentication
     byte[] serializedAuthentication
@@ -42,6 +43,8 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
 
         tokenValue = 'TEST'
         refreshValue = 'REFRESH'
+
+        additionalInformation = [additional: 'information']
 
         client = new Client(clientId: 'test').save()
     }
@@ -76,7 +79,8 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
                 scope: ['test'],
                 expiration: new Date(),
                 authenticationKey: authenticationKey,
-                authentication: serializedAuthentication
+                authentication: serializedAuthentication,
+                additionalInformation: additionalInformation
         )
         addOverrides(token, overrides)
         token.save(failOnError: true)
@@ -147,6 +151,7 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
             getTokenType() >> 'bearer'
             getValue() >> 'TEST'
             getExpiration() >> expiration
+            getAdditionalInformation() >> [foo: 'bar']
         }
 
         def oauth2Request = new OAuth2Request(null, 'testClient', null, false, null, null, null, null, null)
@@ -175,6 +180,7 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
         gormToken.scope.size() == 1
         gormToken.scope.contains('read')
         gormToken.refreshToken == expectedRefreshToken
+        gormToken.additionalInformation.foo == 'bar'
 
         where:
         username    |   expectedUsername    |   isClientOnly    |   useRefreshToken |   refreshToken    |   expectedRefreshToken
@@ -184,7 +190,7 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
         'testUser'  |   null                |   true            |   true            |   'REFRESH'       |   'REFRESH'
     }
 
-    void "read access token"() {
+    void "read access token that has additional information"() {
         given:
         createGormAccessToken()
 
@@ -194,6 +200,20 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
         then:
         accessToken.value == tokenValue
         accessToken.tokenType == 'bearer'
+        accessToken.additionalInformation.additional == 'information'
+    }
+
+    void "read access token that has no additional information"() {
+        given:
+        createGormAccessToken(additionalInformation: null)
+
+        when:
+        def accessToken = gormTokenStoreService.readAccessToken(tokenValue)
+
+        then:
+        accessToken.value == tokenValue
+        accessToken.tokenType == 'bearer'
+        accessToken.additionalInformation.isEmpty()
     }
 
     void "remove access token"() {

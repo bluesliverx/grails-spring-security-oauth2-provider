@@ -133,4 +133,23 @@ class AccessTokenSpec extends Specification {
         []          |   false
         null        |   false
     }
+
+    @Unroll
+    void "valid additional information [#info]"() {
+        when:
+        def token = new AccessToken(additionalInformation: info)
+
+        then:
+        token.validate(['additionalInformation'])
+
+        and:
+        token.additionalInformation == info
+
+        where:
+        _   |   info
+        _   |   null
+        _   |   [:]
+        _   |   [foo: 'bar']
+        _   |   [foo: 'bar', buzz: 'bar', number: 1234]
+    }
 }
