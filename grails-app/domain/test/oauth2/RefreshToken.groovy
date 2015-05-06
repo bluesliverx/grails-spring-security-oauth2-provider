@@ -8,7 +8,7 @@ class RefreshToken {
 
     static constraints = {
         value nullable: false, blank: false, unique: true
-        expiration nullable: false
+        expiration nullable: true
         authentication nullable: false, minSize: 1, maxSize: 1024 * 4
     }
 

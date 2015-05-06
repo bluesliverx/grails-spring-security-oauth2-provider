@@ -11,7 +11,7 @@ class RefreshToken {
 
     static constraints = {
         value nullable: false, blank: false, unique: true
-        expiration nullable: false
+        expiration nullable: true
         authentication nullable: false, minSize: 1, maxSize: 1024 * 4
     }
 
@@ -20,3 +20,5 @@ class RefreshToken {
     }
 }
 {code}
+
+If a non-expiring refresh token is desired, the client issuing the refresh token should be configured to return a 0 or less for the refresh token validity length in accordance with the behavior of Spring Security OAuth beginning with 2.0.6.RELEASE. A non-expiring GORM refresh token will be stored with a @null@ expiration. When reading a GORM refresh token, if the expiration field is @null@, an @ExpiringOAuth2RefreshToken@ instance will be created and returned for processing by Spring Security OAuth. Otherwise an instance of @OAuth2RefreshToken@ will be created and used.

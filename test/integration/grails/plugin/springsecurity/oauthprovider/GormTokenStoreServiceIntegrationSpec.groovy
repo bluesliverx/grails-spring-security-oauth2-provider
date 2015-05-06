@@ -271,7 +271,7 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
         !AccessToken.findByValue(tokenValue)
     }
 
-    void "store refresh token"() {
+    void "store expiring refresh token"() {
         given:
         expectAuthenticationSerialization()
 
@@ -294,6 +294,28 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
         gormToken.value == refreshValue
         gormToken.authentication == serializedAuthentication
         gormToken.expiration == expiration
+    }
+
+    void "store unlimited refresh token"() {
+        given:
+        expectAuthenticationSerialization()
+
+        and:
+        def oAuth2RefreshToken = Stub(OAuth2RefreshToken) {
+            getValue() >> refreshValue
+        }
+
+        when:
+        gormTokenStoreService.storeRefreshToken(oAuth2RefreshToken, oAuth2Authentication)
+
+        then:
+        def gormToken = RefreshToken.findByValue(refreshValue)
+        gormToken != null
+
+        and:
+        gormToken.value == refreshValue
+        gormToken.authentication == serializedAuthentication
+        gormToken.expiration == null
     }
 
     void "attempt to store invalid refresh token"() {
@@ -321,23 +343,9 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
         !e.errors.allErrors.empty
     }
 
-    void "refresh token being stored must be an ExpiringOAuth2RefreshToken"() {
+    void "read expiring refresh token by value"() {
         given:
-        def oAuth2RefreshToken = Stub(OAuth2RefreshToken) {
-            getValue() >> refreshValue
-        }
-
-        when:
-        gormTokenStoreService.storeRefreshToken(oAuth2RefreshToken, oAuth2Authentication)
-
-        then:
-        def e = thrown(IllegalArgumentException)
-        e.message == "Refresh token must be capable of expiring"
-    }
-
-    void "read refresh token by value"() {
-        given:
-        createGormRefreshToken()
+        createGormRefreshToken(expiration: new Date())
         assert RefreshToken.findByValue(refreshValue)
 
         when:
@@ -345,6 +353,20 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
 
         then:
         oAuthRefreshToken.value == refreshValue
+        oAuthRefreshToken instanceof ExpiringOAuth2RefreshToken
+    }
+
+    void "read unlimited refresh token by value"() {
+        given:
+        createGormRefreshToken(expiration: null)
+        assert RefreshToken.findByValue(refreshValue)
+
+        when:
+        def oAuthRefreshToken = gormTokenStoreService.readRefreshToken(refreshValue)
+
+        then:
+        oAuthRefreshToken.value == refreshValue
+        !(oAuthRefreshToken instanceof ExpiringOAuth2RefreshToken)
     }
 
     void "read access token returns null when token not found"() {

@@ -48,7 +48,7 @@ class RefreshTokenSpec extends Specification {
     }
 
     @Unroll
-    void "expiration is required -- [#value] is valid [#valid]"() {
+    void "expiration is optional -- [#value] is valid [#valid]"() {
         when:
         def token = new RefreshToken(expiration: value)
 
@@ -58,6 +58,6 @@ class RefreshTokenSpec extends Specification {
         where:
         value       |   valid
         new Date()  |   true
-        null        |   false
+        null        |   true
     }
 }
