@@ -1,6 +1,7 @@
 package grails.plugin.springsecurity.oauthprovider
 
 import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.oauthprovider.exceptions.OAuth2ValidationException
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.code.RandomValueAuthorizationCodeServices
@@ -19,7 +20,11 @@ class GormAuthorizationCodeService extends RandomValueAuthorizationCodeServices 
         ]
 
         Class AuthorizationCode = getAuthorizationCodeClass(className)
-        AuthorizationCode.newInstance(ctorArgs).save()
+
+        def gormAuthorizationCode = AuthorizationCode.newInstance(ctorArgs)
+        if(!gormAuthorizationCode.save()) {
+            throw new OAuth2ValidationException("Failed to save authorization code", gormAuthorizationCode.errors)
+        }
     }
 
     @Override

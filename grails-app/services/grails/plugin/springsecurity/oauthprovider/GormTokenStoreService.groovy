@@ -1,6 +1,7 @@
 package grails.plugin.springsecurity.oauthprovider
 
 import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.oauthprovider.exceptions.OAuth2ValidationException
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.springframework.security.oauth2.common.DefaultExpiringOAuth2RefreshToken
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken
@@ -77,7 +78,9 @@ class GormTokenStoreService implements TokenStore {
         gormAccessToken."$scopePropertyName" = token.scope
         gormAccessToken."$additionalInformationPropertyName" = token.additionalInformation
 
-        gormAccessToken.save()
+        if(!gormAccessToken.save()) {
+            throw new OAuth2ValidationException("Failed to save access token", gormAccessToken.errors)
+        }
     }
 
     @Override
@@ -125,7 +128,11 @@ class GormTokenStoreService implements TokenStore {
                 (valuePropertyName): expiringRefreshToken.value,
                 (expirationPropertyName): expiringRefreshToken.expiration
         ]
-        GormRefreshToken.newInstance(ctorArgs).save()
+
+        def gormRefreshToken = GormRefreshToken.newInstance(ctorArgs)
+        if(!gormRefreshToken.save()) {
+            throw new OAuth2ValidationException("Failed to save refresh token", gormRefreshToken.errors)
+        }
     }
 
     @Override

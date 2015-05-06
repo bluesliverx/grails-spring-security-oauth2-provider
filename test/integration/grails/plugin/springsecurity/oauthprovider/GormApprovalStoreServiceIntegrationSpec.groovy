@@ -1,5 +1,6 @@
 package grails.plugin.springsecurity.oauthprovider
 
+import grails.plugin.springsecurity.oauthprovider.exceptions.OAuth2ValidationException
 import grails.test.spock.IntegrationSpec
 import org.springframework.security.oauth2.provider.approval.Approval
 import org.springframework.security.oauth2.provider.approval.ApprovalStore
@@ -148,6 +149,20 @@ class GormApprovalStoreServiceIntegrationSpec extends IntegrationSpec {
         true        |   null
         true        |   Approval.ApprovalStatus.APPROVED
         false       |   Approval.ApprovalStatus.DENIED
+    }
+
+    void "attempt to add invalid approval"() {
+        given:
+        def approval = createApproval(clientId: null)
+
+        when:
+        gormApprovalStoreService.addApprovals([approval])
+
+        then:
+        def e = thrown(OAuth2ValidationException)
+
+        e.message.startsWith('Failed to save approval')
+        !e.errors.allErrors.empty
     }
 
     void "get approvals when no approvals exist"() {

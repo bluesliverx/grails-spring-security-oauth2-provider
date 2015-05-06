@@ -1,5 +1,6 @@
 package grails.plugin.springsecurity.oauthprovider
 
+import grails.plugin.springsecurity.oauthprovider.exceptions.OAuth2ValidationException
 import grails.test.spock.IntegrationSpec
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices
@@ -43,6 +44,24 @@ class GormAuthorizationCodeServiceIntegrationSpec extends IntegrationSpec {
 
         and:
         1 * gormAuthorizationCodeService.oauth2AuthenticationSerializer.serialize(oauth2Authentication) >> serializedAuthentication
+    }
+
+    void "attempt to store invalid authorization code (authentication exceeds max size allowed)"() {
+        given:
+        final int maxSize = 1024 * 4
+        byte[] largeSerializedAuthentication = new byte[maxSize + 1]
+
+        when:
+        gormAuthorizationCodeService.store(code, oauth2Authentication)
+
+        then:
+        def e = thrown(OAuth2ValidationException)
+
+        e.message.startsWith('Failed to save authorization code')
+        !e.errors.allErrors.empty
+
+        and:
+        1 * gormAuthorizationCodeService.oauth2AuthenticationSerializer.serialize(oauth2Authentication) >> largeSerializedAuthentication
     }
 
     void "remove authorization code and return authorization request holder"() {

@@ -1,6 +1,7 @@
 package grails.plugin.springsecurity.oauthprovider
 
 import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.oauthprovider.exceptions.OAuth2ValidationException
 import org.springframework.security.oauth2.provider.approval.Approval
 import org.springframework.security.oauth2.provider.approval.ApprovalStore
 
@@ -46,7 +47,11 @@ class GormApprovalStoreService implements ApprovalStore {
                         (expirationPropertyName): approval.expiresAt,
                         (lastModifiedPropertyName): approval.lastUpdatedAt
                 ]
-                GormApproval.newInstance(ctorArgs).save()
+
+                gormApproval = GormApproval.newInstance(ctorArgs)
+                if(!gormApproval.save()) {
+                    throw new OAuth2ValidationException("Failed to save approval", gormApproval.errors)
+                }
             }
         }
         return true

@@ -1,5 +1,6 @@
 package grails.plugin.springsecurity.oauthprovider
 
+import grails.plugin.springsecurity.oauthprovider.exceptions.OAuth2ValidationException
 import grails.test.spock.IntegrationSpec
 import org.springframework.security.oauth2.common.ExpiringOAuth2RefreshToken
 import org.springframework.security.oauth2.common.OAuth2AccessToken
@@ -190,6 +191,46 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
         'testUser'  |   null                |   true            |   true            |   'REFRESH'       |   'REFRESH'
     }
 
+    void "attempt to store invalid access token"() {
+        given:
+        final maxSize = 1024 * 4
+        serializedAuthentication = new byte[maxSize + 1]
+
+        expectAuthenticationSerialization()
+        expectAuthenticationKeyExtraction()
+
+        and:
+        def expiration = new Date()
+        def scope = ['read'] as Set<String>
+
+        def oauth2AccessToken = Stub(OAuth2AccessToken) {
+            getScope() >> scope
+            getRefreshToken() >> null
+            getTokenType() >> 'bearer'
+            getValue() >> 'TEST'
+            getExpiration() >> expiration
+            getAdditionalInformation() >> [foo: 'bar']
+        }
+
+        def oauth2Request = new OAuth2Request(null, 'testClient', null, false, null, null, null, null, null)
+
+        oAuth2Authentication.getName() >> 'testUser'
+        oAuth2Authentication.getOAuth2Request() >> oauth2Request
+        oAuth2Authentication.isClientOnly() >> false
+
+        expect:
+        oauth2Request.clientId == 'testClient'
+
+        when:
+        gormTokenStoreService.storeAccessToken(oauth2AccessToken, oAuth2Authentication)
+
+        then:
+        def e = thrown(OAuth2ValidationException)
+
+        e.message.startsWith('Failed to save access token')
+        !e.errors.allErrors.empty
+    }
+
     void "read access token that has additional information"() {
         given:
         createGormAccessToken()
@@ -253,6 +294,31 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
         gormToken.value == refreshValue
         gormToken.authentication == serializedAuthentication
         gormToken.expiration == expiration
+    }
+
+    void "attempt to store invalid refresh token"() {
+        given:
+        final maxSize = 1024 * 4
+        serializedAuthentication = new byte[maxSize + 1]
+
+        expectAuthenticationSerialization()
+
+        and:
+        def expiration = new Date()
+
+        def oAuth2RefreshToken = Stub(ExpiringOAuth2RefreshToken) {
+            getValue() >> refreshValue
+            getExpiration() >> expiration
+        }
+
+        when:
+        gormTokenStoreService.storeRefreshToken(oAuth2RefreshToken, oAuth2Authentication)
+
+        then:
+        def e = thrown(OAuth2ValidationException)
+
+        e.message.startsWith('Failed to save refresh token')
+        !e.errors.allErrors.empty
     }
 
     void "refresh token being stored must be an ExpiringOAuth2RefreshToken"() {
