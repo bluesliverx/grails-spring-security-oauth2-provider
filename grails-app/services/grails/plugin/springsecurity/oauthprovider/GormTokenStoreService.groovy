@@ -65,9 +65,10 @@ class GormTokenStoreService implements TokenStore {
         def scopePropertyName = accessTokenLookup.scopePropertyName
         def additionalInformationPropertyName = accessTokenLookup.additionalInformationPropertyName
 
-        def gormAccessToken = GormAccessToken.findWhere((valuePropertyName): token.value) ?: GormAccessToken.newInstance()
+        def authenticationKey = authenticationKeyGenerator.extractKey(authentication)
+        def gormAccessToken = GormAccessToken.findWhere((authenticationKeyPropertyName): authenticationKey) ?: GormAccessToken.newInstance()
 
-        gormAccessToken."$authenticationKeyPropertyName" = authenticationKeyGenerator.extractKey(authentication)
+        gormAccessToken."$authenticationKeyPropertyName" = authenticationKey
         gormAccessToken."$authenticationPropertyName" = oauth2AuthenticationSerializer.serialize(authentication)
         gormAccessToken."$usernamePropertyName" = authentication.isClientOnly() ? null : authentication.name
         gormAccessToken."$clientIdPropertyName" = authentication.getOAuth2Request().clientId

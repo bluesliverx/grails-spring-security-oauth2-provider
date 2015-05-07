@@ -61,15 +61,15 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
     }
 
     private void expectAuthenticationKeyExtraction() {
-        1 * gormTokenStoreService.authenticationKeyGenerator.extractKey(oAuth2Authentication as OAuth2Authentication) >> authenticationKey
+        gormTokenStoreService.authenticationKeyGenerator.extractKey(oAuth2Authentication as OAuth2Authentication) >> authenticationKey
     }
 
     private void expectAuthenticationSerialization() {
-        1 * gormTokenStoreService.oauth2AuthenticationSerializer.serialize(oAuth2Authentication as OAuth2Authentication) >> serializedAuthentication
+        gormTokenStoreService.oauth2AuthenticationSerializer.serialize(oAuth2Authentication as OAuth2Authentication) >> serializedAuthentication
     }
 
     private void expectAuthenticationDeserialization() {
-        1 * gormTokenStoreService.oauth2AuthenticationSerializer.deserialize(serializedAuthentication) >> oAuth2Authentication
+        gormTokenStoreService.oauth2AuthenticationSerializer.deserialize(serializedAuthentication) >> oAuth2Authentication
     }
 
     private AccessToken createGormAccessToken(Map overrides = [:]) {
@@ -189,6 +189,58 @@ class GormTokenStoreServiceIntegrationSpec extends IntegrationSpec {
         'testUser'  |   null                |   true            |   false           |   'IGNORE'        |   null
         'testUser'  |   'testUser'          |   false           |   true            |   'REFRESH'       |   'REFRESH'
         'testUser'  |   null                |   true            |   true            |   'REFRESH'       |   'REFRESH'
+    }
+
+    void "store access token should update existing access token"() {
+        given:
+        expectAuthenticationSerialization()
+        expectAuthenticationKeyExtraction()
+
+        and:
+        def expiration = new Date()
+        def scope = ['read'] as Set<String>
+
+        def oauth2RefreshToken = Stub(OAuth2RefreshToken) {
+            getValue() >> 'REFRESH'
+        }
+
+        def insertOauth2AccessToken = Stub(OAuth2AccessToken) {
+            getScope() >> scope
+            getRefreshToken() >> oauth2RefreshToken
+            getTokenType() >> 'bearer'
+            getValue() >> 'INSERT'
+            getExpiration() >> expiration
+            getAdditionalInformation() >> [foo: 'bar']
+        }
+
+        def updateOauth2AccessToken = Stub(OAuth2AccessToken) {
+            getScope() >> scope
+            getRefreshToken() >> oauth2RefreshToken
+            getTokenType() >> 'bearer'
+            getValue() >> 'UPDATE'
+            getExpiration() >> expiration
+            getAdditionalInformation() >> [foo: 'bar']
+        }
+
+        def oauth2Request = new OAuth2Request(null, 'testClient', null, false, null, null, null, null, null)
+
+        oAuth2Authentication.getName() >> 'testUser'
+        oAuth2Authentication.getOAuth2Request() >> oauth2Request
+        oAuth2Authentication.isClientOnly() >> false
+
+        when:
+        gormTokenStoreService.storeAccessToken(insertOauth2AccessToken, oAuth2Authentication)
+
+        then:
+        def insertedGormToken = AccessToken.findByValue('INSERT')
+        insertedGormToken != null
+
+        when:
+        gormTokenStoreService.storeAccessToken(updateOauth2AccessToken, oAuth2Authentication)
+
+        then:
+        def gormToken = AccessToken.findByValue('UPDATE')
+        gormToken != null
     }
 
     void "attempt to store invalid access token"() {
