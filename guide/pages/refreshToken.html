@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3.5 Refresh Token Grant 2.0-RC3</title>
+    <title>3.5 Refresh Token Grant 2.0-RC4</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -83,7 +83,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> </p>
 
-                    <p><strong>Version:</strong> 2.0-RC3</p>
+                    <p><strong>Version:</strong> 2.0-RC4</p>
 
                     
                 </div>
@@ -93,7 +93,10 @@ function addJsClass() {
                 
 
 <h2 id="refreshToken">3.5 Refresh Token Grant</h2>
-The refresh token grant is performed by exchanging a refresh token received during a previous authorization request for an access token from the token endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/token?grant_type=refresh_token&#38;refresh_token=269afd46&#45;0b41&#45;45c2&#45;a920&#45;7d5af8a38d56&#38;client_id=my&#45;client&#38;scope=read</pre></div><p class="paragraph"/>The above assumes that <code>269afd46-0b41-45c2-a920-7d5af8a38d56</code> is the value of the refresh token the client had obtained prior to this request.<p class="paragraph"/>The <code>access_token</code> is included in the response:<p class="paragraph"/><div class="code"><pre>&#123;
+The refresh token grant is performed by exchanging a refresh token received during a previous authorization request for an access token from the token endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/token?grant_type=refresh_token&#38;refresh_token=269afd46&#45;0b41&#45;45c2&#45;a920&#45;7d5af8a38d56&#38;client_id=my&#45;client&#38;scope=read</pre></div><p class="paragraph"/>Also consider this CURL example where the client is authenticated using HTTP Basic:<p class="paragraph"/><div class="code"><pre>curl &#45;X POST &#45;u my&#45;client: &#92;
+     &#45;d <span class="java&#45;quote">"grant_type=refresh_token"</span> &#92;
+     &#45;d <span class="java&#45;quote">"refresh_token=269afd46&#45;0b41&#45;45c2&#45;a920&#45;7d5af8a38d56"</span> &#92;
+     &#45;d <span class="java&#45;quote">"scope=read"</span> http://localhost:8080/oauth2&#45;test/oauth/token</pre></div><p class="paragraph"/>The above assumes that <code>269afd46-0b41-45c2-a920-7d5af8a38d56</code> is the value of the refresh token the client had obtained prior to this request.<p class="paragraph"/>The <code>access_token</code> is included in the response:<p class="paragraph"/><div class="code"><pre>&#123;
     <span class="java&#45;quote">"access_token"</span>: <span class="java&#45;quote">"a3da52c7&#45;4bd2&#45;4d42&#45;a58d&#45;efa64b4de453"</span>,
     <span class="java&#45;quote">"token_type"</span>: <span class="java&#45;quote">"bearer"</span>,
     <span class="java&#45;quote">"refresh_token"</span>: <span class="java&#45;quote">"6396c283&#45;47ff&#45;41d2&#45;b887&#45;39bde6af5f1e"</span>,

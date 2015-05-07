@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.3 Token Services 2.0-RC3</title>
+    <title>7.3 Token Services 2.0-RC4</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -81,7 +81,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> </p>
 
-                    <p><strong>Version:</strong> 2.0-RC3</p>
+                    <p><strong>Version:</strong> 2.0-RC4</p>
 
                     
                 </div>
@@ -91,7 +91,7 @@ function addJsClass() {
                 
 
 <h2 id="tokenServices">7.3 Token Services</h2>
-The following properties apply to how tokens are issued and how long they are valid. If a client has defined a specific token validity length, the client's length will take priority over the values configured for the token services.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>tokenServices.accessTokenValiditySeconds</td><td><code>60 &#42; 60 &#42; 12</code></td><td>The length of time that an access token will be valid after it has been issued.</td></tr><tr class="table-even"><td>tokenServices.refreshTokenValiditySeconds</td><td><code>60 &#42; 60 &#42; 24 &#42; 30</code></td><td>The length of time that a refresh token will be valid after it has been issued.</td></tr><tr class="table-odd"><td>tokenServices.reuseRefreshToken</td><td><code>false</code></td><td>Whether a new refresh token should be generated if one is currently available.</td></tr><tr class="table-even"><td>tokenServices.supportRefreshToken</td><td><code>true</code></td><td>Whether a refresh token can be issued upon request.</td></tr></table><p class="paragraph"/>
+The following properties apply to how tokens are issued and how long they are valid. If a client has defined a specific token validity length, the client's length will take priority over the values configured for the token services.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>tokenServices.registerTokenEnhancers</td><td><code>true</code></td><td>Whether registered <code>TokenEnhancer</code> instances should be used.</td></tr><tr class="table-even"><td>tokenServices.accessTokenValiditySeconds</td><td><code>60 &#42; 60 &#42; 12</code></td><td>The length of time that an access token will be valid after it has been issued.</td></tr><tr class="table-odd"><td>tokenServices.refreshTokenValiditySeconds</td><td><code>60 &#42; 60 &#42; 24 &#42; 30</code></td><td>The length of time that a refresh token will be valid after it has been issued.</td></tr><tr class="table-even"><td>tokenServices.reuseRefreshToken</td><td><code>false</code></td><td>Whether a new refresh token should be generated if one is currently available.</td></tr><tr class="table-odd"><td>tokenServices.supportRefreshToken</td><td><code>true</code></td><td>Whether a refresh token can be issued upon request.</td></tr></table><p class="paragraph"/>
 
 
                 <div style="clear:both;margin-top:15px;"></div>

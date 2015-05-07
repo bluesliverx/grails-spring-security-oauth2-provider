@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>4.3 Refresh Token Class 2.0-RC3</title>
+    <title>4.3 Refresh Token Class 2.0-RC4</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -83,7 +83,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> </p>
 
-                    <p><strong>Version:</strong> 2.0-RC3</p>
+                    <p><strong>Version:</strong> 2.0-RC4</p>
 
                     
                 </div>
@@ -97,12 +97,13 @@ This class represents a refresh token issued as part of one of the grants that s
     Date expiration
     <span class="java&#45;object">byte</span>&#91;&#93; authentication<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
         value nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
-        expiration nullable: <span class="java&#45;keyword">false</span>
+        expiration nullable: <span class="java&#45;keyword">true</span>
         authentication nullable: <span class="java&#45;keyword">false</span>, minSize: 1, maxSize: 1024 &#42; 4
     &#125;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
         version <span class="java&#45;keyword">false</span>
     &#125;
-&#125;</pre></div>
+&#125;</pre></div><p class="paragraph"/>If a non-expiring refresh token is desired, the client issuing the refresh token should be configured to return a 0 or less for the refresh token validity length in accordance with the behavior of Spring Security OAuth beginning with 2.0.6.RELEASE. A non-expiring GORM refresh token will be stored with a <code>null</code> expiration. When reading a GORM refresh token, if the expiration field is <code>null</code>, an <code>ExpiringOAuth2RefreshToken</code> instance will be created and returned for processing by Spring Security OAuth. Otherwise an instance of <code>OAuth2RefreshToken</code> will be created and used.
+
 
 
                 <div style="clear:both;margin-top:15px;"></div>

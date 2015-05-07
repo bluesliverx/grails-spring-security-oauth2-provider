@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>2.4 Add Client Provider 2.0-RC3</title>
+    <title>2.4 Add Client Provider 2.0-RC4</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -83,7 +83,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> </p>
 
-                    <p><strong>Version:</strong> 2.0-RC3</p>
+                    <p><strong>Version:</strong> 2.0-RC4</p>
 
                     
                 </div>
@@ -93,7 +93,8 @@ function addJsClass() {
                 
 
 <h2 id="addClientProvider">2.4 Add Client Provider</h2>
-Next you will need to add the <code>clientCredentialsAuthenticationProvider</code> to the list of providers recognized by the Core plugin in <code>grails-app/conf/Config.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.providerNames = &#91;
+The recommended way of authenticating clients is by using a HTTP Basic authorization header, for which support is enabled by default.
+However, if you want to support client authentication via request parameters, you will need to add the <code>clientCredentialsAuthenticationProvider</code> to the list of providers recognized by the Core plugin in <code>grails-app/conf/Config.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.providerNames = &#91;
         'clientCredentialsAuthenticationProvider',
         'daoAuthenticationProvider',
         'anonymousAuthenticationProvider',

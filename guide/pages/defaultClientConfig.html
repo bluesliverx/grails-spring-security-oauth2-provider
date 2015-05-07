@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.7 Default Client Configuration 2.0-RC3</title>
+    <title>7.8 Default Client Configuration 2.0-RC4</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -77,11 +77,11 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>7.7 Default Client Configuration - Reference Documentation</h1>
+                    <h1>7.8 Default Client Configuration - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> </p>
 
-                    <p><strong>Version:</strong> 2.0-RC3</p>
+                    <p><strong>Version:</strong> 2.0-RC4</p>
 
                     
                 </div>
@@ -90,7 +90,7 @@ function addJsClass() {
 
                 
 
-<h2 id="defaultClientConfig">7.7 Default Client Configuration</h2>
+<h2 id="defaultClientConfig">7.8 Default Client Configuration</h2>
 An application can use the following properties to define the default values that will be used when creating a <code>ClientDetails</code> instance if a client has not specified a value. The default configuration will not allow a client to retrieve an access token unless they have explicitly registered support for the requested grant type.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>defaultClientConfig.resourceIds</td><td><code>&#91;&#93;</code></td><td>Resources the client is authorized to access. This is currently unused as access to resources is controlled by Spring Security Core's rules.</td></tr><tr class="table-even"><td>defaultClientConfig.authorizedGrantTypes</td><td><code>&#91;&#93;</code></td><td>Grant types the client supports.</td></tr><tr class="table-odd"><td>defaultClientConfig.scope</td><td><code>&#91;&#93;</code></td><td>Scope to use for each access token request.</td></tr><tr class="table-even"><td>defaultClientConfig.autoApproveScopes</td><td><code>&#91;&#93;</code></td><td>Scopes to auto-approve for authorization requests. Including a value of <code>true</code> in the list will auto-approve all scopes for clients using the default configuration.</td></tr><tr class="table-odd"><td>defaultClientConfig.registeredRedirectUri</td><td><code>null</code></td><td>URI to redirect the user-agent to during an authorization code or implicit grant.</td></tr><tr class="table-even"><td>defaultClientConfig.authorities</td><td><code>&#91;&#93;</code></td><td>Roles and authorities granted to the client.</td></tr><tr class="table-odd"><td>defaultClientConfig.accessTokenValiditySeconds</td><td><code>null</code></td><td>The length of time that an access token will be valid after it has been issued. This is used instead of the length configured for token services if available.</td></tr><tr class="table-even"><td>defaultClientConfig.refreshTokenValiditySeconds</td><td><code>null</code></td><td>The length of time that a refresh token will be valid after it has been issued. This is used instead of the length configured for token services if available.</td></tr><tr class="table-odd"><td>defaultClientConfig.additionalInformation</td><td><code>&#91;:&#93;</code></td><td>Additional information about the client. This is not required by OAuth 2.0 but is exposed in the underlying Spring library.</td></tr></table>
 
 
