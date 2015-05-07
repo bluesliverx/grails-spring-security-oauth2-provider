@@ -16,7 +16,9 @@
 
 import grails.plugin.springsecurity.SecurityFilterPosition
 import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.oauthprovider.DefaultOAuth2AdditionalInformationSerializer
 import grails.plugin.springsecurity.oauthprovider.DefaultOAuth2AuthenticationSerializer
+import grails.plugin.springsecurity.oauthprovider.DefaultOAuth2ScopeSerializer
 import grails.plugin.springsecurity.oauthprovider.UserApprovalSupport
 import grails.plugin.springsecurity.oauthprovider.endpoint.RequiredRedirectResolver
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationEndpoint
@@ -200,6 +202,11 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
         /* Helper classes for Gorm support */
         oauth2AuthenticationSerializer(DefaultOAuth2AuthenticationSerializer)
         authenticationKeyGenerator(DefaultAuthenticationKeyGenerator)
+
+        clientAdditionalInformationSerializer(DefaultOAuth2AdditionalInformationSerializer)
+
+        accessTokenAdditionalInformationSerializer(DefaultOAuth2AdditionalInformationSerializer)
+        accessTokenScopeSerializer(DefaultOAuth2ScopeSerializer)
     }
 
     private configureTokenEnhancerChain = { conf ->

@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.provider.NoSuchClientException
 class GormClientDetailsService implements ClientDetailsService {
 
     GrailsApplication grailsApplication
+    OAuth2AdditionalInformationSerializer clientAdditionalInformationSerializer
 
     @Override
     ClientDetails loadClientByClientId(String clientId) throws ClientRegistrationException {
@@ -73,13 +74,23 @@ class GormClientDetailsService implements ClientDetailsService {
         details.autoApproveScopes = getPropertyOrDefault(client, autoApproveScopesPropertyName, defaultClientConfig.autoApproveScopes) as Set<String>
         details.accessTokenValiditySeconds  = getPropertyOrDefault(client, accessTokenValiditySecondsPropertyName, defaultClientConfig.accessTokenValiditySeconds) as Integer
         details.refreshTokenValiditySeconds = getPropertyOrDefault(client, refreshTokenValiditySecondsPropertyName, defaultClientConfig.refreshTokenValiditySeconds) as Integer
-        details.additionalInformation = getPropertyOrDefault(client, additionalInformationPropertyName, defaultClientConfig.additionalInformation) as Map
+        details.additionalInformation = getAdditionalInformationOrDefault(client, additionalInformationPropertyName, defaultClientConfig.additionalInformation)
         correctAuthorizedGrantTypes(details, authorizedGrantTypes)
         return details
     }
 
     private Object getPropertyOrDefault(client, propertyName, defaultProperty) {
         return client."$propertyName" != null ? client."$propertyName" : defaultProperty
+    }
+
+    private Map<String, Object> getAdditionalInformationOrDefault(client, propertyName, defaultProperty) {
+        Map<String, Object> additionalInformation = defaultProperty
+
+        if(client."$propertyName" != null) {
+            additionalInformation = clientAdditionalInformationSerializer.deserialize(client."$propertyName")
+        }
+
+        return additionalInformation
     }
 
     /*

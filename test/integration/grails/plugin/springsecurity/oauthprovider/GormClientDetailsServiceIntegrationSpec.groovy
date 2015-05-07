@@ -7,7 +7,7 @@ import test.oauth2.Client
 
 class GormClientDetailsServiceIntegrationSpec extends IntegrationSpec {
 
-    def gormClientDetailsService
+    GormClientDetailsService clientDetailsService
 
     void "request valid client using dynamic look up"() {
         given:
@@ -26,7 +26,7 @@ class GormClientDetailsServiceIntegrationSpec extends IntegrationSpec {
         ).save()
 
         when:
-        def details = gormClientDetailsService.loadClientByClientId('gormClient')
+        def details = clientDetailsService.loadClientByClientId('gormClient')
 
         then:
         details instanceof ClientDetails
@@ -75,7 +75,7 @@ class GormClientDetailsServiceIntegrationSpec extends IntegrationSpec {
 
     void "requested client not found"() {
         when:
-        gormClientDetailsService.loadClientByClientId('gormClient')
+        clientDetailsService.loadClientByClientId('gormClient')
 
         then:
         def e = thrown(NoSuchClientException)

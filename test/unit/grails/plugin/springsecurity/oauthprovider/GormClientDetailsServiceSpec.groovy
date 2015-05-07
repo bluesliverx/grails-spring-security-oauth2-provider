@@ -11,6 +11,7 @@ class GormClientDetailsServiceSpec extends Specification {
 
     void setup() {
         service.grailsApplication = grailsApplication
+        service.clientAdditionalInformationSerializer = Stub(OAuth2AdditionalInformationSerializer)
 
         SpringSecurityUtils.securityConfig = [oauthProvider: [:]] as ConfigObject
         setUpDefaultClientConfig()

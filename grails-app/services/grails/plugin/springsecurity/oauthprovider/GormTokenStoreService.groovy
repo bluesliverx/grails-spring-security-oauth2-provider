@@ -18,6 +18,9 @@ class GormTokenStoreService implements TokenStore {
     OAuth2AuthenticationSerializer oauth2AuthenticationSerializer
     AuthenticationKeyGenerator authenticationKeyGenerator
 
+    OAuth2AdditionalInformationSerializer accessTokenAdditionalInformationSerializer
+    OAuth2ScopeSerializer accessTokenScopeSerializer
+
     GrailsApplication grailsApplication
 
     private static
@@ -76,8 +79,8 @@ class GormTokenStoreService implements TokenStore {
         gormAccessToken."$tokenTypePropertyName" = token.tokenType
         gormAccessToken."$expirationPropertyName" = token.expiration
         gormAccessToken."$refreshTokenPropertyName" = token.refreshToken?.value
-        gormAccessToken."$scopePropertyName" = token.scope
-        gormAccessToken."$additionalInformationPropertyName" = token.additionalInformation
+        gormAccessToken."$scopePropertyName" = accessTokenScopeSerializer.serialize(token.scope ?: [] as Set)
+        gormAccessToken."$additionalInformationPropertyName" = accessTokenAdditionalInformationSerializer.serialize(token.additionalInformation ?: [:])
 
         if(!gormAccessToken.save()) {
             throw new OAuth2ValidationException("Failed to save access token", gormAccessToken.errors)
@@ -265,8 +268,13 @@ class GormTokenStoreService implements TokenStore {
         token.refreshToken = createRefreshTokenForAccessToken(gormAccessToken, refreshTokenPropertyName)
         token.tokenType = gormAccessToken."$tokenTypePropertyName"
         token.expiration = gormAccessToken."$expirationPropertyName"
-        token.scope = gormAccessToken."$scopePropertyName"
-        token.additionalInformation = gormAccessToken."$additionalInformationPropertyName" ?: [:]
+
+        def serializedScopes = gormAccessToken."$scopePropertyName"
+        token.scope = serializedScopes ? accessTokenScopeSerializer.deserialize(serializedScopes) : [] as Set
+
+        def serializedAdditionalInformation = gormAccessToken."$additionalInformationPropertyName"
+        token.additionalInformation = serializedAdditionalInformation ? accessTokenAdditionalInformationSerializer.deserialize(serializedAdditionalInformation) : [:]
+
         return token
     }
 
