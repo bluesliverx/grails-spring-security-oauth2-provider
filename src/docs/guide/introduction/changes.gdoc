@@ -1,3 +1,11 @@
+* 2.0-RC4
+** Fix for Grails 2.5.0 (issue #76)
+** Add support for basic authentication (issue #80)
+** Fix access token header format in the docs (issue #84)
+** Throw exception on validation code save (issue #90)
+** Fixes and enhancements for additional information (issue #87)
+** Add support for unlimited refresh tokens (issue #75)
+
 * 2.0-RC3
 ** Upgrade to Spring OAuth 2.0.6.RELEASE (issue #63)
 ** Fix problems with updating access tokens (issues #49, #50, and #68)
