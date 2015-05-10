@@ -1,0 +1,150 @@
+The default behavior of the plugin is to serialize the @additionalInformation@ and @scope@ properties of the @Client@ and @AccessToken@ classes as a @Map<String, Object>@ and @Set<String>@ respectively. This is how the [s2-init-oauth2-provider|Scripts] script will generate the domain classes. However, this might not be ideal for all plugin consumers who want more control over the serialization of these fields.
+
+To accommodate these users, it is possible to override the default serialization method on a case-by-case basis. The plugin provides two interfaces to accomplish.
+
+For the @additionalInformation@ fields:
+
+{code}
+package grails.plugin.springsecurity.oauthprovider.serialization;
+
+import java.util.Map;
+
+public interface OAuth2AdditionalInformationSerializer {
+
+    Object serialize(Map<String, Object> additionalInformation);
+
+    Map<String, Object> deserialize(Object additionalInformation);
+}
+{code}
+
+For the @scope@ field:
+
+{code}
+package grails.plugin.springsecurity.oauthprovider.serialization;
+
+import java.util.Set;
+
+public interface OAuth2ScopeSerializer {
+
+    Object serialize(Set<String> scopes);
+
+    Set<String> deserialize(Object scopes);
+}
+{code}
+
+By default, the plugin registers implementations that do little more than return the argument provided to each method. The following table shows which plugin provided Spring beans implement these interfaces and how they're used:
+
+{table}
+*Bean Name*                                     |   *Interface Implemented*                 |   *Description*
+@clientAdditionalInformationSerializer@         |   @OAuth2AdditionalInformationSerializer@ |   Handles deserialization of the @additionalInformation@ property of the @Client@ class into a @Map<String, Object>@. Only the @deserialize@ method is used by the plugin at this time.
+@accessTokenAdditionalInformationSerializer@    |   @OAuth2AdditionalInformationSerializer@ |   Handles serialization and deserialization of the @additionalInformation@ property of the @AccessToken@ class into a @Map<String, Object>@.
+@accessTokenScopeSerializer@                    |   @OAuth2ScopeSerializer@                 |   Handles serialization and deserialization of the @scope@ property of the @AccessToken@ class into a @Set<String>@.
+{table}
+
+Overriding these beans in @resources.groovy@ will allow the plugin consumer to customize how these fields are serialized. However, this will require the affected domain class to be modified to accommodate the change. For example, let's change the @AccessToken@ to serialized its @additionalInformation@ as JSON @String@ and its @scope@ as white space delimited @String@.
+
+First, modify the @AccessToken@ class to reflect the change in the storage of these fields:
+
+{code}
+package test.oauth2
+
+class AccessToken {
+
+    String authenticationKey
+    byte[] authentication
+
+    String username
+    String clientId
+
+    String value
+    String tokenType
+
+    Date expiration
+    String additionalInformation
+
+    String scope
+
+    static hasOne = [refreshToken: String]
+
+    static constraints = {
+        username nullable: true
+        clientId nullable: false, blank: false
+        value nullable: false, blank: false, unique: true
+        tokenType nullable: false, blank: false
+        expiration nullable: false
+        scope nullable: false
+        refreshToken nullable: true
+        authenticationKey nullable: false, blank: false, unique: true
+        authentication nullable: false, minSize: 1, maxSize: 1024 * 4
+        additionalInformation nullable: true
+    }
+
+    static mapping = {
+        version false
+        scope lazy: false
+    }
+}
+{code}
+
+Next, implement the earlier described interfaces:
+
+{code}
+package test
+
+import grails.plugin.springsecurity.oauthprovider.serialization.OAuth2ScopeSerializer
+import org.springframework.security.oauth2.common.util.OAuth2Utils
+
+class WhiteSpaceDelimitedStringScopeSerializer implements OAuth2ScopeSerializer {
+
+    @Override
+    Object serialize(Set<String> scopes) {
+        return OAuth2Utils.formatParameterList(scopes)
+    }
+
+    @Override
+    Set<String> deserialize(Object scopes) {
+        return OAuth2Utils.parseParameterList(scopes)
+    }
+}
+{code}
+
+And:
+
+{code}
+package test
+
+import grails.plugin.springsecurity.oauthprovider.serialization.OAuth2AdditionalInformationSerializer
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
+class JsonAdditionalInformationSerializer implements OAuth2AdditionalInformationSerializer {
+
+    @Override
+    Object serialize(Map<String, Object> additionalInformation) {
+        JsonOutput.toJson(additionalInformation)
+    }
+
+    @Override
+    Map<String, Object> deserialize(Object additionalInformation) {
+        new JsonSlurper().parseText(additionalInformation as String)
+    }
+}
+{code}
+
+{note}
+The @serialize@ methods are guaranteed to receive a non-null argument, although they may be provided an empty collection. The @deserialize@ methods are expected to return a non-null value.
+{note}
+
+Finally, in @resources.groovy@, override the appropriate beans:
+
+{code}
+import test.JsonAdditionalInformationSerializer
+import test.WhiteSpaceDelimitedStringScopeSerializer
+
+beans = {
+    // Other beans here
+
+    accessTokenAdditionalInformationSerializer(JsonAdditionalInformationSerializer)
+    accessTokenScopeSerializer(WhiteSpaceDelimitedStringScopeSerializer)
+}
+{code}

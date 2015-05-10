@@ -45,3 +45,4 @@ configuration:
   approvalHandler: User Approval Configuration
   defaultClientConfig: Default Client Configuration
   filterChainConfig: Filter Chain Configuration
+  domainClassCustomSerializationConfig: Domain Class Custom Serialization Configuration
