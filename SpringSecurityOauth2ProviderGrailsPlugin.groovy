@@ -455,8 +455,11 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
             permissionEvaluator = ref('permissionEvaluator')
         }
 
+        // Provide a customization point for handling resource access approval
+        springConfig.addAlias 'resourceServerTokenServices', 'tokenServices'
+
         oauth2AuthenticationManager(OAuth2AuthenticationManager) {
-            tokenServices = ref('tokenServices')
+            tokenServices = ref('resourceServerTokenServices')
         }
 
         oauth2ProviderFilter(OAuth2AuthenticationProcessingFilter) {
