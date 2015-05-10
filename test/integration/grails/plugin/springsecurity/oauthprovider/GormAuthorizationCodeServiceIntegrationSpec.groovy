@@ -1,6 +1,7 @@
 package grails.plugin.springsecurity.oauthprovider
 
 import grails.plugin.springsecurity.oauthprovider.exceptions.OAuth2ValidationException
+import grails.plugin.springsecurity.oauthprovider.serialization.OAuth2AuthenticationSerializer
 import grails.test.spock.IntegrationSpec
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices

@@ -14,7 +14,7 @@
  */
 
 import grails.plugin.springsecurity.SecurityFilterPosition
-import grails.plugin.springsecurity.oauthprovider.UserApprovalSupport
+import grails.plugin.springsecurity.oauthprovider.approval.UserApprovalSupport
 
 security {
 	oauthProvider {

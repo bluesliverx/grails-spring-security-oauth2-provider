@@ -1,4 +1,4 @@
-package grails.plugin.springsecurity.oauthprovider
+package grails.plugin.springsecurity.oauthprovider.serialization
 
 import org.springframework.security.oauth2.provider.OAuth2Authentication
 import org.springframework.security.oauth2.common.util.SerializationUtils

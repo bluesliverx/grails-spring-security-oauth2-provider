@@ -14,12 +14,11 @@
  */
 
 
-import grails.plugin.springsecurity.SecurityFilterPosition
 import grails.plugin.springsecurity.SpringSecurityUtils
-import grails.plugin.springsecurity.oauthprovider.DefaultOAuth2AdditionalInformationSerializer
-import grails.plugin.springsecurity.oauthprovider.DefaultOAuth2AuthenticationSerializer
-import grails.plugin.springsecurity.oauthprovider.DefaultOAuth2ScopeSerializer
-import grails.plugin.springsecurity.oauthprovider.UserApprovalSupport
+import grails.plugin.springsecurity.oauthprovider.approval.UserApprovalSupport
+import grails.plugin.springsecurity.oauthprovider.serialization.DefaultOAuth2AdditionalInformationSerializer
+import grails.plugin.springsecurity.oauthprovider.serialization.DefaultOAuth2AuthenticationSerializer
+import grails.plugin.springsecurity.oauthprovider.serialization.DefaultOAuth2ScopeSerializer
 import grails.plugin.springsecurity.oauthprovider.endpoint.RequiredRedirectResolver
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedAuthorizationEndpoint
 import grails.plugin.springsecurity.oauthprovider.endpoint.WrappedTokenEndpoint
@@ -68,9 +67,8 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.savedrequest.NullRequestCache
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
-import test.FooBarTokenEnhancer
 
-import static grails.plugin.springsecurity.oauthprovider.UserApprovalSupport.*
+import static grails.plugin.springsecurity.oauthprovider.approval.UserApprovalSupport.*
 
 class SpringSecurityOauth2ProviderGrailsPlugin {
 	static final Logger log = LoggerFactory.getLogger(this)

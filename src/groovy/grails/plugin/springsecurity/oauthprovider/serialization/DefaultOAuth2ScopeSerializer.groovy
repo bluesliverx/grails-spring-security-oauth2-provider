@@ -1,4 +1,4 @@
-package grails.plugin.springsecurity.oauthprovider
+package grails.plugin.springsecurity.oauthprovider.serialization
 
 class DefaultOAuth2ScopeSerializer implements OAuth2ScopeSerializer {
 

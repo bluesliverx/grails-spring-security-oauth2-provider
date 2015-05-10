@@ -1,6 +1,7 @@
 package grails.plugin.springsecurity.oauthprovider
 
 import grails.plugin.springsecurity.SpringSecurityUtils
+import grails.plugin.springsecurity.oauthprovider.serialization.OAuth2AdditionalInformationSerializer
 import grails.test.mixin.TestFor
 import spock.lang.Specification
 import spock.lang.Unroll
