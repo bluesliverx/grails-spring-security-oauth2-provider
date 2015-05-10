@@ -1,0 +1,3 @@
+By default, the plugin is configured to assume the role of both the Authorization Server and the Resource Server as defined by RFC 6749. However, it is possible to configure an application to fulfill only one role.
+
+The plugin registers an instance of the Spring OAuth provided @OAuth2AuthenticationProcessingFilter@ under the bean name @oauth2ProviderFilter@. This filter is responsible for extracting the @Bearer@ token from the @Authorization@ header and confirming its authenticity.

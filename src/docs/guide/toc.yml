@@ -46,3 +46,7 @@ configuration:
   defaultClientConfig: Default Client Configuration
   filterChainConfig: Filter Chain Configuration
   domainClassCustomSerializationConfig: Domain Class Custom Serialization Configuration
+standaloneResourceAuthorizationServer:
+  title: Standalone Resource Server or Authorization Server
+  authorizationServer: Authorization Server
+  resourceServer: Resource Server
