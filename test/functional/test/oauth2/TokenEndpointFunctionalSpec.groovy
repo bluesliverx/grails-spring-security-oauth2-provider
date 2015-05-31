@@ -80,6 +80,23 @@ class TokenEndpointFunctionalSpec extends AbstractTokenEndpointFunctionalSpec {
         oldAccessToken == newAccessToken
     }
 
+    void "each client should be issued its own access token"() {
+        given:
+        def params = [grant_type: 'password', username: 'user', password: 'test', scope: 'test']
+
+        def publicClientParams = params.clone() + [client_id: 'public-client']
+        def passwordOnlyClientParams = params.clone() + [client_id: 'password-only']
+
+        when:
+        def publicClientAccessToken = getAccessToken(publicClientParams)
+
+        and:
+        def passwordOnlyAccessToken = getAccessToken(passwordOnlyClientParams)
+
+        then:
+        publicClientAccessToken != passwordOnlyAccessToken
+    }
+
     void "additional information should be returned for each token request"() {
         given:
         def params = [grant_type: 'client_credentials', client_id: 'public-client', scope: 'test']
