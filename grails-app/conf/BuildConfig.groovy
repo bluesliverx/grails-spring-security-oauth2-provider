@@ -33,7 +33,7 @@ grails.project.dependency.resolution = {
 	}
 
 	dependencies {
-		compile 'org.springframework.security.oauth:spring-security-oauth2:2.0.6.RELEASE', {
+		compile 'org.springframework.security.oauth:spring-security-oauth2:2.0.7.RELEASE', {
 			excludes "spring-beans",
 			         "spring-core",
 			         "spring-context",
@@ -101,6 +101,6 @@ grails.project.dependency.resolution = {
             export = false
         }
 
-        compile ':spring-security-core:2.0-RC4'
+        compile ':spring-security-core:2.0-RC5'
 	}
 }

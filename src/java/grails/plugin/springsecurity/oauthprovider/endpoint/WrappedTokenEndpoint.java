@@ -16,13 +16,10 @@ import java.util.Map;
 public class WrappedTokenEndpoint extends TokenEndpoint {
 
     @Override
-    public ResponseEntity<OAuth2AccessToken> getAccessToken(Principal principal,
-            @RequestParam Map<String, String> parameters, HttpMethod requestMethod) throws HttpRequestMethodNotSupportedException {
+    public ResponseEntity<OAuth2AccessToken> postAccessToken(Principal principal,
+            @RequestParam Map<String, String> parameters) throws HttpRequestMethodNotSupportedException {
         try {
-            if(requestMethod == null) {
-                requestMethod = HttpMethod.POST;
-            }
-            return super.getAccessToken(principal, parameters, requestMethod);
+            return super.postAccessToken(principal, parameters);
         }
         catch (ClientRegistrationException e) {
             throw new OAuth2TokenEndpointException(e);
