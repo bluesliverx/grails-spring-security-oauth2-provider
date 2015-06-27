@@ -14,7 +14,7 @@ class MixedSecurityRealmsFunctionalSpec extends AbstractAccessControlFunctionalS
         assert !currentSecurityContextHasGrantedAuthority('ROLE_CLIENT')
 
         when:
-        requestPage('securedOAuth2Resources/clientRole', token) == 'client role'
+        requestResource('securedOAuth2Resources/clientRole', token) == 'client role'
 
         then:
         !currentSecurityContextHasGrantedAuthority('ROLE_CLIENT')
@@ -30,7 +30,7 @@ class MixedSecurityRealmsFunctionalSpec extends AbstractAccessControlFunctionalS
         formLogin()
 
         when:
-        requestPage('securedOAuth2Resources/clientRole', token) == 'client role'
+        requestResource('securedOAuth2Resources/clientRole', token) == 'client role'
 
         then:
         attemptUnauthenticatedRequestRedirectsToDenied('securedWebResources/clientRole')

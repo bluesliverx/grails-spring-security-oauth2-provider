@@ -51,6 +51,7 @@ import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenG
 import org.springframework.security.oauth2.provider.endpoint.DefaultRedirectResolver
 import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpointHandlerMapping
 import org.springframework.security.oauth2.provider.error.DefaultOAuth2ExceptionRenderer
+import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint
 import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurityExpressionHandler
 import org.springframework.security.oauth2.provider.implicit.ImplicitTokenGranter
@@ -61,11 +62,9 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices
 import org.springframework.security.oauth2.provider.token.TokenEnhancer
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain
 import org.springframework.security.web.access.ExceptionTranslationFilter
-import org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint
 import org.springframework.security.web.authentication.NullRememberMeServices
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.security.web.savedrequest.NullRequestCache
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
 
 import static grails.plugin.springsecurity.oauthprovider.approval.UserApprovalSupport.*
@@ -171,9 +170,9 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
         configureClientAuthentication.delegate = delegate
         configureClientAuthentication(conf)
 
-        /* Ensure OAuth2 authentication entry point plays well with the one provided by the Core plugin */
-        configureAuthenticationEntryPoints.delegate = delegate
-        configureAuthenticationEntryPoints(conf)
+        /* Register OAuth2 authentication entry point and access denied handler */
+        configureSecurityHandlers.delegate = delegate
+        configureSecurityHandlers(conf)
 
         /* Ensure access tokens are extracted from incoming requests for access to protected resources */
         configureResourceProtection.delegate = delegate
@@ -404,25 +403,13 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
         }
     }
 
-    private configureAuthenticationEntryPoints = { conf ->
-        // Configure multiple authentication entry points
-        // http://jdevdiary.blogspot.com/2013/03/grails-spring-security-and-multiple.html
-        oauth2RequestMatcher(AntPathRequestMatcher, conf.oauthProvider.tokenEndpointUrl + '**')
+    private configureSecurityHandlers = { conf ->
         oauth2AuthenticationEntryPoint(OAuth2AuthenticationEntryPoint) {
             realmName = conf.oauthProvider.realmName
         }
 
-        util.map(id: 'authenticationEntryPointMap') {
-            entry('key-ref': 'oauth2RequestMatcher') {
-                ref(bean: 'oauth2AuthenticationEntryPoint')
-            }
-        }
-
-        // Retrieve the bean definition defined by the Core plugin
-        def defaultAuthenticationEntryPoint = getBeanDefinition('authenticationEntryPoint')
-
-        authenticationEntryPoint(DelegatingAuthenticationEntryPoint, ref('authenticationEntryPointMap')) {
-            defaultEntryPoint = defaultAuthenticationEntryPoint
+        oauth2AccessDeniedHandler(OAuth2AccessDeniedHandler) {
+            exceptionRenderer = ref('oauth2ExceptionRenderer')
         }
     }
 
@@ -486,8 +473,8 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 
         oauth2RequestCache(NullRequestCache)
 
-        oauth2ExceptionTranslationFilter(ExceptionTranslationFilter, ref('authenticationEntryPoint'), ref('oauth2RequestCache')) {
-            accessDeniedHandler = ref('accessDeniedHandler')
+        oauth2ExceptionTranslationFilter(ExceptionTranslationFilter, ref('oauth2AuthenticationEntryPoint'), ref('oauth2RequestCache')) {
+            accessDeniedHandler = ref('oauth2AccessDeniedHandler')
             authenticationTrustResolver = ref('authenticationTrustResolver')
             throwableAnalyzer = ref('throwableAnalyzer')
         }

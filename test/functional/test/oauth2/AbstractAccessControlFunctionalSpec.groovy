@@ -8,6 +8,7 @@ import helper.AccessTokenRequest
 import helper.AccessTokenRequester
 import helper.GrantTypes
 import helper.TestEnvironmentCleaner
+import org.apache.http.HttpResponse
 import pages.*
 
 abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
@@ -28,20 +29,37 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
         browser.clearCookies()
     }
 
+    protected void attemptUnauthorizedResourceRequest(String relativeUrl) {
+        try {
+            def requestUrl = browser.baseUrl + relativeUrl
+            restClient.get(uri: requestUrl) as HttpResponseDecorator
+
+            throw new IllegalStateException("Url [$requestUrl] should have been forbidden")
+        }
+        catch(HttpResponseException e) {
+            def response = e.response
+            assert response.status == 401
+
+            def wwwAuthHeader = response.headers['WWW-Authenticate'].value
+            assert wwwAuthHeader.contains('error="unauthorized"')
+            assert wwwAuthHeader.contains('error_description="Full authentication is required to access this resource"')
+        }
+    }
+
     protected void attemptUnauthenticatedRequestRedirectsToDenied(String relativeUrl) {
         def requestUrl = browser.baseUrl + relativeUrl
         go requestUrl
-        isAt DeniedPage
+        at DeniedPage
     }
 
-    protected String requestPage(String relativeUrl, String token = null) {
+    protected String requestResource(String relativeUrl, String token = null) {
         def requestUrl = browser.baseUrl + relativeUrl
         def headers = token ? [Authorization: "Bearer $token"] : [:]
         def response = restClient.get(uri: requestUrl, headers: headers) as HttpResponseDecorator
         response.data
     }
 
-    protected void forbiddenPage(String relativeUrl, String token) {
+    protected void forbiddenResource(String relativeUrl, String token) {
         try {
             def requestUrl = browser.baseUrl + relativeUrl
             def headers = [Authorization: "Bearer $token"]
@@ -51,6 +69,8 @@ abstract class AbstractAccessControlFunctionalSpec extends GebReportingSpec {
         }
         catch(HttpResponseException e) {
             assert e.response.status == 403
+            assert e.response.data.error == 'access_denied'
+            assert e.response.data.error_description == 'Access is denied'
         }
     }
 
