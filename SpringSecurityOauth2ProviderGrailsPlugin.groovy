@@ -424,9 +424,12 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
             saltSource = ref('saltSource')
         }
 
+        oauth2AuthenticationDetailsSource(OAuth2AuthenticationDetailsSource)
+
         clientCredentialsTokenEndpointFilter(ClientCredentialsTokenEndpointFilter, conf.oauthProvider.tokenEndpointUrl) {
             authenticationManager = ref('authenticationManager')
             authenticationEntryPoint = ref('oauth2AuthenticationEntryPoint')
+            authenticationDetailsSource = ref('oauth2AuthenticationDetailsSource')
         }
 
         SpringSecurityUtils.registerFilter 'clientCredentialsTokenEndpointFilter',
@@ -510,7 +513,6 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
                 exceptionTranslator = new BasicClientExceptionTranslator()
             }
 
-            oauth2AuthenticationDetailsSource(OAuth2AuthenticationDetailsSource)
             statelessRememberMeServices(NullRememberMeServices)
 
             oauth2BasicAuthenticationFilter(BasicAuthenticationFilter, ref('basicClientAuthenticationManager'), ref('basicClientAuthenticationEntryPoint')) {
