@@ -11,15 +11,15 @@ Finally, the plugin registers an @ExceptionTranslationFilter@ under the bean nam
 The following filter chain configuration is recommended:
 
 {code}
-   grails.plugin.springsecurity.filterChain.chainMap = [
-            '/oauth/token': 'JOINED_FILTERS,-oauth2ProviderFilter,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter,-exceptionTranslationFilter',
-            '/securedOAuth2Resources/**': 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter,-basicAuthenticationFilter,-exceptionTranslationFilter',
-            '/**': 'JOINED_FILTERS,-statelessSecurityContextPersistenceFilter,-oauth2ProviderFilter,-clientCredentialsTokenEndpointFilter,-basicAuthenticationFilter,-oauth2ExceptionTranslationFilter'
-   ]
+grails.plugin.springsecurity.filterChain.chainMap = [
+        '/oauth/token': 'JOINED_FILTERS,-oauth2ProviderFilter,-securityContextPersistenceFilter,-logoutFilter,-authenticationProcessingFilter,-rememberMeAuthenticationFilter,-exceptionTranslationFilter',
+        '/securedOAuth2Resources/**': 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-authenticationProcessingFilter,-rememberMeAuthenticationFilter,-oauth2BasicAuthenticationFilter,-exceptionTranslationFilter',
+        '/**': 'JOINED_FILTERS,-statelessSecurityContextPersistenceFilter,-oauth2ProviderFilter,-clientCredentialsTokenEndpointFilter,-oauth2BasicAuthenticationFilter,-oauth2ExceptionTranslationFilter'
+]
 {code}
 
 The @oauth2ProviderFilter@ and stateful @securityContextPersistenceFilter@ and @exceptionTranslationFilter@ are removed from the token endpoint's filter chain. With the @securityContextPersistenceFilter@ removed, the @statelessSecurityContextPersistenceFilter@ will be used to ensure access token requests are stateless. Similarly, removing the @exceptionTranslationFilter@ will allow the @oauth2ExceptionTranslationFilter@ to take its place in the filter chain.
 
 The @securityContextPersistenceFilter@ and @exceptionTranslationFilter@ are also removed from the filter chain for OAuth 2.0 resources. However, the @oauth2ProviderFilter@ must not be removed, as this filter is responsible for authenticating the OAuth 2.0 access token included in the request.
 
-It is recommend that filter chain(s) for non-OAuth 2.0 resources have all OAuth 2.0 specific filters removed. These include: @statelessSecurityContextPersistenceFilter@, @oauth2ProviderFilter@, @clientCredentialsTokenEndpointFilter@, @basicAuthenticationFilter@ and @oauth2ExceptionTranslationFilter@. It is also recommended that any unnecessary filters such as the @rememberMeAuthenticationFilter@ are removed from the filter chains for the token endpoint and OAuth 2.0 resources.
+It is recommend that filter chain(s) for non-OAuth 2.0 resources have all OAuth 2.0 specific filters removed. These include: @statelessSecurityContextPersistenceFilter@, @oauth2ProviderFilter@, @clientCredentialsTokenEndpointFilter@, @basicAuthenticationFilter@ and @oauth2ExceptionTranslationFilter@. It is also recommended that any unnecessary filters such as the @rememberMeAuthenticationFilter@ and @authenticationProcessingFilter@ are removed from the filter chains for the token endpoint and OAuth 2.0 resources.
