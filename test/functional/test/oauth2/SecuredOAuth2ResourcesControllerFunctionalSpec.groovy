@@ -170,8 +170,6 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         'confidential-client'   |   'secret-pass-phrase'
     }
 
-    // TODO: Re-enable once the auth processing filter does not allow tokens to be omitted
-    @Ignore()
     @Unroll
     void "denyOAuthClient() denies grant type [#grantType]"() {
         given:
@@ -179,9 +177,6 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         def token = getAccessToken(request)
 
         expect:
-        attemptUnauthorizedResourceRequest('securedOAuth2Resources/denyClient')
-
-        and:
         forbiddenResource('securedOAuth2Resources/denyClient', token)
 
         where:
@@ -192,7 +187,6 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         _   |   GrantTypes.ClientCredentials
     }
 
-    // TODO: Re-evaluate this once auth processing filter works properly
     void "access web only resource secured with denyOAuthClient()"() {
         given:
         to LoginPage
@@ -252,6 +246,9 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
         def token = getAccessToken(request)
 
         expect:
+        attemptUnauthorizedResourceRequest('securedOAuth2Resources/nobody')
+
+        and:
         forbiddenResource('securedOAuth2Resources/nobody', token)
 
         where:
@@ -363,6 +360,5 @@ class SecuredOAuth2ResourcesControllerFunctionalSpec extends AbstractAccessContr
 
         GrantTypes.ClientCredentials        |   'confidential-client'   |   'secret-pass-phrase'    |   'read'      |   true
         GrantTypes.ClientCredentials        |   'confidential-client'   |   'secret-pass-phrase'    |   'trust'     |   false
-
     }
 }
