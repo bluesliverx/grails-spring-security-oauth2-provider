@@ -1,5 +1,8 @@
 * 2.0-RC5 (WIP)
 ** Upgrade to Spring OAuth 2.0.7.RELEASE for compatibility with Spring Security Core RC5 (issue #100)
+** Resolve minor problems affecting stateless access of OAuth 2.0 resources
+** Remove need to include `clientCredentialsAuthenticationProvider` in `grails.plugin.springsecurity.providerNames` list
+** Document using plugin to create only authorization server only or only a resource server (issue #71)
 
 * 2.0-RC4
 ** Fix for Grails 2.5.0 (issue #76)
