@@ -20,7 +20,6 @@ class MixedSecurityRealmsFunctionalSpec extends AbstractAccessControlFunctionalS
         !currentSecurityContextHasGrantedAuthority('ROLE_CLIENT')
     }
 
-    // TODO: This should retrieve the access token used via JavaScript
     void "accessing OAuth 2.0 resource does not affect form authenticated session"() {
         given:
         def request = new AccessTokenRequest(grantType: GrantTypes.ClientCredentials, clientId: 'public-client')
@@ -30,13 +29,32 @@ class MixedSecurityRealmsFunctionalSpec extends AbstractAccessControlFunctionalS
         formLogin()
 
         when:
-        requestResource('securedOAuth2Resources/clientRole', token) == 'client role'
+        def resource = accessOAuth2ResourceViaJavaScript('securedOAuth2Resources/clientRole', token)
 
         then:
+        resource == 'client role'
+
+        and:
         attemptUnauthenticatedRequestRedirectsToDenied('securedWebResources/clientRole')
 
         and:
         assertPageContent('securedWebResources/userRole', 'form user role')
+    }
+
+    private Object accessOAuth2ResourceViaJavaScript(String relativeUrl, String token) {
+        js.exec(token, relativeUrl, '''
+            var token = arguments[0];
+            var relativeUrl = arguments[1];
+
+            var xhr = new XMLHttpRequest();
+            var text = null;
+
+            xhr.open("GET", relativeUrl, false);
+            xhr.setRequestHeader("Authorization", "Bearer " + token);
+            xhr.send();
+
+            return xhr.responseText;
+        ''')
     }
 
     private void assertPageContent(String url, String content) {
