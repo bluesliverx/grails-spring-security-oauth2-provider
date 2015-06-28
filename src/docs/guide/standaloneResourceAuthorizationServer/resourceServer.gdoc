@@ -34,7 +34,7 @@ Any requests to the authorization or token endpoints will be greeted with a 403 
 
 {code}
    grails.plugin.springsecurity.filterChain.chainMap = [
-            '/securedOAuth2Resources/**': 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter,-basicAuthenticationFilter,-exceptionTranslationFilter',
+            '/securedOAuth2Resources/**': 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter,-authenticationProcessingFilter,-basicAuthenticationFilter,-exceptionTranslationFilter',
             '/**': 'JOINED_FILTERS,-statelessSecurityContextPersistenceFilter,-oauth2ProviderFilter,-clientCredentialsTokenEndpointFilter,-basicAuthenticationFilter,-oauth2ExceptionTranslationFilter'
    ]
 {code}
