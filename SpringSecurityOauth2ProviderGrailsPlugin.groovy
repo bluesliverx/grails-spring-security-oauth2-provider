@@ -41,6 +41,7 @@ import org.springframework.security.oauth2.provider.CompositeTokenGranter
 import org.springframework.security.oauth2.provider.approval.ApprovalStoreUserApprovalHandler
 import org.springframework.security.oauth2.provider.approval.DefaultUserApprovalHandler
 import org.springframework.security.oauth2.provider.approval.TokenStoreUserApprovalHandler
+import org.springframework.security.oauth2.provider.authentication.BearerTokenExtractor
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetailsSource
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter
@@ -452,9 +453,13 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
             tokenServices = ref('resourceServerTokenServices')
         }
 
+        tokenExtractor(BearerTokenExtractor)
+
         oauth2ProviderFilter(OAuth2AuthenticationProcessingFilter) {
             authenticationEntryPoint = ref('oauth2AuthenticationEntryPoint')
             authenticationManager = ref('oauth2AuthenticationManager')
+            authenticationDetailsSource = ref('oauth2AuthenticationDetailsSource')
+            tokenExtractor = ref('tokenExtractor')
         }
 
         SpringSecurityUtils.registerFilter 'oauth2ProviderFilter',
