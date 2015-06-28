@@ -6,7 +6,6 @@ gettingStarted:
   installPlugin: Install Plugin
   createDomainClasses: Create Domain Classes
   secureEndpoints: Secure Authorization and Token Endpoints
-  addClientProvider: Add Client Provider
   excludeClientSecret: Exclude client_secret From Logs
   customizeViews: (Optional) Customize Error and Confirm Access Views
   clientRegistration: Client Registration

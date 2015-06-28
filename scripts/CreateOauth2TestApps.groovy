@@ -136,14 +136,7 @@ private void runQuickstart() {
 
     config.withWriter { it.writeLine contents }
 
-    config.withWriterAppend { it.writeLine '''grails.plugin.springsecurity.providerNames = [
-        'clientCredentialsAuthenticationProvider',
-        'daoAuthenticationProvider',
-        'anonymousAuthenticationProvider',
-        'rememberMeAuthenticationProvider'
-]
-
-grails.plugin.springsecurity.filterChain.chainMap = [
+    config.withWriterAppend { it.writeLine '''grails.plugin.springsecurity.filterChain.chainMap = [
         '/oauth/token': 'JOINED_FILTERS,-oauth2ProviderFilter,-securityContextPersistenceFilter,-logoutFilter,-authenticationProcessingFilter,-rememberMeAuthenticationFilter,-exceptionTranslationFilter',
         '/securedOAuth2Resources/**': 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-authenticationProcessingFilter,-rememberMeAuthenticationFilter,-oauth2BasicAuthenticationFilter,-exceptionTranslationFilter',
         '/**': 'JOINED_FILTERS,-statelessSecurityContextPersistenceFilter,-oauth2ProviderFilter,-clientCredentialsTokenEndpointFilter,-oauth2BasicAuthenticationFilter,-oauth2ExceptionTranslationFilter\'

@@ -22,6 +22,22 @@ class BootStrap {
 
         UserRole.create(user, roleUser, true)
 
+        new User(
+                username: 'common-name',
+                password: 'the-user',
+                enabled: true,
+                accountExpired: false,
+                accountLocked: false,
+                passwordExpired: false
+        ).save(flush: true)
+
+        new Client(
+                clientId: 'common-name',
+                clientSecret: 'the-client',
+                authorizedGrantTypes: ['client_credentials'],
+                scopes: ['test']
+        ).save(flush: true)
+
         new Client(
                 clientId: 'no-grant-client',
                 authorizedGrantTypes: [],

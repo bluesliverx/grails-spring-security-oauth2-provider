@@ -35,13 +35,6 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 	'/**/favicon.ico':                ['permitAll']
 ]
 
-grails.plugin.springsecurity.providerNames = [
-        'clientCredentialsAuthenticationProvider',
-        'daoAuthenticationProvider',
-        'anonymousAuthenticationProvider',
-        'rememberMeAuthenticationProvider'
-]
-
 grails.plugin.springsecurity.filterChain.chainMap = [
         '/oauth/token': 'JOINED_FILTERS,-oauth2ProviderFilter,-securityContextPersistenceFilter,-logoutFilter,-authenticationProcessingFilter,-rememberMeAuthenticationFilter,-exceptionTranslationFilter',
         '/securedOAuth2Resources/**': 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-authenticationProcessingFilter,-rememberMeAuthenticationFilter,-oauth2BasicAuthenticationFilter,-exceptionTranslationFilter',

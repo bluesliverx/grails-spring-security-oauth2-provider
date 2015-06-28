@@ -427,8 +427,15 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 
         oauth2AuthenticationDetailsSource(OAuth2AuthenticationDetailsSource)
 
+        // Create a separate authentication manager with a single provider for the client authentication
+        clientAuthenticationManager(ProviderManager) {
+            providers = [ ref('clientCredentialsAuthenticationProvider') ]
+            authenticationEventPublisher = ref('authenticationEventPublisher')
+            eraseCredentialsAfterAuthentication = true
+        }
+
         clientCredentialsTokenEndpointFilter(ClientCredentialsTokenEndpointFilter, conf.oauthProvider.tokenEndpointUrl) {
-            authenticationManager = ref('authenticationManager')
+            authenticationManager = ref('clientAuthenticationManager')
             authenticationEntryPoint = ref('oauth2AuthenticationEntryPoint')
             authenticationDetailsSource = ref('oauth2AuthenticationDetailsSource')
         }
@@ -504,13 +511,6 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
         boolean registerBasicAuthFilter = conf.oauthProvider.registerBasicAuthenticationFilter as boolean
 
         if(registerBasicAuthFilter) {
-            // Create a separate authentication manager with a single provider for the basic authentication filter
-            basicClientAuthenticationManager(ProviderManager) {
-                providers = [ ref('clientCredentialsAuthenticationProvider') ]
-                authenticationEventPublisher = ref('authenticationEventPublisher')
-                eraseCredentialsAfterAuthentication = true
-            }
-
             // This allows us to install a custom ExceptionTranslator, to keep the error messages consistent with
             // the alternative client authentication mechanism (via request parameters)
             basicClientAuthenticationEntryPoint(OAuth2AuthenticationEntryPoint) {
@@ -520,7 +520,7 @@ class SpringSecurityOauth2ProviderGrailsPlugin {
 
             statelessRememberMeServices(NullRememberMeServices)
 
-            oauth2BasicAuthenticationFilter(BasicAuthenticationFilter, ref('basicClientAuthenticationManager'), ref('basicClientAuthenticationEntryPoint')) {
+            oauth2BasicAuthenticationFilter(BasicAuthenticationFilter, ref('clientAuthenticationManager'), ref('basicClientAuthenticationEntryPoint')) {
                 authenticationDetailsSource = ref('oauth2AuthenticationDetailsSource')
                 rememberMeServices = ref('statelessRememberMeServices')
                 credentialsCharset = conf.oauthProvider.credentialsCharset

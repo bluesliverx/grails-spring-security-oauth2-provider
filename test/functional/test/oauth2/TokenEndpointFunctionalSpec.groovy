@@ -122,4 +122,12 @@ class TokenEndpointFunctionalSpec extends AbstractTokenEndpointFunctionalSpec {
         expect:
         assertAccessTokenErrorRequest(params, 400, 'unsupported_grant_type', unsupportedGrantType('unknown'))
     }
+
+    void "client has client id that is the same as the username of a user -- try user credentials for client"() {
+        given:
+        def params = [grant_type: 'client_credentials', client_id: 'common-name', client_secret: 'the-user', scope: 'test']
+
+        expect:
+        assertAccessTokenErrorRequest(params, 401, 'invalid_client', BAD_CLIENT_CREDENTIALS)
+    }
 }
