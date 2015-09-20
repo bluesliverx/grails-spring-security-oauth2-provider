@@ -73,7 +73,7 @@ import static grails.plugin.springsecurity.oauthprovider.approval.UserApprovalSu
 class SpringSecurityOauth2ProviderGrailsPlugin {
 	static final Logger log = LoggerFactory.getLogger(this)
 
-	def version = "2.0-SNAPSHOT"
+	def version = "2.0-RC5"
 	def grailsVersion = '2.3 > *'
 
 	List pluginExcludes = [
