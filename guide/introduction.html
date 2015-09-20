@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>1 Introduction to the Spring Security OAuth2 Plugin 2.0-RC4</title>
+    <title>1 Introduction to the Spring Security OAuth2 Plugin 2.0-RC5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -45,6 +45,9 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0"><a href="../guide/configuration.html"><strong>7</strong><span>Configuration</span></a>
                     </div>
                     
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/standaloneResourceAuthorizationServer.html"><strong>8</strong><span>Standalone Resource Server or Authorization Server</span></a>
+                    </div>
+                    
                 </div>
             </div>
         </li>
@@ -81,7 +84,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> </p>
 
-                    <p><strong>Version:</strong> 2.0-RC4</p>
+                    <p><strong>Version:</strong> 2.0-RC5</p>
 
                     
                 </div>
@@ -104,6 +107,13 @@ The OAuth2 plugin adds <a href="http://oauth.net/2/" target="blank">OAuth 2.0</a
 
 <h2 id="changes">1.1 Change Log</h2>
 <ul class="star">
+<li>2.0-RC5</li>
+<ul class="star">
+<li>Upgrade to Spring OAuth 2.0.7.RELEASE for compatibility with Spring Security Core RC5 (issue #100)</li>
+<li>Resolve minor problems affecting stateless access of OAuth 2.0 resources</li>
+<li>Remove need to include `clientCredentialsAuthenticationProvider` in `grails.plugin.springsecurity.providerNames` list</li>
+<li>Document using plugin to create only authorization server only or only a resource server (issue #71)</li>
+</ul>
 <li>2.0-RC4</li>
 <ul class="star">
 <li>Fix for Grails 2.5.0 (issue #76)</li>

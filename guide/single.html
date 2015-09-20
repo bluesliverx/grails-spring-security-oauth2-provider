@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
-        <title>Spring Security OAuth2 Plugin 2.0-RC4</title>
+        <title>Spring Security OAuth2 Plugin 2.0-RC5</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8" />
         <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8" />
@@ -37,6 +37,8 @@ function addJsClass(el) {
                             
                             <div class="toc-item" style="margin-left:0"><a href="#configuration"><strong>7</strong><span>Configuration</span></a></div>
                             
+                            <div class="toc-item" style="margin-left:0"><a href="#standaloneResourceAuthorizationServer"><strong>8</strong><span>Standalone Resource Server or Authorization Server</span></a></div>
+                            
                         </div>
                     </div>
                 </li>
@@ -64,7 +66,7 @@ function addJsClass(el) {
                         <div class="project">
                             <h1>Spring Security OAuth2 Plugin - Reference Documentation</h1>
                             <p><strong>Authors:</strong> </p>
-                            <p><strong>Version:</strong> 2.0-RC4</p>
+                            <p><strong>Version:</strong> 2.0-RC5</p>
                             
                         </div>
 
@@ -84,17 +86,15 @@ function addJsClass(el) {
                             
                             <div class="toc-item" style="margin-left:10px"><a href="#secureEndpoints"><strong>2.3</strong><span>Secure Authorization and Token Endpoints</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#addClientProvider"><strong>2.4</strong><span>Add Client Provider</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#excludeClientSecret"><strong>2.4</strong><span>Exclude client_secret From Logs</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#excludeClientSecret"><strong>2.5</strong><span>Exclude client_secret From Logs</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#customizeViews"><strong>2.5</strong><span>(Optional) Customize Error and Confirm Access Views</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#customizeViews"><strong>2.6</strong><span>(Optional) Customize Error and Confirm Access Views</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#clientRegistration"><strong>2.6</strong><span>Client Registration</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#clientRegistration"><strong>2.7</strong><span>Client Registration</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#resourceAccess"><strong>2.7</strong><span>Controlling Access to Resources</span></a></div>
                             
-                            <div class="toc-item" style="margin-left:10px"><a href="#resourceAccess"><strong>2.8</strong><span>Controlling Access to Resources</span></a></div>
-                            
-                            <div class="toc-item" style="margin-left:10px"><a href="#troubleShooting"><strong>2.9</strong><span>Trouble Shooting</span></a></div>
+                            <div class="toc-item" style="margin-left:10px"><a href="#troubleShooting"><strong>2.8</strong><span>Trouble Shooting</span></a></div>
                             
                             <div class="toc-item" style="margin-left:0px"><a href="#exampleFlows"><strong>3</strong><span>Example Flows</span></a></div>
                             
@@ -152,6 +152,14 @@ function addJsClass(el) {
                             
                             <div class="toc-item" style="margin-left:10px"><a href="#filterChainConfig"><strong>7.9</strong><span>Filter Chain Configuration</span></a></div>
                             
+                            <div class="toc-item" style="margin-left:10px"><a href="#domainClassCustomSerializationConfig"><strong>7.10</strong><span>Domain Class Custom Serialization Configuration</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:0px"><a href="#standaloneResourceAuthorizationServer"><strong>8</strong><span>Standalone Resource Server or Authorization Server</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:10px"><a href="#authorizationServer"><strong>8.1</strong><span>Authorization Server</span></a></div>
+                            
+                            <div class="toc-item" style="margin-left:10px"><a href="#resourceServer"><strong>8.2</strong><span>Resource Server</span></a></div>
+                            
                             <div style="clear:both" ></div>
                         </div>
                         
@@ -163,6 +171,13 @@ The OAuth2 plugin adds <a href="http://oauth.net/2/" target="blank">OAuth 2.0</a
 
 <h2 id="changes">1.1 Change Log</h2>
 <ul class="star">
+<li>2.0-RC5</li>
+<ul class="star">
+<li>Upgrade to Spring OAuth 2.0.7.RELEASE for compatibility with Spring Security Core RC5 (issue #100)</li>
+<li>Resolve minor problems affecting stateless access of OAuth 2.0 resources</li>
+<li>Remove need to include `clientCredentialsAuthenticationProvider` in `grails.plugin.springsecurity.providerNames` list</li>
+<li>Document using plugin to create only authorization server only or only a resource server (issue #71)</li>
+</ul>
 <li>2.0-RC4</li>
 <ul class="star">
 <li>Fix for Grails 2.5.0 (issue #76)</li>
@@ -232,28 +247,17 @@ Update the Core plugin's rules for the authorization and token endpoints so they
 
 
 
-<h2 id="addClientProvider">2.4 Add Client Provider</h2>
-The recommended way of authenticating clients is by using a HTTP Basic authorization header, for which support is enabled by default.
-However, if you want to support client authentication via request parameters, you will need to add the <code>clientCredentialsAuthenticationProvider</code> to the list of providers recognized by the Core plugin in <code>grails-app/conf/Config.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.providerNames = &#91;
-        'clientCredentialsAuthenticationProvider',
-        'daoAuthenticationProvider',
-        'anonymousAuthenticationProvider',
-        'rememberMeAuthenticationProvider'
-&#93;</pre></div><p class="paragraph"/>The order is important. The <code>clientCredentialsAuthenticationProvider</code> <strong class="bold">must</strong> occur first to ensure proper authentication of the client and user during the Resource Owner Password Credentials grant.
-
-
-
-<h2 id="excludeClientSecret">2.5 Exclude client_secret From Logs</h2>
+<h2 id="excludeClientSecret">2.4 Exclude client_secret From Logs</h2>
 Update the params exclusion list in <code>grails-app/conf/Config.groovy</code> so client secrets are not logged in the clear:<p class="paragraph"/><div class="code"><pre>grails.exceptionresolver.params.exclude = &#91;'password', 'client_secret'&#93;</pre></div>
 
 
 
-<h2 id="customizeViews">2.6 (Optional) Customize Error and Confirm Access Views</h2>
+<h2 id="customizeViews">2.5 (Optional) Customize Error and Confirm Access Views</h2>
 When the plugin is installed, two views are copied for the error and confirm access pages. They are located under <code>grails-app/views/oauth/</code>. Customize these to fit your needs.
 
 
 
-<h2 id="clientRegistration">2.7 Client Registration</h2>
+<h2 id="clientRegistration">2.6 Client Registration</h2>
 At this point your application is a proper OAuth 2.0 provider. You can now register clients in what ever method is appropriate for your application. For example, you can register a client in <code>grails-app/conf/Bootstrap.groovy</code> as follows:<p class="paragraph"/><div class="code"><pre>def init = &#123; servletContext &#45;&#62;
         <span class="java&#45;keyword">new</span> Client(
                 clientId: 'my&#45;client',
@@ -265,7 +269,7 @@ At this point your application is a proper OAuth 2.0 provider. You can now regis
     &#125;</pre></div>
 
 
-<h2 id="resourceAccess">2.8 Controlling Access to Resources</h2>
+<h2 id="resourceAccess">2.7 Controlling Access to Resources</h2>
 Access to resources is controlled by the Spring Security Core plugin's access control mechanisms. Additionally, the plugin has full support for the OAuth 2.0 SPeL extensions provided by the underlying Spring library. Refer to the methods in <a href="https://github.com/spring-projects/spring-security-oauth/blob/2.0.2.RELEASE/spring-security-oauth2/src/main/java/org/springframework/security/oauth2/provider/expression/OAuth2SecurityExpressionMethods.java" target="blank">OAuth2SecurityExpressionMethods</a> for what is available in the plugin.<p class="paragraph"/>Using SPeL is the only tested and confirmed way to enforce OAuth 2.0 specific restrictions on resource access.<p class="paragraph"/>The following controller illustrates the use of OAuth 2.0 SPeL:<p class="paragraph"/><div class="code"><pre>class SecuredOAuth2ResourcesController &#123;<p class="paragraph"/>    @Secured(&#91;<span class="java&#45;quote">"&#35;oauth2.clientHasRole('ROLE_CLIENT')"</span>&#93;)
     def clientRoleExpression() &#123;
         render <span class="java&#45;quote">"client role expression"</span>
@@ -300,13 +304,13 @@ Access to resources is controlled by the Spring Security Core plugin's access co
         render <span class="java&#45;quote">"user role or read scope"</span>
     &#125;
 &#125;</pre></div><p class="paragraph"/>The filter chains must be configured to ensure stateless access to the token endpoint and any OAuth 2.0 resources:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.filterChain.chainMap = &#91;
-        '/oauth/token': 'JOINED_FILTERS,&#45;oauth2ProviderFilter,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter,&#45;exceptionTranslationFilter',
-        '/securedOAuth2Resources/&#42;&#42;': 'JOINED_FILTERS,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter,&#45;exceptionTranslationFilter',
-        '/&#42;&#42;': 'JOINED_FILTERS,&#45;statelessSecurityContextPersistenceFilter,&#45;oauth2ProviderFilter,&#45;clientCredentialsTokenEndpointFilter,&#45;oauth2ExceptionTranslationFilter'
+        '/oauth/token': 'JOINED_FILTERS,&#45;oauth2ProviderFilter,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;authenticationProcessingFilter,&#45;rememberMeAuthenticationFilter,&#45;exceptionTranslationFilter',
+        '/securedOAuth2Resources/&#42;&#42;': 'JOINED_FILTERS,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;authenticationProcessingFilter,&#45;rememberMeAuthenticationFilter,&#45;oauth2BasicAuthenticationFilter,&#45;exceptionTranslationFilter',
+        '/&#42;&#42;': 'JOINED_FILTERS,&#45;statelessSecurityContextPersistenceFilter,&#45;oauth2ProviderFilter,&#45;clientCredentialsTokenEndpointFilter,&#45;oauth2BasicAuthenticationFilter,&#45;oauth2ExceptionTranslationFilter'
 &#93;</pre></div><p class="paragraph"/>Please consult the section on <a href="../guide/single.html#filterChainConfig" class="guide">Filter Chain Configuration</a> for more information.
 
 
-<h2 id="troubleShooting">2.9 Trouble Shooting</h2>
+<h2 id="troubleShooting">2.8 Trouble Shooting</h2>
 If you encounter a <code>NullPointerException</code> while using the OAuth2 plugin, you might have run into <a href="https://jira.grails.org/browse/GPCACHE-25" target="blank">GPCACHE-25</a>. This will occur when using the OAuth2 plugin with earlier versions of the <a href="http://grails.org/plugin/cache" target="blank">Cache Plugin</a>. However, the latest version at the time of this writing (<code>1.1.6</code>) seems to have fixed this issue. To resolve the <code>NullPointerException</code> issue, either upgrade the Cache plugin or uninstall it.<p class="paragraph"/>If an instance of one of the GORM backed classes that the plugin uses cannot be saved, an <code>OAuth2ValidationException</code> will be thrown. This is a subclass of the standard Grails <code>ValidationException</code> so the plugin consumer has the flexibility to determine how to deal with this type of error. The typical reason for this exception being thrown will likely be related to the max size allotted to the serialized <code>OAuth2Authentication</code> fields. The thrown exception can be inspected for further information about the <code>Errors</code>.
 
 
@@ -325,12 +329,14 @@ The following examples assume you have followed the steps outlined in the <a hre
         scopes: &#91;'read', 'write'&#93;,
         redirectUris: &#91;'http://myredirect.com'&#93;
     ).save(flush: <span class="java&#45;keyword">true</span>)
-&#125;</pre></div><p class="paragraph"/>After retrieving an <code>access_token</code> via one of the flows, you must include this in the <code>Authorization</code> header when accessing protected resources.<p class="paragraph"/>For example, if you receive <code>7b9a989e-3702-4621-a631-fbd1a996fc94</code> as the <code>access_token</code>, you will include this in the <code>Authorization</code> header as <code>Bearer 7b9a989e-3702-4621-a631-fbd1a996fc94</code> when requesting a protected resource.
-
+&#125;</pre></div><p class="paragraph"/>After retrieving an <code>access_token</code> via one of the flows, you must include this in the <code>Authorization</code> header when accessing protected resources.<p class="paragraph"/>For example, if you receive <code>7b9a989e-3702-4621-a631-fbd1a996fc94</code> as the <code>access_token</code>, you will include this in the <code>Authorization</code> header as <code>Bearer 7b9a989e-3702-4621-a631-fbd1a996fc94</code> when requesting a protected resource.<p class="paragraph"/>The examples below are given using <a href="http://curl.haxx.se/" target="blank">CURL</a> tool to make the requests. The plugin is compliant with RFC 6749 when configured properly. Therefore token requests should be made using an HTTP POST and authorization requests should be initiated by the User-Agent with an HTTP GET.
 
 
 <h2 id="authorizationCode">3.1 Authorization Code Grant</h2>
-The authorization code grant flow is initiated by directing your browser to the authorization endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/authorize?response_type=code&#38;client_id=my&#45;client&#38;scope=read</pre></div><p class="paragraph"/>You will be redirected to the login page. After signing in, you will be prompted to confirm the request. Doing so will redirect your browser to the following URL:<p class="paragraph"/><div class="code"><pre>http://myredirect.com/?code=139R59</pre></div><p class="paragraph"/>The authorization code included in the query can be exchanged for an access token via the token endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/token?grant_type=authorization_code&#38;code=139R59&#38;client_id=my&#45;client</pre></div><p class="paragraph"/>Also consider this CURL example where the client is authenticated using HTTP Basic:<p class="paragraph"/><div class="code"><pre>curl &#45;X POST &#45;u my&#45;client: &#92;
+The authorization code grant flow is initiated by directing your browser to the authorization endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/authorize?response_type=code&#38;client_id=my&#45;client&#38;scope=read</pre></div><p class="paragraph"/>You will be redirected to the login page. After signing in, you will be prompted to confirm the request. Doing so will redirect your browser to the following URL:<p class="paragraph"/><div class="code"><pre>http://myredirect.com/?code=139R59</pre></div><p class="paragraph"/>The authorization code included in the query can be exchanged for an access token via the token endpoint:<p class="paragraph"/><div class="code"><pre>curl &#45;X POST &#92;
+     &#45;d <span class="java&#45;quote">"client_id=my&#45;client"</span> &#92;
+     &#45;d <span class="java&#45;quote">"grant_type=authorization_code"</span> &#92;
+     &#45;d <span class="java&#45;quote">"code=139R59"</span> http://localhost:8080/oauth2&#45;test/oauth/token</pre></div><p class="paragraph"/>Using HTTP Basic for client authentication:<p class="paragraph"/><div class="code"><pre>curl &#45;X POST &#45;u my&#45;client: &#92;
      &#45;d <span class="java&#45;quote">"grant_type=authorization_code"</span> &#92;
      &#45;d <span class="java&#45;quote">"code=139R59"</span> http://localhost:8080/oauth2&#45;test/oauth/token</pre></div><p class="paragraph"/>You'll receive the <code>access_token</code> in the response:<p class="paragraph"/><div class="code"><pre>&#123;
     <span class="java&#45;quote">"access_token"</span>: <span class="java&#45;quote">"a1ce2915&#45;8d79&#45;4961&#45;8abb&#45;2c6f0fdb4aba"</span>,
@@ -346,7 +352,12 @@ The implicit grant is similar to the authorization code grant and can be initiat
 
 
 <h2 id="password">3.3 Resource Owner Password Credentials Grant</h2>
-The resource owner password grant is performed by requesting an access token from the token endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/token?grant_type=password&#38;client_id=my&#45;client&#38;username=my&#45;user&#38;password=my&#45;password&#38;scope=read</pre></div><p class="paragraph"/>Also consider this CURL example where the client is authenticated using HTTP Basic:<p class="paragraph"/><div class="code"><pre>curl &#45;X POST &#45;u my&#45;client: &#92;
+The resource owner password grant is performed by requesting an access token from the token endpoint:<p class="paragraph"/><div class="code"><pre>curl &#45;X POST &#92;
+     &#45;d <span class="java&#45;quote">"client_id=my&#45;client"</span> &#92;
+     &#45;d <span class="java&#45;quote">"grant_type=password"</span> &#92;
+     &#45;d <span class="java&#45;quote">"username=my&#45;user"</span> &#92;
+     &#45;d <span class="java&#45;quote">"password=my&#45;password"</span> &#92;
+     &#45;d <span class="java&#45;quote">"scope=read"</span> http://localhost:8080/oauth2&#45;test/oauth/token</pre></div><p class="paragraph"/>Using HTTP Basic for client authentication:<p class="paragraph"/><div class="code"><pre>curl &#45;X POST &#45;u my&#45;client: &#92;
      &#45;d <span class="java&#45;quote">"grant_type=password"</span> &#92;
      &#45;d <span class="java&#45;quote">"username=my&#45;user"</span> &#92;
      &#45;d <span class="java&#45;quote">"password=my&#45;password"</span> &#92;
@@ -360,7 +371,10 @@ The resource owner password grant is performed by requesting an access token fro
 
 
 <h2 id="clientCredentials">3.4 Client Credentials Grant</h2>
-The client credentials grant is performed by authenticating the client via the token endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/token?grant_type=client_credentials&#38;client_id=my&#45;client&#38;scope=read</pre></div><p class="paragraph"/>Also consider this CURL example where the client is authenticated using HTTP Basic:<p class="paragraph"/><div class="code"><pre>curl &#45;X POST &#45;u my&#45;client: &#92;
+The client credentials grant is performed by authenticating the client via the token endpoint:<p class="paragraph"/><div class="code"><pre>curl &#45;X POST &#92;
+     &#45;d <span class="java&#45;quote">"client_id=my&#45;client"</span> &#92;
+     &#45;d <span class="java&#45;quote">"grant_type=client_credentials"</span> &#92;
+     &#45;d <span class="java&#45;quote">"scope=read"</span> http://localhost:8080/oauth2&#45;test/oauth/token</pre></div><p class="paragraph"/>Using HTTP Basic for client authentication:<p class="paragraph"/><div class="code"><pre>curl &#45;X POST &#45;u my&#45;client: &#92;
      &#45;d <span class="java&#45;quote">"grant_type=client_credentials"</span> &#92;
      &#45;d <span class="java&#45;quote">"scope=read"</span> http://localhost:8080/oauth2&#45;test/oauth/token</pre></div><p class="paragraph"/>The <code>access_token</code> can be extracted from the response:<p class="paragraph"/><div class="code"><pre>&#123;
     <span class="java&#45;quote">"access_token"</span>: <span class="java&#45;quote">"7b9a989e&#45;3702&#45;4621&#45;a631&#45;fbd1a996fc94"</span>,
@@ -372,7 +386,11 @@ The client credentials grant is performed by authenticating the client via the t
 
 
 <h2 id="refreshToken">3.5 Refresh Token Grant</h2>
-The refresh token grant is performed by exchanging a refresh token received during a previous authorization request for an access token from the token endpoint:<p class="paragraph"/><div class="code"><pre>http://localhost:8080/oauth2&#45;test/oauth/token?grant_type=refresh_token&#38;refresh_token=269afd46&#45;0b41&#45;45c2&#45;a920&#45;7d5af8a38d56&#38;client_id=my&#45;client&#38;scope=read</pre></div><p class="paragraph"/>Also consider this CURL example where the client is authenticated using HTTP Basic:<p class="paragraph"/><div class="code"><pre>curl &#45;X POST &#45;u my&#45;client: &#92;
+The refresh token grant is performed by exchanging a refresh token received during a previous authorization request for an access token from the token endpoint:<p class="paragraph"/><div class="code"><pre>curl &#45;X POST &#92;
+     &#45;d <span class="java&#45;quote">"client_id=my&#45;client"</span> &#92;
+     &#45;d <span class="java&#45;quote">"grant_type=refresh_token"</span> &#92;
+     &#45;d <span class="java&#45;quote">"refresh_token=269afd46&#45;0b41&#45;45c2&#45;a920&#45;7d5af8a38d56"</span> &#92;
+     &#45;d <span class="java&#45;quote">"scope=read"</span> http://localhost:8080/oauth2&#45;test/oauth/token</pre></div><p class="paragraph"/>Using HTTP Basic for client authentication:<p class="paragraph"/><div class="code"><pre>curl &#45;X POST &#45;u my&#45;client: &#92;
      &#45;d <span class="java&#45;quote">"grant_type=refresh_token"</span> &#92;
      &#45;d <span class="java&#45;quote">"refresh_token=269afd46&#45;0b41&#45;45c2&#45;a920&#45;7d5af8a38d56"</span> &#92;
      &#45;d <span class="java&#45;quote">"scope=read"</span> http://localhost:8080/oauth2&#45;test/oauth/token</pre></div><p class="paragraph"/>The above assumes that <code>269afd46-0b41-45c2-a920-7d5af8a38d56</code> is the value of the refresh token the client had obtained prior to this request.<p class="paragraph"/>The <code>access_token</code> is included in the response:<p class="paragraph"/><div class="code"><pre>&#123;
@@ -547,7 +565,7 @@ The plugin enforces the following restrictions on authorization request params:<
 
 
 <h2 id="approvalHandler">7.7 User Approval Configuration</h2>
-The plugin provides support for the three <code>UserApprovalHandler</code> implementations provided by the underlying Spring OAuth library. This only applies to the authorization endpoint and allows you to configure the method of auto-approval used by the application. The following properties determine which method of auto-approval to use and how it is configured:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>auto</td><td><code>EXPLICIT</code></td><td>Determines which method of auto-approval to use. The value is determined by <code>grails.plugin.springsecurity.UserApprovalSupport</code> and must be <code>EXPLICIT</code>, <code>TOKEN_STORE</code> or <code>APPROVAL_STORE</code>.</td></tr><tr class="table-even"><td>handleRevocationAsExpiry</td><td><code>false</code></td><td>When configured to use an approval store for auto-approval, this determines if approval revocation should expire the corresponding approval instance (<code>true</code>) or delete the approval (<code>false</code>) outright.</td></tr><tr class="table-odd"><td>approvalValiditySeconds</td><td><code>60 &#42; 60 &#42; 24 &#42; 30</code></td><td>When configured to use an approval store for auto-approval, the length of time that an approval will be valid after it has been granted.</td></tr><tr class="table-even"><td>scopePrefix</td><td><code>'scope.'</code></td><td>When configured to use an approval store for auto-approval, the prefix added to approved scopes as part of the auto-approval process.</td></tr></table><p class="paragraph"/>The <code>auto</code> property determines which of the three <code>UserApprovalHandler</code> provided by Spring OAuth will be used.<p class="paragraph"/>The default option is to require explicit approval for every authorization and is equivalent to setting <code>auto</code> to <code>EXPLICIT</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.oauthprovider.approval.auto = UserApproval.EXPLICIT</pre></div><p class="paragraph"/>Auto-approval based on previously issued access tokens is supported via the <code>TokenStoreUserApprovalHandler</code> provided by Spring OAuth and can be configured by setting <code>auto</code> to <code>TOKEN_STORE</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.oauthprovider.approval.auto = UserApproval.TOKEN_STORE</pre></div><p class="paragraph"/>Auto-approval based on prior approvals is supported via the <code>ApprovalStoreUserApprovalHandler</code> provided by Spring OAuth and can be configured by setting <code>auto</code> to <code>APPROVAL_STORE</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.oauthprovider.approval.auto = UserApproval.APPROVAL_STORE</pre></div><p class="paragraph"/>The plugin will configure the <code>TokenStoreUserApprovalHandler</code> and <code>ApprovalStoreUserApprovalHandler</code> to use the GORM backed <code>TokenStore</code> and <code>ApprovalStore</code> respectively.<p class="paragraph"/>Please consult Spring OAuth directly for more information on the usage of the <code>TokenStore</code> and <code>ApprovalStore</code> methods of auto-approval.
+The plugin provides support for the three <code>UserApprovalHandler</code> implementations provided by the underlying Spring OAuth library. This only applies to the authorization endpoint and allows you to configure the method of auto-approval used by the application. The following properties determine which method of auto-approval to use and how it is configured:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>auto</td><td><code>EXPLICIT</code></td><td>Determines which method of auto-approval to use. The value is determined by <code>grails.plugin.springsecurity.oauthprovider.approval.UserApprovalSupport</code> and must be <code>EXPLICIT</code>, <code>TOKEN_STORE</code> or <code>APPROVAL_STORE</code>.</td></tr><tr class="table-even"><td>handleRevocationAsExpiry</td><td><code>false</code></td><td>When configured to use an approval store for auto-approval, this determines if approval revocation should expire the corresponding approval instance (<code>true</code>) or delete the approval (<code>false</code>) outright.</td></tr><tr class="table-odd"><td>approvalValiditySeconds</td><td><code>60 &#42; 60 &#42; 24 &#42; 30</code></td><td>When configured to use an approval store for auto-approval, the length of time that an approval will be valid after it has been granted.</td></tr><tr class="table-even"><td>scopePrefix</td><td><code>'scope.'</code></td><td>When configured to use an approval store for auto-approval, the prefix added to approved scopes as part of the auto-approval process.</td></tr></table><p class="paragraph"/>The <code>auto</code> property determines which of the three <code>UserApprovalHandler</code> provided by Spring OAuth will be used.<p class="paragraph"/>The default option is to require explicit approval for every authorization and is equivalent to setting <code>auto</code> to <code>EXPLICIT</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.oauthprovider.approval.auto = UserApproval.EXPLICIT</pre></div><p class="paragraph"/>Auto-approval based on previously issued access tokens is supported via the <code>TokenStoreUserApprovalHandler</code> provided by Spring OAuth and can be configured by setting <code>auto</code> to <code>TOKEN_STORE</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.oauthprovider.approval.auto = UserApproval.TOKEN_STORE</pre></div><p class="paragraph"/>Auto-approval based on prior approvals is supported via the <code>ApprovalStoreUserApprovalHandler</code> provided by Spring OAuth and can be configured by setting <code>auto</code> to <code>APPROVAL_STORE</code>:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.oauthprovider.approval.auto = UserApproval.APPROVAL_STORE</pre></div><p class="paragraph"/>The plugin will configure the <code>TokenStoreUserApprovalHandler</code> and <code>ApprovalStoreUserApprovalHandler</code> to use the GORM backed <code>TokenStore</code> and <code>ApprovalStore</code> respectively.<p class="paragraph"/>Please consult Spring OAuth directly for more information on the usage of the <code>TokenStore</code> and <code>ApprovalStore</code> methods of auto-approval.
 
 
 <h2 id="defaultClientConfig">7.8 Default Client Configuration</h2>
@@ -556,10 +574,101 @@ An application can use the following properties to define the default values tha
 
 <h2 id="filterChainConfig">7.9 Filter Chain Configuration</h2>
 Spring Security Core plugin's <code>securityContextPersistenceFilter</code> stores state in the HTTP session. Access to the token endpoint and OAuth 2.0 resources must be stateless.<p class="paragraph"/>By default, the OAuth2 plugin will register the <code>statelessSecurityContextPersistenceFilter</code> in the filter chain after the <code>securityContextPersistenceFilter</code> provided by the Spring Security Core plugin. This is provided as a convenience for the plugin consumer, so they can remove one filter or the other to easily achieve stateful or stateless request handling. See the example below. This automatic filter registration can be disabled by setting the <code>registerStatelessFilter</code> configuration option to <code>false</code>.<p class="paragraph"/>The plugin registers an <code>OAuth2AuthenticationProcessingFilter</code> under the bean name <code>oauth2ProviderFilter</code>. This filter provides token authentication using the underlying token store for resource access.<p class="paragraph"/>The plugin registers a <code>ClientCredentialsTokenEndpointFilter</code> under the bean name <code>clientCredentialsTokenEndpointFilter</code>. This filter is responsible for authenticating the client specified in any OAuth 2.0 requests. The plugin also registers a <code>BasicAuthenticationFilter</code> under the bean name <code>oauth2BasicAuthenticationFilter</code>. This filter is responsible for authenticating the client via HTTP Basic authentication, which is the recommended method in the OAuth 2.0 specification.<p class="paragraph"/>Finally, the plugin registers an <code>ExceptionTranslationFilter</code> under the bean name <code>oauth2ExceptionTranslationFilter</code>. This filter is created with a <code>NullRequestCache</code> instance rather than the <code>HttpSessionRequestCache</code> instance that the Spring Security Core plugin provided <code>ExceptionTranslationFilter</code> is created with. Similar to the <code>statelessSecurityContextPersistenceFilter</code>, this filter is registered automatically by the plugin but can be disabled by setting the <code>registerExceptionTranslationFilter</code> configuration option to <code>false</code>.<p class="paragraph"/>The following filter chain configuration is recommended:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.filterChain.chainMap = &#91;
-            '/oauth/token': 'JOINED_FILTERS,&#45;oauth2ProviderFilter,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter,&#45;exceptionTranslationFilter',
-            '/securedOAuth2Resources/&#42;&#42;': 'JOINED_FILTERS,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter,&#45;basicAuthenticationFilter,&#45;exceptionTranslationFilter',
+        '/oauth/token': 'JOINED_FILTERS,&#45;oauth2ProviderFilter,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;authenticationProcessingFilter,&#45;rememberMeAuthenticationFilter,&#45;exceptionTranslationFilter',
+        '/securedOAuth2Resources/&#42;&#42;': 'JOINED_FILTERS,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;authenticationProcessingFilter,&#45;rememberMeAuthenticationFilter,&#45;oauth2BasicAuthenticationFilter,&#45;exceptionTranslationFilter',
+        '/&#42;&#42;': 'JOINED_FILTERS,&#45;statelessSecurityContextPersistenceFilter,&#45;oauth2ProviderFilter,&#45;clientCredentialsTokenEndpointFilter,&#45;oauth2BasicAuthenticationFilter,&#45;oauth2ExceptionTranslationFilter'
+&#93;</pre></div><p class="paragraph"/>The <code>oauth2ProviderFilter</code> and stateful <code>securityContextPersistenceFilter</code> and <code>exceptionTranslationFilter</code> are removed from the token endpoint's filter chain. With the <code>securityContextPersistenceFilter</code> removed, the <code>statelessSecurityContextPersistenceFilter</code> will be used to ensure access token requests are stateless. Similarly, removing the <code>exceptionTranslationFilter</code> will allow the <code>oauth2ExceptionTranslationFilter</code> to take its place in the filter chain.<p class="paragraph"/>The <code>securityContextPersistenceFilter</code> and <code>exceptionTranslationFilter</code> are also removed from the filter chain for OAuth 2.0 resources. However, the <code>oauth2ProviderFilter</code> must not be removed, as this filter is responsible for authenticating the OAuth 2.0 access token included in the request.<p class="paragraph"/>It is recommend that filter chain(s) for non-OAuth 2.0 resources have all OAuth 2.0 specific filters removed. These include: <code>statelessSecurityContextPersistenceFilter</code>, <code>oauth2ProviderFilter</code>, <code>clientCredentialsTokenEndpointFilter</code>, <code>basicAuthenticationFilter</code> and <code>oauth2ExceptionTranslationFilter</code>. It is also recommended that any unnecessary filters such as the <code>rememberMeAuthenticationFilter</code> and <code>authenticationProcessingFilter</code> are removed from the filter chains for the token endpoint and OAuth 2.0 resources.
+
+
+<h2 id="domainClassCustomSerializationConfig">7.10 Domain Class Custom Serialization Configuration</h2>
+The default behavior of the plugin is to serialize the <code>additionalInformation</code> and <code>scope</code> properties of the <code>Client</code> and <code>AccessToken</code> classes as a <code>Map&#60;String, Object&#62;</code> and <code>Set&#60;String&#62;</code> respectively. This is how the <a href="../ref/Scripts/s2-init-oauth2-provider.html" class="Scripts">s2-init-oauth2-provider</a> script will generate the domain classes. However, this might not be ideal for all plugin consumers who want more control over the serialization of these fields.<p class="paragraph"/>To accommodate these users, it is possible to override the default serialization method on a case-by-case basis. The plugin provides two interfaces to accomplish.<p class="paragraph"/>For the <code>additionalInformation</code> fields:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> grails.plugin.springsecurity.oauthprovider.serialization;<p class="paragraph"/><span class="java&#45;keyword">import</span> java.util.Map;<p class="paragraph"/><span class="java&#45;keyword">public</span> <span class="java&#45;keyword">interface</span> OAuth2AdditionalInformationSerializer &#123;<p class="paragraph"/>    <span class="java&#45;object">Object</span> serialize(Map&#60;<span class="java&#45;object">String</span>, <span class="java&#45;object">Object</span>&#62; additionalInformation);<p class="paragraph"/>    Map&#60;<span class="java&#45;object">String</span>, <span class="java&#45;object">Object</span>&#62; deserialize(<span class="java&#45;object">Object</span> additionalInformation);
+&#125;</pre></div><p class="paragraph"/>For the <code>scope</code> field:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> grails.plugin.springsecurity.oauthprovider.serialization;<p class="paragraph"/><span class="java&#45;keyword">import</span> java.util.Set;<p class="paragraph"/><span class="java&#45;keyword">public</span> <span class="java&#45;keyword">interface</span> OAuth2ScopeSerializer &#123;<p class="paragraph"/>    <span class="java&#45;object">Object</span> serialize(Set&#60;<span class="java&#45;object">String</span>&#62; scopes);<p class="paragraph"/>    Set&#60;<span class="java&#45;object">String</span>&#62; deserialize(<span class="java&#45;object">Object</span> scopes);
+&#125;</pre></div><p class="paragraph"/>By default, the plugin registers implementations that do little more than return the argument provided to each method. The following table shows which plugin provided Spring beans implement these interfaces and how they're used:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Bean Name</strong></th><th><strong class="bold">Interface Implemented</strong></th><th><strong class="bold">Description</strong></th></tr><tr class="table-odd"><td><code>clientAdditionalInformationSerializer</code></td><td><code>OAuth2AdditionalInformationSerializer</code></td><td>Handles deserialization of the <code>additionalInformation</code> property of the <code>Client</code> class into a <code>Map&#60;String, Object&#62;</code>. Only the <code>deserialize</code> method is used by the plugin at this time.</td></tr><tr class="table-even"><td><code>accessTokenAdditionalInformationSerializer</code></td><td><code>OAuth2AdditionalInformationSerializer</code></td><td>Handles serialization and deserialization of the <code>additionalInformation</code> property of the <code>AccessToken</code> class into a <code>Map&#60;String, Object&#62;</code>.</td></tr><tr class="table-odd"><td><code>accessTokenScopeSerializer</code></td><td><code>OAuth2ScopeSerializer</code></td><td>Handles serialization and deserialization of the <code>scope</code> property of the <code>AccessToken</code> class into a <code>Set&#60;String&#62;</code>.</td></tr></table><p class="paragraph"/>Overriding these beans in <code>resources.groovy</code> will allow the plugin consumer to customize how these fields are serialized. However, this will require the affected domain class to be modified to accommodate the change. For example, let's change the <code>AccessToken</code> to serialized its <code>additionalInformation</code> as JSON <code>String</code> and its <code>scope</code> as white space delimited <code>String</code>.<p class="paragraph"/>First, modify the <code>AccessToken</code> class to reflect the change in the storage of these fields:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> test.oauth2<p class="paragraph"/>class AccessToken &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> authenticationKey
+    <span class="java&#45;object">byte</span>&#91;&#93; authentication<p class="paragraph"/>    <span class="java&#45;object">String</span> username
+    <span class="java&#45;object">String</span> clientId<p class="paragraph"/>    <span class="java&#45;object">String</span> value
+    <span class="java&#45;object">String</span> tokenType<p class="paragraph"/>    Date expiration
+    <span class="java&#45;object">String</span> additionalInformation<p class="paragraph"/>    <span class="java&#45;object">String</span> scope<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasOne = &#91;refreshToken: <span class="java&#45;object">String</span>&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
+        username nullable: <span class="java&#45;keyword">true</span>
+        clientId nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>
+        value nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
+        tokenType nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>
+        expiration nullable: <span class="java&#45;keyword">false</span>
+        scope nullable: <span class="java&#45;keyword">false</span>
+        refreshToken nullable: <span class="java&#45;keyword">true</span>
+        authenticationKey nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
+        authentication nullable: <span class="java&#45;keyword">false</span>, minSize: 1, maxSize: 1024 &#42; 4
+        additionalInformation nullable: <span class="java&#45;keyword">true</span>
+    &#125;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        version <span class="java&#45;keyword">false</span>
+        scope lazy: <span class="java&#45;keyword">false</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Next, implement the earlier described interfaces:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> test<p class="paragraph"/><span class="java&#45;keyword">import</span> grails.plugin.springsecurity.oauthprovider.serialization.OAuth2ScopeSerializer
+<span class="java&#45;keyword">import</span> org.springframework.security.oauth2.common.util.OAuth2Utils<p class="paragraph"/>class WhiteSpaceDelimitedStringScopeSerializer <span class="java&#45;keyword">implements</span> OAuth2ScopeSerializer &#123;<p class="paragraph"/>    @Override
+    <span class="java&#45;object">Object</span> serialize(Set&#60;<span class="java&#45;object">String</span>&#62; scopes) &#123;
+        <span class="java&#45;keyword">return</span> OAuth2Utils.formatParameterList(scopes)
+    &#125;<p class="paragraph"/>    @Override
+    Set&#60;<span class="java&#45;object">String</span>&#62; deserialize(<span class="java&#45;object">Object</span> scopes) &#123;
+        <span class="java&#45;keyword">return</span> OAuth2Utils.parseParameterList(scopes)
+    &#125;
+&#125;</pre></div><p class="paragraph"/>And:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> test<p class="paragraph"/><span class="java&#45;keyword">import</span> grails.plugin.springsecurity.oauthprovider.serialization.OAuth2AdditionalInformationSerializer
+<span class="java&#45;keyword">import</span> groovy.json.JsonOutput
+<span class="java&#45;keyword">import</span> groovy.json.JsonSlurper<p class="paragraph"/>class JsonAdditionalInformationSerializer <span class="java&#45;keyword">implements</span> OAuth2AdditionalInformationSerializer &#123;<p class="paragraph"/>    @Override
+    <span class="java&#45;object">Object</span> serialize(Map&#60;<span class="java&#45;object">String</span>, <span class="java&#45;object">Object</span>&#62; additionalInformation) &#123;
+        JsonOutput.toJson(additionalInformation)
+    &#125;<p class="paragraph"/>    @Override
+    Map&#60;<span class="java&#45;object">String</span>, <span class="java&#45;object">Object</span>&#62; deserialize(<span class="java&#45;object">Object</span> additionalInformation) &#123;
+        <span class="java&#45;keyword">new</span> JsonSlurper().parseText(additionalInformation as <span class="java&#45;object">String</span>)
+    &#125;
+&#125;</pre></div><p class="paragraph"/><blockquote class="note">
+The <code>serialize</code> methods are guaranteed to receive a non-null argument, although they may be provided an empty collection. The <code>deserialize</code> methods are expected to return a non-null value.
+</blockquote><p class="paragraph"/>Finally, in <code>resources.groovy</code>, override the appropriate beans:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> test.JsonAdditionalInformationSerializer
+<span class="java&#45;keyword">import</span> test.WhiteSpaceDelimitedStringScopeSerializer<p class="paragraph"/>beans = &#123;
+    // Other beans here<p class="paragraph"/>    accessTokenAdditionalInformationSerializer(JsonAdditionalInformationSerializer)
+    accessTokenScopeSerializer(WhiteSpaceDelimitedStringScopeSerializer)
+&#125;</pre></div>
+
+
+<h1 id="standaloneResourceAuthorizationServer">8 Standalone Resource Server or Authorization Server</h1>
+By default, the plugin is configured to assume the role of both the Authorization Server and the Resource Server as defined by RFC 6749. However, it is possible to configure an application to fulfill only one role.<p class="paragraph"/>The plugin registers an instance of the Spring OAuth provided <code>OAuth2AuthenticationProcessingFilter</code> under the bean name <code>oauth2ProviderFilter</code>. This filter is responsible for extracting the <code>Bearer</code> token from the <code>Authorization</code> header and confirming its authenticity.
+
+
+
+<h2 id="authorizationServer">8.1 Authorization Server</h2>
+To create an application that is only an Authorization Server, it is as simple as configuring the authorization and token endpoints as shown in the <a href="../guide/single.html#gettingStarted" class="guide">Getting Started</a> and <a href="../guide/single.html#filterChainConfig" class="guide">Filter Chain Configuration</a> sections and excluding the <code>oauth2ProviderFilter</code>.<p class="paragraph"/>So instead of the following filter chain:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.filterChain.chainMap = &#91;
+        '/oauth/token': 'JOINED_FILTERS,&#45;oauth2ProviderFilter,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;authenticationProcessingFilter,&#45;rememberMeAuthenticationFilter,&#45;exceptionTranslationFilter',
+        '/securedOAuth2Resources/&#42;&#42;': 'JOINED_FILTERS,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;authenticationProcessingFilter,&#45;rememberMeAuthenticationFilter,&#45;oauth2BasicAuthenticationFilter,&#45;exceptionTranslationFilter',
+        '/&#42;&#42;': 'JOINED_FILTERS,&#45;statelessSecurityContextPersistenceFilter,&#45;oauth2ProviderFilter,&#45;clientCredentialsTokenEndpointFilter,&#45;oauth2BasicAuthenticationFilter,&#45;oauth2ExceptionTranslationFilter'
+   &#93;</pre></div><p class="paragraph"/>You would have something like this:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.filterChain.chainMap = &#91;
+            '/oauth/token': 'JOINED_FILTERS,&#45;oauth2ProviderFilter,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter,&#45;authenticationProcessingFilter,&#45;exceptionTranslationFilter',
             '/&#42;&#42;': 'JOINED_FILTERS,&#45;statelessSecurityContextPersistenceFilter,&#45;oauth2ProviderFilter,&#45;clientCredentialsTokenEndpointFilter,&#45;basicAuthenticationFilter,&#45;oauth2ExceptionTranslationFilter'
-   &#93;</pre></div><p class="paragraph"/>The <code>oauth2ProviderFilter</code> and stateful <code>securityContextPersistenceFilter</code> and <code>exceptionTranslationFilter</code> are removed from the token endpoint's filter chain. With the <code>securityContextPersistenceFilter</code> removed, the <code>statelessSecurityContextPersistenceFilter</code> will be used to ensure access token requests are stateless. Similarly, removing the <code>exceptionTranslationFilter</code> will allow the <code>oauth2ExceptionTranslationFilter</code> to take its place in the filter chain.<p class="paragraph"/>The <code>securityContextPersistenceFilter</code> and <code>exceptionTranslationFilter</code> are also removed from the filter chain for OAuth 2.0 resources. However, the <code>oauth2ProviderFilter</code> must not be removed, as this filter is responsible for authenticating the OAuth 2.0 access token included in the request.<p class="paragraph"/>It is recommend that filter chain(s) for non-OAuth 2.0 resources have all OAuth 2.0 specific filters removed. These include: <code>statelessSecurityContextPersistenceFilter</code>, <code>oauth2ProviderFilter</code>, <code>clientCredentialsTokenEndpointFilter</code>, <code>basicAuthenticationFilter</code> and <code>oauth2ExceptionTranslationFilter</code>. It is also recommended that any unnecessary filters such as the <code>rememberMeAuthenticationFilter</code> are removed from the filter chains for the token endpoint and OAuth 2.0 resources.
+   &#93;</pre></div><p class="paragraph"/>Where <code>/&#42;&#42;</code> is any Authorization Server specific functionality.
+
+
+
+<h2 id="resourceServer">8.2 Resource Server</h2>
+To create an application that is only a Resource Server is slightly more involved. The plugin uses an implementation of the Spring provided <code>ResourceServerTokenServices</code> interface that uses the currently configured <code>TokenStore</code> to authenticate the presented <code>Bearer</code> token. If the Authorization Server and Resource Server are distinct applications, it is very likely that the Resource Server will need some means to validate the provided <code>Bearer</code> token that depends on your use case. To do this, simply implement the aforementioned <code>ResourceServerTokenServices</code> interface and override the <code>resourceServerTokenServices</code> bean in your <code>resources.groovy</code>.<p class="paragraph"/>Next you will need to disable access to the authorization and token endpoints. This can be accomplished by changing access to the appropriate URL. For example, when using static rules to secure your endpoints, you might have the following when the Authorization and Resource Servers are the same application:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.controllerAnnotations.staticRules = &#91;
+    '/oauth/authorize.dispatch':      &#91;<span class="java&#45;quote">"isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"</span>&#93;,
+    '/oauth/token.dispatch':          &#91;<span class="java&#45;quote">"isFullyAuthenticated() and request.getMethod().equals('POST')"</span>&#93;,
+	'/':                              &#91;'permitAll'&#93;,
+	'/index':                         &#91;'permitAll'&#93;,
+	'/index.gsp':                     &#91;'permitAll'&#93;,
+	'/&#42;&#42;/js/&#42;&#42;':                      &#91;'permitAll'&#93;,
+	'/&#42;&#42;/css/&#42;&#42;':                     &#91;'permitAll'&#93;,
+	'/&#42;&#42;/images/&#42;&#42;':                  &#91;'permitAll'&#93;,
+	'/&#42;&#42;/favicon.ico':                &#91;'permitAll'&#93;
+&#93;</pre></div><p class="paragraph"/>Splitting out the authorization parts will result in something like this:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.controllerAnnotations.staticRules = &#91;
+	'/':                              &#91;'permitAll'&#93;,
+	'/index':                         &#91;'permitAll'&#93;,
+	'/index.gsp':                     &#91;'permitAll'&#93;,
+	'/&#42;&#42;/js/&#42;&#42;':                      &#91;'permitAll'&#93;,
+	'/&#42;&#42;/css/&#42;&#42;':                     &#91;'permitAll'&#93;,
+	'/&#42;&#42;/images/&#42;&#42;':                  &#91;'permitAll'&#93;,
+	'/&#42;&#42;/favicon.ico':                &#91;'permitAll'&#93;
+&#93;</pre></div><p class="paragraph"/>Any requests to the authorization or token endpoints will be greeted with a 403 response. You should also remove any filter chain configurations in place for these endpoints as well. Our earlier filter chain would become something like the following:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.filterChain.chainMap = &#91;
+            '/securedOAuth2Resources/&#42;&#42;': 'JOINED_FILTERS,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter,&#45;authenticationProcessingFilter,&#45;basicAuthenticationFilter,&#45;exceptionTranslationFilter',
+            '/&#42;&#42;': 'JOINED_FILTERS,&#45;statelessSecurityContextPersistenceFilter,&#45;oauth2ProviderFilter,&#45;clientCredentialsTokenEndpointFilter,&#45;basicAuthenticationFilter,&#45;oauth2ExceptionTranslationFilter'
+   &#93;</pre></div><p class="paragraph"/>Where <code>/&#42;&#42;</code> is any Resource Server specific functionality.
+
 
                     </div>
                 </td>
