@@ -101,6 +101,6 @@ grails.project.dependency.resolution = {
             export = false
         }
 
-        compile ':spring-security-core:2.0-RC5'
+        compile ':spring-security-core:2.0.0'
 	}
 }
