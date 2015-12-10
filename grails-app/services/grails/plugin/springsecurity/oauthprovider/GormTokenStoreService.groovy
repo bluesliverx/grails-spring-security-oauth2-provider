@@ -43,9 +43,11 @@ class GormTokenStoreService implements TokenStore {
             def authenticationPropertyName = accessTokenLookup.authenticationPropertyName
 
             def gormAccessToken = GormAccessToken.findWhere((valuePropertyName): token)
-            def serializedAuthentication = gormAccessToken."$authenticationPropertyName"
+            if(gormAccessToken) {
+                def serializedAuthentication = gormAccessToken."$authenticationPropertyName"
 
-            authentication = oauth2AuthenticationSerializer.deserialize(serializedAuthentication)
+                authentication = oauth2AuthenticationSerializer.deserialize(serializedAuthentication)
+            }
         }
         catch (IllegalArgumentException e) {
             checkForDomainConfigurationRelatedException(e, 'access', accessTokenLookup.className)
