@@ -1,4 +1,4 @@
-At this point your application is a proper OAuth 2.0 provider. You can now register clients in what ever method is appropriate for your application. For example, you can register a client in @grails-app/conf/Bootstrap.groovy@ as follows:
+At this point your application is a proper OAuth 2.0 provider. You can now register clients in what ever method is appropriate for your application. For example, you can register a client in @grails-app/init/Bootstrap.groovy@ as follows:
 
 {code}
 	def init = { servletContext ->

@@ -1,4 +1,4 @@
-The following examples assume you have followed the steps outlined in the [Getting Started|guide:gettingStarted] section for an application named @oauth2-test@ and your @grails-app/conf/BootStrap.groovy@ contains the following:
+The following examples assume you have followed the steps outlined in the [Getting Started|guide:gettingStarted] section for an application named @oauth2-test@ and your @grails-app/init/BootStrap.groovy@ contains the following:
 
 {code}
 def init = { servletContext ->

@@ -1,1 +1,1 @@
-When the plugin is installed, two views are copied for the error and confirm access pages. They are located under @grails-app/views/oauth/@. Customize these to fit your needs.
+The plugin provides views for the error and confirm access pages. These can be overridden by providing your own @grails-app/views/oauth/error.gsp@ and @grails-app/views/oauth/confirm_access.gsp@ files, respectively.

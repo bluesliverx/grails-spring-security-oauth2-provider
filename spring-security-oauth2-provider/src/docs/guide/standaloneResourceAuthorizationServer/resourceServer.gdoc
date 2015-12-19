@@ -4,15 +4,16 @@ Next you will need to disable access to the authorization and token endpoints. T
 
 {code}
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
-    '/oauth/authorize.dispatch':      ["isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"],
-    '/oauth/token.dispatch':          ["isFullyAuthenticated() and request.getMethod().equals('POST')"],
-	'/':                              ['permitAll'],
-	'/index':                         ['permitAll'],
-	'/index.gsp':                     ['permitAll'],
-	'/**/js/**':                      ['permitAll'],
-	'/**/css/**':                     ['permitAll'],
-	'/**/images/**':                  ['permitAll'],
-	'/**/favicon.ico':                ['permitAll']
+        [pattern: '/oauth/authorize',           access: "isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"],
+        [pattern: '/oauth/token',               access: "isFullyAuthenticated() and request.getMethod().equals('POST')"],
+        [pattern: '/',                          access: 'permitAll'],
+        [pattern: '/index',                     access: 'permitAll'],
+        [pattern: '/index.gsp',                 access: 'permitAll'],
+        [pattern: '/**/js/**',                  access: 'permitAll'],
+        [pattern: '/**/css/**',                 access: 'permitAll'],
+        [pattern: '/**/images/**',              access: 'permitAll'],
+        [pattern: '/**/favicon.ico',            access: 'permitAll'],
+        [pattern: '/assets/**',                 access: 'permitAll']
 ]
 {code}
 
@@ -20,13 +21,14 @@ Splitting out the authorization parts will result in something like this:
 
 {code}
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
-	'/':                              ['permitAll'],
-	'/index':                         ['permitAll'],
-	'/index.gsp':                     ['permitAll'],
-	'/**/js/**':                      ['permitAll'],
-	'/**/css/**':                     ['permitAll'],
-	'/**/images/**':                  ['permitAll'],
-	'/**/favicon.ico':                ['permitAll']
+        [pattern: '/',                          access: 'permitAll'],
+        [pattern: '/index',                     access: 'permitAll'],
+        [pattern: '/index.gsp',                 access: 'permitAll'],
+        [pattern: '/**/js/**',                  access: 'permitAll'],
+        [pattern: '/**/css/**',                 access: 'permitAll'],
+        [pattern: '/**/images/**',              access: 'permitAll'],
+        [pattern: '/**/favicon.ico',            access: 'permitAll'],
+        [pattern: '/assets/**',                 access: 'permitAll']
 ]
 {code}
 
@@ -34,8 +36,8 @@ Any requests to the authorization or token endpoints will be greeted with a 403 
 
 {code}
    grails.plugin.springsecurity.filterChain.chainMap = [
-            '/securedOAuth2Resources/**': 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter,-authenticationProcessingFilter,-basicAuthenticationFilter,-exceptionTranslationFilter',
-            '/**': 'JOINED_FILTERS,-statelessSecurityContextPersistenceFilter,-oauth2ProviderFilter,-clientCredentialsTokenEndpointFilter,-basicAuthenticationFilter,-oauth2ExceptionTranslationFilter'
+           [pattern: '/securedOAuth2Resources/**', filters: 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter,-authenticationProcessingFilter,-basicAuthenticationFilter,-exceptionTranslationFilter'],
+           [pattern: '/**',                        filters: 'JOINED_FILTERS,-statelessSecurityContextPersistenceFilter,-oauth2ProviderFilter,-clientCredentialsTokenEndpointFilter,-basicAuthenticationFilter,-oauth2ExceptionTranslationFilter']
    ]
 {code}
 

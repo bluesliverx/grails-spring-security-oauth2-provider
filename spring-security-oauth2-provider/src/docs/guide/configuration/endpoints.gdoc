@@ -13,20 +13,18 @@ When changing the URL for the @authorizationEndpointUrl@ or @tokenEndpointUrl@, 
 
 {code}
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
-        '/oauth/authorize.dispatch':      ["isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"],
-        '/oauth/token.dispatch':          ["isFullyAuthenticated() and request.getMethod().equals('POST')"],
+        [pattern: '/oauth/authorize',           access: "isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"],
+        [pattern: '/oauth/token',               access: "isFullyAuthenticated() and request.getMethod().equals('POST')"],
         ...
 {code}
 
-To change the @authorizationEndpointUrl@ to @/authorize@, you will need to make the following changes in @grails-app/conf/Config.groovy@:
+To change the @authorizationEndpointUrl@ to @/authorize@, you will need to make the following changes in @grails-app/conf/application.groovy@:
 
 {code}
 grails.plugin.springsecurity.oauthProvider.authorizationEndpointUrl = '/authorize'
 
 grails.plugin.springsecurity.controllerAnnotations.staticRules = [
-        '/authorize.dispatch':            ["isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"],
-        '/oauth/token.dispatch':          ["isFullyAuthenticated() and request.getMethod().equals('POST')"],
+        [pattern: '/authorize',                 access: "isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"],
+        [pattern: '/oauth/token',               access: "isFullyAuthenticated() and request.getMethod().equals('POST')"],
         ...
 {code}
-
-The URL mapping must include the @.dispatch@ suffix in order integrate with the underlying Spring MVC controller.
