@@ -64,7 +64,7 @@ dependencies {
 
     compile 'org.grails.plugins:spring-security-core:3.0.0'
 
-    compile 'org.springframework.security.oauth:spring-security-oauth2:2.0.7.RELEASE', {
+    compile 'org.springframework.security.oauth:spring-security-oauth2:2.0.8.RELEASE', {
         [
             "spring-beans",
     	    "spring-core",

@@ -1,6 +1,7 @@
 * 3.0.0-SNAPSHOT
 ** Upgrade to Grails 3.x
 ** Make `readAuthentication` in `GormTokenStoreService` null safe (pull request #109)
+** Upgrade to Spring OAuth 2.0.8.RELEASE
 
 * 2.0-RC5
 ** Upgrade to Spring OAuth 2.0.7.RELEASE for compatibility with Spring Security Core RC5 (issue #100)
