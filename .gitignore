@@ -16,3 +16,7 @@ web-app
 .project
 out
 /docs
+
+.gradle
+grails-app
+build

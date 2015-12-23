@@ -1,21 +1,10 @@
 #!/bin/bash
 set -e
 rm -rf *.zip
-./grailsw refresh-dependencies --non-interactive --stacktrace
-./grailsw upgrade --non-interactive
-./grailsw test-app --non-interactive --stacktrace
-echo "Repeating functional tests with HTTP Basic client authentication"
-./grailsw test-app functional: -Dhttp.basic=true --non-interactive --stacktrace
-./grailsw package-plugin --non-interactive --stacktrace
-./grailsw doc --pdf --non-interactive --stacktrace
-
-filename=$(find . -name "grails-*.zip" | head -1)
-filename=$(basename $filename)
-plugin=${filename:7}
-plugin=${plugin/.zip/}
-plugin=${plugin/-SNAPSHOT/}
-version="${plugin#*-}";
-plugin=${plugin/"-$version"/}
+./gradlew acceptanceTest --stacktrace
+#echo "Repeating functional tests with HTTP Basic client authentication"
+#./gradlew acceptanceTest -Dhttp.basic=true --stacktrace
+./gradlew spring-security-oauth2-provider:gdocs --stacktrace
 
 if [ $TRAVIS_PULL_REQUEST == 'false' ]; then
   echo "Publishing plugin grails-spring-security-core with version $version"
@@ -39,6 +28,6 @@ if [ $TRAVIS_PULL_REQUEST == 'false' ]; then
   fi
 
   # Publish plugin
-  ./grailsw publish-plugin --allow-overwrite --non-interactive --stacktrace
+  ./gradlew spring-security-oauth2-provider:bintrayUpload --stacktrace
 
 fi

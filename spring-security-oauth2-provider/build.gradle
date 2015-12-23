@@ -112,3 +112,21 @@ task gdocs() {
     }
 }
 
+bintray {
+    pkg {
+        userOrg = 'bluesliverx'
+        repo = 'grails-plugins'
+        name = "org.grails.plugins:$project.name"
+        desc = "Grails OAuth 2 Provider Plugin"
+        websiteUrl = "http://grails.org/plugin/$project.name"
+        issueTrackerUrl = "https://github.com/bluesliverx/grails-spring-security-oauth2-provider/issues"
+        vcsUrl = "https://github.com/bluesliverx/grails-spring-security-oauth2-provider"
+        licenses = ['Apache-2.0']
+        publicDownloadNumbers = true
+        version {
+            attributes = ['grails-plugin': "org.grails.plugins:$project.name"]
+            name = project.version
+        }
+    }
+}
+
