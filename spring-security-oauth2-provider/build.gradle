@@ -31,10 +31,19 @@ apply plugin: "spring-boot"
 apply plugin: "org.grails.grails-plugin"
 apply plugin: "org.grails.grails-gsp"
 apply plugin: "org.grails.grails-doc"
+apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
 
-// Used for publishing to central repository, remove if not needed
-//apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
-//apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
+// Workaround for jansi dependency problem with groovydoc (https://discuss.gradle.org/t/gradle-task-groovydoc-failing-with-noclassdeffounderror/2541/21)
+configurations {
+    jansi.extendsFrom(runtime)
+}
+groovydoc {
+    def title = "IPDS ${version}"
+    groovyClasspath = project.configurations.jansi
+}
+dependencies {
+    jansi 'org.fusesource.jansi:jansi:1.11'
+}
 
 ext {
     grailsVersion = project.grailsVersion
