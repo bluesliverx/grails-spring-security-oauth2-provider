@@ -1,0 +1,1 @@
+The plugin is pessimistic by default, locking down as much as possible to guard against accidental security breaches. However, these constraints can be modified if so desired in @grails-app/conf/application.groovy@. The properties below exist in the @grails.plugin.springsecurity.oauthProvider@ namespace.

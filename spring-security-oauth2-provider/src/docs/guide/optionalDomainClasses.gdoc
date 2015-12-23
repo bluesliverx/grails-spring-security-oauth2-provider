@@ -1,0 +1,5 @@
+The plugin provides support for using a GORM backed @ApprovalStore@ with the @ApprovalStoreUserApprovalHandler@ provided by the underlying Spring OAuth library. This class is only required if the consuming application is configured to use the @UserApprovalSupport.APPROVAL_STORE@ method of auto-approval.
+
+The [s2-init-oauth2-approval|Scripts] script will create the required domain class for you in a specified package and update @grails-app/conf/application.groovy@ so the plugin recognizes it. You can customize the generated class to fit your needs. If you change the default property names, you will need to update @grails-app/conf/application.groovy@ so the plugin is aware of the changes. See the section on [domain class properties|guide:domainClassProperties] for more information.
+
+The below discussion assumes the [s2-init-oauth2-approval|Scripts] script has been run with @com.yourapp@ specified as the package and @Approval@ as the name of the domain class.

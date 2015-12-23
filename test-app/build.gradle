@@ -1,0 +1,93 @@
+buildscript {
+    ext {
+        grailsVersion = project.grailsVersion
+    }
+    repositories {
+        mavenLocal()
+        maven { url "https://repo.grails.org/grails/core" }
+    }
+    dependencies {        
+        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+        classpath 'com.bertramlabs.plugins:asset-pipeline-gradle:2.5.0'
+        classpath "org.grails.plugins:hibernate:4.3.10.5"
+    }
+}
+
+plugins {
+    id "io.spring.dependency-management" version "0.5.2.RELEASE"
+}
+
+version "0.1"
+group "test.app"
+
+apply plugin: "spring-boot"
+apply plugin: "war"
+apply plugin: "asset-pipeline"
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: "org.grails.grails-web"
+apply plugin: "org.grails.grails-gsp"
+
+ext {
+    grailsVersion = project.grailsVersion
+    gradleWrapperVersion = project.gradleWrapperVersion
+}
+
+assets {
+    minifyJs = true
+    minifyCss = true
+}
+
+repositories {
+    mavenLocal()
+    maven { url "https://repo.grails.org/grails/core" }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.grails:grails-bom:$grailsVersion"
+    }
+    applyMavenExclusions false
+}
+
+dependencies {
+    compile project(":spring-security-oauth2-provider")
+
+    compile "org.springframework.boot:spring-boot-starter-logging"
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+    compile "org.springframework.boot:spring-boot-autoconfigure"
+    compile "org.springframework.boot:spring-boot-starter-tomcat"
+    compile "org.grails:grails-dependencies"
+    compile "org.grails:grails-web-boot"
+
+    compile "org.grails.plugins:hibernate"
+    compile "org.grails.plugins:cache"
+    compile "org.hibernate:hibernate-ehcache"
+    compile "org.grails.plugins:scaffolding"
+
+    runtime "org.grails.plugins:asset-pipeline"
+
+    runtime 'org.grails.plugins:hibernate'
+    runtime 'org.hibernate:hibernate-ehcache'
+
+    testCompile "org.grails:grails-plugin-testing"
+    testCompile "org.grails.plugins:geb"
+
+    testCompile "org.seleniumhq.selenium:selenium-chrome-driver:2.42.2"
+    testCompile 'com.github.detro:phantomjsdriver:1.2.0'
+
+    testCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1', {
+        ["commons-logging", "xml-apis", "groovy"].each { exclude module: it }
+    }
+
+    // Workaround for java.lang.ClassNotFoundException: org.apache.http.conn.HttpClientConnectionManager
+    // that is thrown during the initialization of the selenium driver for 2.42.x.
+    testRuntime "org.apache.httpcomponents:httpclient:4.3.2"
+
+
+    console "org.grails:grails-console"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleWrapperVersion
+}

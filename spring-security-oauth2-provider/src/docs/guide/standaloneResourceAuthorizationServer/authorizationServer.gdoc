@@ -1,0 +1,22 @@
+To create an application that is only an Authorization Server, it is as simple as configuring the authorization and token endpoints as shown in the [Getting Started|guide:gettingStarted] and [Filter Chain Configuration|guide:filterChainConfig] sections and excluding the @oauth2ProviderFilter@.
+
+So instead of the following filter chain:
+
+{code}
+    grails.plugin.springsecurity.filterChain.chainMap = [
+            [pattern: '/oauth/token',               filters: 'JOINED_FILTERS,-oauth2ProviderFilter,-securityContextPersistenceFilter,-logoutFilter,-authenticationProcessingFilter,-rememberMeAuthenticationFilter,-exceptionTranslationFilter'],
+            [pattern: '/securedOAuth2Resources/**', filters: 'JOINED_FILTERS,-securityContextPersistenceFilter,-logoutFilter,-authenticationProcessingFilter,-rememberMeAuthenticationFilter,-oauth2BasicAuthenticationFilter,-exceptionTranslationFilter'],
+            [pattern: '/**',                        filters: 'JOINED_FILTERS,-statelessSecurityContextPersistenceFilter,-oauth2ProviderFilter,-clientCredentialsTokenEndpointFilter,-oauth2BasicAuthenticationFilter,-oauth2ExceptionTranslationFilter']
+    ]
+{code}
+
+You would have something like this:
+
+{code}
+   grails.plugin.springsecurity.filterChain.chainMap = [
+           [pattern: '/oauth/token',               filters: 'JOINED_FILTERS,-oauth2ProviderFilter,-securityContextPersistenceFilter,-logoutFilter,-rememberMeAuthenticationFilter,-authenticationProcessingFilter,-exceptionTranslationFilter'],
+           [pattern: '/**',                        filters: 'JOINED_FILTERS,-statelessSecurityContextPersistenceFilter,-oauth2ProviderFilter,-clientCredentialsTokenEndpointFilter,-basicAuthenticationFilter,-oauth2ExceptionTranslationFilter']
+   ]
+{code}
+
+Where @/\*\*@ is any Authorization Server specific functionality.

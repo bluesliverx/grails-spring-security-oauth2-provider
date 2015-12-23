@@ -1,0 +1,50 @@
+introduction:
+  title: Introduction to the Spring Security OAuth2 Plugin
+  changes: Change Log
+gettingStarted:
+  title: Getting Started
+  installPlugin: Install Plugin
+  createDomainClasses: Create Domain Classes
+  secureEndpoints: Secure Authorization and Token Endpoints
+  customizeViews: (Optional) Customize Error and Confirm Access Views
+  clientRegistration: Client Registration
+  resourceAccess: Controlling Access to Resources
+  troubleShooting: Trouble Shooting
+exampleFlows:
+  title: Example Flows
+  authorizationCode: Authorization Code Grant
+  implicit: Implicit Grant
+  password: Resource Owner Password Credentials Grant
+  clientCredentials: Client Credentials Grant
+  refreshToken: Refresh Token Grant
+domainClasses:
+  title: Required Domain Classes
+  clientClass: Client Class
+  accessTokenClass: Access Token Class
+  refreshTokenClass: Refresh Token Class
+  authorizationCodeClass: Authorization Code Class
+optionalDomainClasses:
+  title: Optional Domain Classes
+  approvalClass: Approval Class
+domainClassProperties:
+  title: Domain Class Properties
+  clientLookup: Client Class Properties
+  accessTokenLookup: Access Token Class Properties
+  refreshTokenLookup: Refresh Token Class Properties
+  authorizationCodeLookup: Authorization Code Class Properties
+configuration:
+  title: Configuration
+  plugin: Plugin
+  endpoints: Endpoint URLs
+  tokenServices: Token Services
+  tokenEnhancers: Token Enhancers Configuration
+  grantTypes: Supported Grant Types
+  authorization: Additional Authorization Constraints
+  approvalHandler: User Approval Configuration
+  defaultClientConfig: Default Client Configuration
+  filterChainConfig: Filter Chain Configuration
+  domainClassCustomSerializationConfig: Domain Class Custom Serialization Configuration
+standaloneResourceAuthorizationServer:
+  title: Standalone Resource Server or Authorization Server
+  authorizationServer: Authorization Server
+  resourceServer: Resource Server

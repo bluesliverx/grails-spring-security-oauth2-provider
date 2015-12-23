@@ -1,0 +1,33 @@
+The following examples assume you have followed the steps outlined in the [Getting Started|guide:gettingStarted] section for an application named @oauth2-test@ and your @grails-app/init/BootStrap.groovy@ contains the following:
+
+{code}
+def init = { servletContext ->
+
+    Role roleUser = new Role(authority: 'ROLE_USER').save(flush: true)
+
+    User user = new User(
+         username: 'my-user',
+         password: 'my-password',
+         enabled: true,
+         accountExpired: false,
+         accountLocked: false,
+         passwordExpired: false
+    ).save(flush: true)
+
+    UserRole.create(user, roleUser, true)
+
+    new Client(
+        clientId: 'my-client',
+        authorizedGrantTypes: ['authorization_code', 'refresh_token', 'implicit', 'password', 'client_credentials'],
+        authorities: ['ROLE_CLIENT'],
+        scopes: ['read', 'write'],
+        redirectUris: ['http://myredirect.com']
+    ).save(flush: true)
+}
+{code}
+
+After retrieving an @access_token@ via one of the flows, you must include this in the @Authorization@ header when accessing protected resources.
+
+For example, if you receive @7b9a989e-3702-4621-a631-fbd1a996fc94@ as the @access_token@, you will include this in the @Authorization@ header as @Bearer 7b9a989e-3702-4621-a631-fbd1a996fc94@ when requesting a protected resource.
+
+The examples below are given using [CURL|http://curl.haxx.se/] tool to make the requests. The plugin is compliant with RFC 6749 when configured properly. Therefore token requests should be made using an HTTP POST and authorization requests should be initiated by the User-Agent with an HTTP GET.

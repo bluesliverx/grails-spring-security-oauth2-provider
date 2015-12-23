@@ -1,0 +1,1 @@
+The plugin provides views for the error and confirm access pages. These can be overridden by providing your own @grails-app/views/oauth/error.gsp@ and @grails-app/views/oauth/confirm_access.gsp@ files, respectively.

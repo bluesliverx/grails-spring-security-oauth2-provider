@@ -1,0 +1,2 @@
+include 'spring-security-oauth2-provider'
+include 'test-app'
