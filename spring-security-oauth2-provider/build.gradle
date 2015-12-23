@@ -130,3 +130,5 @@ bintray {
     }
 }
 
+bintrayUpload.dependsOn sourcesJar, javadocJar
+
