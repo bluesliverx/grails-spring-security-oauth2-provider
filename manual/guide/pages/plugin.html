@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>7.1 Plugin 3.0.0-SNAPSHOT</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction to the Spring Security OAuth2 Plugin</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/exampleFlows.html"><strong>3</strong><span>Example Flows</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/optionalDomainClasses.html"><strong>5</strong><span>Optional Domain Classes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClassProperties.html"><strong>6</strong><span>Domain Class Properties</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/configuration.html"><strong>7</strong><span>Configuration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/standaloneResourceAuthorizationServer.html"><strong>8</strong><span>Standalone Resource Server or Authorization Server</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        
+    </div>
+    <p>Grails OAuth2 Provider Plugin</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/domainClassProperties.html">&lt;&lt; <strong>6</strong><span>Domain Class Properties</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/standaloneResourceAuthorizationServer.html"><strong>8</strong><span>Standalone Resource Server or Authorization Server</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>7.1 Plugin - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Brian Saville, Bobby Vandiver, Roy Willemse</p>
+
+                    <p><strong>Version:</strong> 3.0.0-SNAPSHOT</p>
+
+                    
+                </div>
+
+                
+
+                
+
+<h2 id="plugin">7.1 Plugin</h2>
+The following properties define whether the plugin is active and where the required filters are registered in the Spring Security filter chain:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Property</strong></th><th><strong class="bold">Default Value</strong></th><th><strong class="bold">Meaning</strong></th></tr><tr class="table-odd"><td>active</td><td><code>true</code></td><td>Whether the plugin is enabled.</td></tr><tr class="table-even"><td>filterStartPosition</td><td><code>SecurityFilterPosition.X509_FILTER.order</code></td><td>The position in the filter chain of the <code>OAuth2AuthenticationProcessingFilter</code>, which handles authentication for resource access by extracting an access token from the incoming request.</td></tr><tr class="table-odd"><td>clientFilterStartPosition</td><td><code>SecurityFilterPosition.DIGEST_AUTH_FILTER.order</code></td><td>The position in the filter chain of the <code>ClientCredentialsTokenEndpointFilter</code>, which handles client authentication.</td></tr><tr class="table-even"><td>statelessFilterStartPosition</td><td><code>SecurityFilterPosition.SECURITY_CONTEXT_FILTER.order</code></td><td>The position in the filter chain of the <code>StatelessSecurityContextPersistenceFilter</code>, which is used to ensure access to OAuth 2.0 resources and the token endpoint are stateless.</td></tr><tr class="table-odd"><td>exceptionTranslationFilterStartPosition</td><td><code>SecurityFilterPosition.EXCEPTION_TRANSLATION_FILTER.order</code></td><td>The position in the filter chain of the <code>ExceptionTranslationFilter</code> configured with a <code>NullRequestCache</code>, which is used to ensure access to OAuth 2.0 resources and the token endpoint are stateless.</td></tr><tr class="table-even"><td>basicAuthenticationFilterStartPosition</td><td><code>SecurityFilterPosition.BASIC_AUTH_FILTER.order</code></td><td>The position in the filter chain of the <code>BasicAuthenticationFilter</code> configured with a <code>NullRememberMeServices</code>, which is used to ensure access to OAuth 2.0 resources and the token endpoint are stateless.</td></tr><tr class="table-odd"><td>registerStatelessFilter</td><td><code>true</code></td><td>When this is <code>true</code>, the plugin will register the <code>statelessSecurityContextPersistenceFilter</code> in the filter chain after the <code>securityContextPersistenceFilter</code> provided by the Spring Security Core plugin. See <a href="../guide/single.html#filterChainConfig" class="guide">below</a> for additional configuration of the filter chain(s) required to properly secure access to OAuth 2.0 resources.</td></tr><tr class="table-even"><td>registerExceptionTranslationFilter</td><td><code>true</code></td><td>When this is <code>true</code>, the plugin will register the <code>oauth2ExceptionTranslationFilter</code> in the filter chain after the <code>exceptionTranslationFilter</code> provided by the Spring Security Core plugin. See <a href="../guide/single.html#filterChainConfig" class="guide">below</a> for additional configuration of the filter chain(s) required to properly secure access to OAuth 2.0 resources.</td></tr><tr class="table-odd"><td>registerBasicAuthenticationFilter</td><td><code>true</code></td><td>When this is <code>true</code>, the plugin will register the <code>oauth2BasicAuthenticationFilter</code> in the filter chain after the <code>basicAuthenticationFilter</code> provided by the Spring Security Core plugin. See <a href="../guide/single.html#filterChainConfig" class="guide">below</a> for additional configuration of the filter chain(s) required to properly secure access to OAuth 2.0 resources.</td></tr><tr class="table-even"><td>realmName</td><td><code>Grails OAuth2 Realm</code></td><td>Realm name included in the WWW-Authenticate header in a challenge response.</td></tr></table>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/domainClassProperties.html">&lt;&lt; <strong>6</strong><span>Domain Class Properties</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/standaloneResourceAuthorizationServer.html"><strong>8</strong><span>Standalone Resource Server or Authorization Server</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Scripts</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Scripts/s2-init-oauth2-approval.html">s2-init-oauth2-approval</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Scripts/s2-init-oauth2-provider.html">s2-init-oauth2-provider</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

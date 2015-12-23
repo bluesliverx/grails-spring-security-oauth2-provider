@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>8 Standalone Resource Server or Authorization Server 3.0.0-SNAPSHOT</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/introduction.html"><strong>1</strong><span>Introduction to the Spring Security OAuth2 Plugin</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/exampleFlows.html"><strong>3</strong><span>Example Flows</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/optionalDomainClasses.html"><strong>5</strong><span>Optional Domain Classes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/domainClassProperties.html"><strong>6</strong><span>Domain Class Properties</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/configuration.html"><strong>7</strong><span>Configuration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../guide/standaloneResourceAuthorizationServer.html"><strong>8</strong><span>Standalone Resource Server or Authorization Server</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        
+    </div>
+    <p>Grails OAuth2 Provider Plugin</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../guide/configuration.html">&lt;&lt; <strong>7</strong><span>Configuration</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+
+
+                <div class="project">
+                    <h1>8 Standalone Resource Server or Authorization Server - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Brian Saville, Bobby Vandiver, Roy Willemse</p>
+
+                    <p><strong>Version:</strong> 3.0.0-SNAPSHOT</p>
+
+                    
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#authorizationServer"><strong>8.1</strong><span>Authorization Server</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#resourceServer"><strong>8.2</strong><span>Resource Server</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+
+<h1 id="standaloneResourceAuthorizationServer">8 Standalone Resource Server or Authorization Server</h1>
+By default, the plugin is configured to assume the role of both the Authorization Server and the Resource Server as defined by RFC 6749. However, it is possible to configure an application to fulfill only one role.<p class="paragraph"/>The plugin registers an instance of the Spring OAuth provided <code>OAuth2AuthenticationProcessingFilter</code> under the bean name <code>oauth2ProviderFilter</code>. This filter is responsible for extracting the <code>Bearer</code> token from the <code>Authorization</code> header and confirming its authenticity.
+
+
+
+<h2 id="authorizationServer">8.1 Authorization Server</h2>
+To create an application that is only an Authorization Server, it is as simple as configuring the authorization and token endpoints as shown in the <a href="../guide/single.html#gettingStarted" class="guide">Getting Started</a> and <a href="../guide/single.html#filterChainConfig" class="guide">Filter Chain Configuration</a> sections and excluding the <code>oauth2ProviderFilter</code>.<p class="paragraph"/>So instead of the following filter chain:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.filterChain.chainMap = &#91;
+            &#91;pattern: '/oauth/token',               filters: 'JOINED_FILTERS,&#45;oauth2ProviderFilter,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;authenticationProcessingFilter,&#45;rememberMeAuthenticationFilter,&#45;exceptionTranslationFilter'&#93;,
+            &#91;pattern: '/securedOAuth2Resources/&#42;&#42;', filters: 'JOINED_FILTERS,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;authenticationProcessingFilter,&#45;rememberMeAuthenticationFilter,&#45;oauth2BasicAuthenticationFilter,&#45;exceptionTranslationFilter'&#93;,
+            &#91;pattern: '/&#42;&#42;',                        filters: 'JOINED_FILTERS,&#45;statelessSecurityContextPersistenceFilter,&#45;oauth2ProviderFilter,&#45;clientCredentialsTokenEndpointFilter,&#45;oauth2BasicAuthenticationFilter,&#45;oauth2ExceptionTranslationFilter'&#93;
+    &#93;</pre></div><p class="paragraph"/>You would have something like this:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.filterChain.chainMap = &#91;
+           &#91;pattern: '/oauth/token',               filters: 'JOINED_FILTERS,&#45;oauth2ProviderFilter,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter,&#45;authenticationProcessingFilter,&#45;exceptionTranslationFilter'&#93;,
+           &#91;pattern: '/&#42;&#42;',                        filters: 'JOINED_FILTERS,&#45;statelessSecurityContextPersistenceFilter,&#45;oauth2ProviderFilter,&#45;clientCredentialsTokenEndpointFilter,&#45;basicAuthenticationFilter,&#45;oauth2ExceptionTranslationFilter'&#93;
+   &#93;</pre></div><p class="paragraph"/>Where <code>/&#42;&#42;</code> is any Authorization Server specific functionality.
+
+
+
+<h2 id="resourceServer">8.2 Resource Server</h2>
+To create an application that is only a Resource Server is slightly more involved. The plugin uses an implementation of the Spring provided <code>ResourceServerTokenServices</code> interface that uses the currently configured <code>TokenStore</code> to authenticate the presented <code>Bearer</code> token. If the Authorization Server and Resource Server are distinct applications, it is very likely that the Resource Server will need some means to validate the provided <code>Bearer</code> token that depends on your use case. To do this, simply implement the aforementioned <code>ResourceServerTokenServices</code> interface and override the <code>resourceServerTokenServices</code> bean in your <code>resources.groovy</code>.<p class="paragraph"/>Next you will need to disable access to the authorization and token endpoints. This can be accomplished by changing access to the appropriate URL. For example, when using static rules to secure your endpoints, you might have the following when the Authorization and Resource Servers are the same application:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.controllerAnnotations.staticRules = &#91;
+        &#91;pattern: '/oauth/authorize',           access: <span class="java&#45;quote">"isFullyAuthenticated() and (request.getMethod().equals('GET') or request.getMethod().equals('POST'))"</span>&#93;,
+        &#91;pattern: '/oauth/token',               access: <span class="java&#45;quote">"isFullyAuthenticated() and request.getMethod().equals('POST')"</span>&#93;,
+        &#91;pattern: '/',                          access: 'permitAll'&#93;,
+        &#91;pattern: '/index',                     access: 'permitAll'&#93;,
+        &#91;pattern: '/index.gsp',                 access: 'permitAll'&#93;,
+        &#91;pattern: '/&#42;&#42;/js/&#42;&#42;',                  access: 'permitAll'&#93;,
+        &#91;pattern: '/&#42;&#42;/css/&#42;&#42;',                 access: 'permitAll'&#93;,
+        &#91;pattern: '/&#42;&#42;/images/&#42;&#42;',              access: 'permitAll'&#93;,
+        &#91;pattern: '/&#42;&#42;/favicon.ico',            access: 'permitAll'&#93;,
+        &#91;pattern: '/assets/&#42;&#42;',                 access: 'permitAll'&#93;
+&#93;</pre></div><p class="paragraph"/>Splitting out the authorization parts will result in something like this:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.controllerAnnotations.staticRules = &#91;
+        &#91;pattern: '/',                          access: 'permitAll'&#93;,
+        &#91;pattern: '/index',                     access: 'permitAll'&#93;,
+        &#91;pattern: '/index.gsp',                 access: 'permitAll'&#93;,
+        &#91;pattern: '/&#42;&#42;/js/&#42;&#42;',                  access: 'permitAll'&#93;,
+        &#91;pattern: '/&#42;&#42;/css/&#42;&#42;',                 access: 'permitAll'&#93;,
+        &#91;pattern: '/&#42;&#42;/images/&#42;&#42;',              access: 'permitAll'&#93;,
+        &#91;pattern: '/&#42;&#42;/favicon.ico',            access: 'permitAll'&#93;,
+        &#91;pattern: '/assets/&#42;&#42;',                 access: 'permitAll'&#93;
+&#93;</pre></div><p class="paragraph"/>Any requests to the authorization or token endpoints will be greeted with a 403 response. You should also remove any filter chain configurations in place for these endpoints as well. Our earlier filter chain would become something like the following:<p class="paragraph"/><div class="code"><pre>grails.plugin.springsecurity.filterChain.chainMap = &#91;
+           &#91;pattern: '/securedOAuth2Resources/&#42;&#42;', filters: 'JOINED_FILTERS,&#45;securityContextPersistenceFilter,&#45;logoutFilter,&#45;rememberMeAuthenticationFilter,&#45;authenticationProcessingFilter,&#45;basicAuthenticationFilter,&#45;exceptionTranslationFilter'&#93;,
+           &#91;pattern: '/&#42;&#42;',                        filters: 'JOINED_FILTERS,&#45;statelessSecurityContextPersistenceFilter,&#45;oauth2ProviderFilter,&#45;clientCredentialsTokenEndpointFilter,&#45;basicAuthenticationFilter,&#45;oauth2ExceptionTranslationFilter'&#93;
+   &#93;</pre></div><p class="paragraph"/>Where <code>/&#42;&#42;</code> is any Resource Server specific functionality.
+
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../guide/configuration.html">&lt;&lt; <strong>7</strong><span>Configuration</span></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Scripts</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../ref/Scripts/s2-init-oauth2-approval.html">s2-init-oauth2-approval</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Scripts/s2-init-oauth2-provider.html">s2-init-oauth2-provider</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

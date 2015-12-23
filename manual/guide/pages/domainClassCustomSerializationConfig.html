@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>7.10 Domain Class Custom Serialization Configuration 3.0.0-SNAPSHOT</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction to the Spring Security OAuth2 Plugin</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/exampleFlows.html"><strong>3</strong><span>Example Flows</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClasses.html"><strong>4</strong><span>Required Domain Classes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/optionalDomainClasses.html"><strong>5</strong><span>Optional Domain Classes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/domainClassProperties.html"><strong>6</strong><span>Domain Class Properties</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/configuration.html"><strong>7</strong><span>Configuration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/standaloneResourceAuthorizationServer.html"><strong>8</strong><span>Standalone Resource Server or Authorization Server</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        
+    </div>
+    <p>Grails OAuth2 Provider Plugin</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/domainClassProperties.html">&lt;&lt; <strong>6</strong><span>Domain Class Properties</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/standaloneResourceAuthorizationServer.html"><strong>8</strong><span>Standalone Resource Server or Authorization Server</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>7.10 Domain Class Custom Serialization Configuration - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Brian Saville, Bobby Vandiver, Roy Willemse</p>
+
+                    <p><strong>Version:</strong> 3.0.0-SNAPSHOT</p>
+
+                    
+                </div>
+
+                
+
+                
+
+<h2 id="domainClassCustomSerializationConfig">7.10 Domain Class Custom Serialization Configuration</h2>
+The default behavior of the plugin is to serialize the <code>additionalInformation</code> and <code>scope</code> properties of the <code>Client</code> and <code>AccessToken</code> classes as a <code>Map&#60;String, Object&#62;</code> and <code>Set&#60;String&#62;</code> respectively. This is how the <a href="../ref/Scripts/s2-init-oauth2-provider.html" class="Scripts">s2-init-oauth2-provider</a> script will generate the domain classes. However, this might not be ideal for all plugin consumers who want more control over the serialization of these fields.<p class="paragraph"/>To accommodate these users, it is possible to override the default serialization method on a case-by-case basis. The plugin provides two interfaces to accomplish.<p class="paragraph"/>For the <code>additionalInformation</code> fields:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> grails.plugin.springsecurity.oauthprovider.serialization;<p class="paragraph"/><span class="java&#45;keyword">import</span> java.util.Map;<p class="paragraph"/><span class="java&#45;keyword">public</span> <span class="java&#45;keyword">interface</span> OAuth2AdditionalInformationSerializer &#123;<p class="paragraph"/>    <span class="java&#45;object">Object</span> serialize(Map&#60;<span class="java&#45;object">String</span>, <span class="java&#45;object">Object</span>&#62; additionalInformation);<p class="paragraph"/>    Map&#60;<span class="java&#45;object">String</span>, <span class="java&#45;object">Object</span>&#62; deserialize(<span class="java&#45;object">Object</span> additionalInformation);
+&#125;</pre></div><p class="paragraph"/>For the <code>scope</code> field:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> grails.plugin.springsecurity.oauthprovider.serialization;<p class="paragraph"/><span class="java&#45;keyword">import</span> java.util.Set;<p class="paragraph"/><span class="java&#45;keyword">public</span> <span class="java&#45;keyword">interface</span> OAuth2ScopeSerializer &#123;<p class="paragraph"/>    <span class="java&#45;object">Object</span> serialize(Set&#60;<span class="java&#45;object">String</span>&#62; scopes);<p class="paragraph"/>    Set&#60;<span class="java&#45;object">String</span>&#62; deserialize(<span class="java&#45;object">Object</span> scopes);
+&#125;</pre></div><p class="paragraph"/>By default, the plugin registers implementations that do little more than return the argument provided to each method. The following table shows which plugin provided Spring beans implement these interfaces and how they're used:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Bean Name</strong></th><th><strong class="bold">Interface Implemented</strong></th><th><strong class="bold">Description</strong></th></tr><tr class="table-odd"><td><code>clientAdditionalInformationSerializer</code></td><td><code>OAuth2AdditionalInformationSerializer</code></td><td>Handles deserialization of the <code>additionalInformation</code> property of the <code>Client</code> class into a <code>Map&#60;String, Object&#62;</code>. Only the <code>deserialize</code> method is used by the plugin at this time.</td></tr><tr class="table-even"><td><code>accessTokenAdditionalInformationSerializer</code></td><td><code>OAuth2AdditionalInformationSerializer</code></td><td>Handles serialization and deserialization of the <code>additionalInformation</code> property of the <code>AccessToken</code> class into a <code>Map&#60;String, Object&#62;</code>.</td></tr><tr class="table-odd"><td><code>accessTokenScopeSerializer</code></td><td><code>OAuth2ScopeSerializer</code></td><td>Handles serialization and deserialization of the <code>scope</code> property of the <code>AccessToken</code> class into a <code>Set&#60;String&#62;</code>.</td></tr></table><p class="paragraph"/>Overriding these beans in <code>resources.groovy</code> will allow the plugin consumer to customize how these fields are serialized. However, this will require the affected domain class to be modified to accommodate the change. For example, let's change the <code>AccessToken</code> to serialized its <code>additionalInformation</code> as JSON <code>String</code> and its <code>scope</code> as white space delimited <code>String</code>.<p class="paragraph"/>First, modify the <code>AccessToken</code> class to reflect the change in the storage of these fields:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> test.oauth2<p class="paragraph"/>class AccessToken &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> authenticationKey
+    <span class="java&#45;object">byte</span>&#91;&#93; authentication<p class="paragraph"/>    <span class="java&#45;object">String</span> username
+    <span class="java&#45;object">String</span> clientId<p class="paragraph"/>    <span class="java&#45;object">String</span> value
+    <span class="java&#45;object">String</span> tokenType<p class="paragraph"/>    Date expiration
+    <span class="java&#45;object">String</span> additionalInformation<p class="paragraph"/>    <span class="java&#45;object">String</span> scope<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasOne = &#91;refreshToken: <span class="java&#45;object">String</span>&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
+        username nullable: <span class="java&#45;keyword">true</span>
+        clientId nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>
+        value nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
+        tokenType nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>
+        expiration nullable: <span class="java&#45;keyword">false</span>
+        scope nullable: <span class="java&#45;keyword">false</span>
+        refreshToken nullable: <span class="java&#45;keyword">true</span>
+        authenticationKey nullable: <span class="java&#45;keyword">false</span>, blank: <span class="java&#45;keyword">false</span>, unique: <span class="java&#45;keyword">true</span>
+        authentication nullable: <span class="java&#45;keyword">false</span>, minSize: 1, maxSize: 1024 &#42; 4
+        additionalInformation nullable: <span class="java&#45;keyword">true</span>
+    &#125;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        version <span class="java&#45;keyword">false</span>
+        scope lazy: <span class="java&#45;keyword">false</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Next, implement the earlier described interfaces:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> test<p class="paragraph"/><span class="java&#45;keyword">import</span> grails.plugin.springsecurity.oauthprovider.serialization.OAuth2ScopeSerializer
+<span class="java&#45;keyword">import</span> org.springframework.security.oauth2.common.util.OAuth2Utils<p class="paragraph"/>class WhiteSpaceDelimitedStringScopeSerializer <span class="java&#45;keyword">implements</span> OAuth2ScopeSerializer &#123;<p class="paragraph"/>    @Override
+    <span class="java&#45;object">Object</span> serialize(Set&#60;<span class="java&#45;object">String</span>&#62; scopes) &#123;
+        <span class="java&#45;keyword">return</span> OAuth2Utils.formatParameterList(scopes)
+    &#125;<p class="paragraph"/>    @Override
+    Set&#60;<span class="java&#45;object">String</span>&#62; deserialize(<span class="java&#45;object">Object</span> scopes) &#123;
+        <span class="java&#45;keyword">return</span> OAuth2Utils.parseParameterList(scopes)
+    &#125;
+&#125;</pre></div><p class="paragraph"/>And:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> test<p class="paragraph"/><span class="java&#45;keyword">import</span> grails.plugin.springsecurity.oauthprovider.serialization.OAuth2AdditionalInformationSerializer
+<span class="java&#45;keyword">import</span> groovy.json.JsonOutput
+<span class="java&#45;keyword">import</span> groovy.json.JsonSlurper<p class="paragraph"/>class JsonAdditionalInformationSerializer <span class="java&#45;keyword">implements</span> OAuth2AdditionalInformationSerializer &#123;<p class="paragraph"/>    @Override
+    <span class="java&#45;object">Object</span> serialize(Map&#60;<span class="java&#45;object">String</span>, <span class="java&#45;object">Object</span>&#62; additionalInformation) &#123;
+        JsonOutput.toJson(additionalInformation)
+    &#125;<p class="paragraph"/>    @Override
+    Map&#60;<span class="java&#45;object">String</span>, <span class="java&#45;object">Object</span>&#62; deserialize(<span class="java&#45;object">Object</span> additionalInformation) &#123;
+        <span class="java&#45;keyword">new</span> JsonSlurper().parseText(additionalInformation as <span class="java&#45;object">String</span>)
+    &#125;
+&#125;</pre></div><p class="paragraph"/><blockquote class="note">
+The <code>serialize</code> methods are guaranteed to receive a non-null argument, although they may be provided an empty collection. The <code>deserialize</code> methods are expected to return a non-null value.
+</blockquote><p class="paragraph"/>Finally, in <code>resources.groovy</code>, override the appropriate beans:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> test.JsonAdditionalInformationSerializer
+<span class="java&#45;keyword">import</span> test.WhiteSpaceDelimitedStringScopeSerializer<p class="paragraph"/>beans = &#123;
+    // Other beans here<p class="paragraph"/>    accessTokenAdditionalInformationSerializer(JsonAdditionalInformationSerializer)
+    accessTokenScopeSerializer(WhiteSpaceDelimitedStringScopeSerializer)
+&#125;</pre></div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/domainClassProperties.html">&lt;&lt; <strong>6</strong><span>Domain Class Properties</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/standaloneResourceAuthorizationServer.html"><strong>8</strong><span>Standalone Resource Server or Authorization Server</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Scripts</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Scripts/s2-init-oauth2-approval.html">s2-init-oauth2-approval</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Scripts/s2-init-oauth2-provider.html">s2-init-oauth2-provider</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    
+    
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>
