@@ -9,7 +9,7 @@ rm -rf *.zip
 cd spring-security-oauth2-provider/build/libs
 filename=$(find . -name "*.jar" | grep -v javadoc | grep -v sources | head -1)
 filename=$(basename $filename)
-plugin=${filename:7}
+plugin=${filename/spring-security-oauth2-provider-/}
 plugin=${plugin/.jar/}
 plugin=${plugin/-SNAPSHOT/}
 version="${plugin#*-}";
