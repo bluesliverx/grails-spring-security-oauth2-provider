@@ -15,13 +15,13 @@ if [ $TRAVIS_PULL_REQUEST == 'false' ]; then
   #  git config --global credential.helper "store --file=~/.git-credentials"
   #  echo "https://$GITHUB_TOKEN:@github.com" > ~/.git-credentials
   #  git clone https://${GITHUB_TOKEN}@github.com/$TRAVIS_REPO_SLUG.git -b gh-pages gh-pages --single-branch > /dev/null
-  #  cd gh-pages
+  #  cd gh-pages/v3
   #  git rm -rf .
-  #  cp -r ../spring-security-oauth2-provider/build/docs/. ./
+  #  cp -r ../../spring-security-oauth2-provider/build/docs/. ./
   #  git add *
-  #  git commit -a -m "Updating docs for Travis build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
+  #  git commit -a -m "Updating 3.x docs for Travis build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
   #  git push origin HEAD
-  #  cd ..
+  #  cd ../..
   #  rm -rf gh-pages
   #else
   #  echo "Not doing a release, so not publishing docs"
