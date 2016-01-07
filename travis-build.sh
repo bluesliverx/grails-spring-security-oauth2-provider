@@ -17,7 +17,7 @@ plugin=${plugin/"-$version"/}
 cd ../../..
 
 if [ $TRAVIS_PULL_REQUEST == 'false' ]; then
-  echo "Publishing plugin grails-spring-security-oauth2-provider"
+  echo "Publishing plugin grails-spring-security-oauth2-provider with version $version"
 
   if [[ $filename != *-SNAPSHOT* && $TRAVIS_REPO_SLUG == 'bluesliverx/grails-spring-security-oauth2-provider' ]]; then
     git config --global user.name "$GIT_NAME"
