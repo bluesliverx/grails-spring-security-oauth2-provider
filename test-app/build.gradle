@@ -91,3 +91,7 @@ dependencies {
 task wrapper(type: Wrapper) {
     gradleVersion = gradleWrapperVersion
 }
+
+integrationTest {
+    systemProperties = ["http.basic": System.getProperty("http.basic")]
+}

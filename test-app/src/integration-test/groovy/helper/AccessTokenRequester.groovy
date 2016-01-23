@@ -10,7 +10,7 @@ class AccessTokenRequester {
     static final TOKEN_ENDPOINT_URL = FunctionalTestConfig.BASE_URL + 'oauth/token'
 
     private static boolean useHttpBasic() {
-        System.properties['http.basic'] == 'true'
+        return System.properties['http.basic']
     }
 
     static HttpResponseDecorator requestAccessToken(Map requestParams) {

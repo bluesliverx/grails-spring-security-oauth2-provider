@@ -102,6 +102,9 @@ grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 private void copyTestResources(String grailsHome, String destinationDir, String appName) {
     String sourceDir = project(":test-app").projectDir
 
+    /* Configuration for HTTP Basic Authentication */
+    passHttpBasicToIntegrationTestTask(destinationDir)
+
     /* Bootstrap (Client Registration) */
     ant.copy file: "$sourceDir/grails-app/init/BootStrap.groovy",
              tofile: "$destinationDir/grails-app/init/BootStrap.groovy",
@@ -166,8 +169,14 @@ private void changeRedirectUriConstant(String projectDir, String path, String ap
     file.withWriter { it.writeLine contents }
 }
 
+private void passHttpBasicToIntegrationTestTask(String projectDir) {
+    File build = new File(projectDir, "build.gradle")
+    build.append('\nintegrationTest { systemProperties = ["http.basic": System.getProperty("http.basic")] }\n')
+}
+
 private void runTests(String grailsHome, String projectDir) {
-    callGrails(grailsHome, projectDir, 'test-app')
+//    callGrails(grailsHome, projectDir, 'test-app')
+    callGrails(grailsHome, projectDir, 'test-app', ['-Dhttp.basic="true"'])
 }
 
 private String grailsHome(String version) {
