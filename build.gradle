@@ -1,6 +1,6 @@
 ext {
-    grailsSDKsDir = System.properties['user.home'] + '/sdk/grails'
-    workspace = System.properties['java.io.tmpdir']
+    grailsSDKsDir = project.hasProperty('grailsSDKsDir') ? project.property('grailsSDKsDir') : System.properties['user.home'] + '/sdk/grails'
+    workspace = project.hasProperty('workspace') ? project.property('workspace') : System.properties['java.io.tmpdir']
 }
 
 task acceptanceTest(dependsOn: ":spring-security-oauth2-provider:install") {
