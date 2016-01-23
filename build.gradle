@@ -175,7 +175,7 @@ private void passHttpBasicToIntegrationTestTask(String projectDir) {
 }
 
 private void runTests(String grailsHome, String projectDir) {
-//    callGrails(grailsHome, projectDir, 'test-app')
+    callGrails(grailsHome, projectDir, 'test-app')
     callGrails(grailsHome, projectDir, 'test-app', ['-Dhttp.basic="true"'])
 }
 
