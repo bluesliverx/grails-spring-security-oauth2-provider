@@ -31,7 +31,6 @@ apply plugin: "spring-boot"
 apply plugin: "org.grails.grails-plugin"
 apply plugin: "org.grails.grails-gsp"
 apply plugin: "org.grails.grails-doc"
-apply from:'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
 
 // Workaround for jansi dependency problem with groovydoc (https://discuss.gradle.org/t/gradle-task-groovydoc-failing-with-noclassdeffounderror/2541/21)
 configurations {
@@ -122,6 +121,8 @@ task gdocs() {
 }
 
 bintray {
+    user = System.getenv("BINTRAY_USER") ?: project.hasProperty("bintrayUser") ? project.bintrayUser : ''
+    key = System.getenv("BINTRAY_KEY") ?: project.hasProperty("bintrayKey") ? project.bintrayKey : ''
     pkg {
         userOrg = 'bluesliverx'
         repo = 'grails-plugins'
