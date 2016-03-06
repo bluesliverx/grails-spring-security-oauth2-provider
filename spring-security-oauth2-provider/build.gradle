@@ -20,6 +20,11 @@ plugins {
     id "com.jfrog.bintray" version "1.2"
 }
 
+ext {
+    issueTrackerUrl = "https://github.com/bluesliverx/grails-spring-security-oauth2-provider/issues"
+    vcsUrl = "https://github.com/bluesliverx/grails-spring-security-oauth2-provider"
+}
+
 version "3.0.1-SNAPSHOT"
 group "org.grails.plugins"
 
@@ -31,6 +36,9 @@ apply plugin: "spring-boot"
 apply plugin: "org.grails.grails-plugin"
 apply plugin: "org.grails.grails-gsp"
 apply plugin: "org.grails.grails-doc"
+
+apply from: 'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/grailsCentralPublishing.gradle'
+apply from: 'https://raw.githubusercontent.com/grails/grails-profile-repository/master/profiles/plugin/templates/bintrayPublishing.gradle'
 
 // Workaround for jansi dependency problem with groovydoc (https://discuss.gradle.org/t/gradle-task-groovydoc-failing-with-noclassdeffounderror/2541/21)
 configurations {
@@ -119,26 +127,3 @@ task gdocs() {
         publisher.publish()
     }
 }
-
-bintray {
-    user = System.getenv("BINTRAY_USER") ?: project.hasProperty("bintrayUser") ? project.bintrayUser : ''
-    key = System.getenv("BINTRAY_KEY") ?: project.hasProperty("bintrayKey") ? project.bintrayKey : ''
-    pkg {
-        userOrg = 'bluesliverx'
-        repo = 'grails-plugins'
-        name = "org.grails.plugins:$project.name"
-        desc = "Grails OAuth 2 Provider Plugin"
-        websiteUrl = "http://grails.org/plugin/$project.name"
-        issueTrackerUrl = "https://github.com/bluesliverx/grails-spring-security-oauth2-provider/issues"
-        vcsUrl = "https://github.com/bluesliverx/grails-spring-security-oauth2-provider"
-        licenses = ['Apache-2.0']
-        publicDownloadNumbers = true
-        version {
-            attributes = ['grails-plugin': "org.grails.plugins:$project.name"]
-            name = project.version
-        }
-    }
-}
-
-bintrayUpload.dependsOn sourcesJar, javadocJar
-
