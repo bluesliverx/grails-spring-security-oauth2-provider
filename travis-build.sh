@@ -30,7 +30,7 @@ if [ $TRAVIS_PULL_REQUEST == 'false' ]; then
     git add *
     git commit -a -m "Updating 3.x docs for Travis build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
     git push origin HEAD
-    cd ../..
+    cd ..
     rm -rf gh-pages
 
     # Publish plugin
