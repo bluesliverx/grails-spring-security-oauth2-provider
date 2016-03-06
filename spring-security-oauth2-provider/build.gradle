@@ -29,7 +29,6 @@ version "3.0.1-SNAPSHOT"
 group "org.grails.plugins"
 
 apply plugin: 'maven-publish'
-apply plugin: 'maven'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: "spring-boot"
