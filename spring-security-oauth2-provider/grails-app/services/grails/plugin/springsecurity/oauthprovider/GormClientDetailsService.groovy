@@ -3,12 +3,14 @@ package grails.plugin.springsecurity.oauthprovider
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugin.springsecurity.oauthprovider.serialization.OAuth2AdditionalInformationSerializer
 import grails.core.GrailsApplication
+import grails.transaction.Transactional
 import org.springframework.security.oauth2.provider.client.BaseClientDetails
 import org.springframework.security.oauth2.provider.ClientDetails
 import org.springframework.security.oauth2.provider.ClientDetailsService
 import org.springframework.security.oauth2.provider.ClientRegistrationException
 import org.springframework.security.oauth2.provider.NoSuchClientException
 
+@Transactional(readOnly = true)
 class GormClientDetailsService implements ClientDetailsService {
 
     GrailsApplication grailsApplication
