@@ -62,8 +62,8 @@ private void installPlugin(String testProjectDir) {
     contents = contents.replace('testCompile "org.grails.plugins:geb"', """
     testCompile "org.grails.plugins:geb"
 
-    testCompile "org.seleniumhq.selenium:selenium-chrome-driver:2.42.2"
-    testCompile 'com.github.detro:phantomjsdriver:1.2.0'
+    testCompile "org.seleniumhq.selenium:selenium-chrome-driver:2.53.0"
+    testCompile 'com.codeborne:phantomjsdriver:1.2.1'
 
     testCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1', {
         ["commons-logging", "xml-apis", "groovy"].each { exclude module: it }
@@ -139,10 +139,6 @@ private void copyTestResources(String grailsHome, String destinationDir, String 
     ant.copydir src: "$sourceDir/src/test/groovy/helper",
                 dest: "$destinationDir/src/test/groovy/helper",
                 forceoverwrite: true
-
-    ant.copydir src: "$sourceDir/src/test/groovy/org",
-            dest: "$destinationDir/src/test/groovy/org",
-            forceoverwrite: true
 
     /* Change redirect uri referenced in tests */
     changeRedirectUriConstant(destinationDir, 'src/integration-test/groovy/test/oauth2/AbstractAuthorizationEndpointFunctionalSpec.groovy', appName)

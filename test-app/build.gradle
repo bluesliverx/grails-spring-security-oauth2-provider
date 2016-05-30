@@ -73,8 +73,11 @@ dependencies {
     testCompile "org.grails:grails-plugin-testing"
     testCompile "org.grails.plugins:geb"
 
-    testCompile "org.seleniumhq.selenium:selenium-chrome-driver:2.42.2"
-    testCompile 'com.github.detro:phantomjsdriver:1.2.0'
+    testCompile "org.seleniumhq.selenium:selenium-chrome-driver:2.53.0"
+
+    // TODO switch back to com.github.detro:phantomjsdriver when this issue is resolved:
+    // https://github.com/detro/ghostdriver/issues/397
+    testCompile 'com.codeborne:phantomjsdriver:1.3.0'
 
     testCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1', {
         ["commons-logging", "xml-apis", "groovy"].each { exclude module: it }
