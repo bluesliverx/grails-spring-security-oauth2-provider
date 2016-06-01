@@ -14,6 +14,9 @@ wget -P "$GRAILS_SDKS_DIR" "https://github.com/grails/grails-core/releases/downl
 
 cd "$GRAILS_SDKS_DIR"
 
+unzip "grails-${GRAILS_3_0_X}.zip"
+unzip "grails-${GRAILS_3_1_X}.zip"
+
 ln -s "grails-${GRAILS_3_0_X}" "$GRAILS_3_0_X"
 ln -s "grails-${GRAILS_3_1_X}" "$GRAILS_3_1_X"
 
