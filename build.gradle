@@ -186,22 +186,53 @@ private String testProjectDir(String name) {
 private void callGrails(String grailsHome, String projectDir, String action,
                         List extraArgs = null, boolean ignoreFailure = false) {
 
-    String resultproperty = 'exitCode' + System.currentTimeMillis()
-    String outputproperty = 'execOutput' + System.currentTimeMillis()
+    StringBuilder commandBuilder = new StringBuilder("${grailsHome}/bin/grails ${action}")
 
-    println "Running 'grails $action ${extraArgs?.join(' ') ?: ''}'"
-
-    ant.exec(executable: "${grailsHome}/bin/grails", dir: projectDir, failonerror: false,
-                resultproperty: resultproperty, outputproperty: outputproperty) {
-        ant.env key: 'GRAILS_HOME', value: grailsHome
-        ant.arg value: action
-        extraArgs.each { ant.arg value: it }
-        ant.arg value: '--stacktrace'
+    extraArgs.each { arg ->
+        commandBuilder.append(" ")
+        commandBuilder.append(arg)
     }
 
-    println ant.project.getProperty(outputproperty)
+    commandBuilder.append(" ")
+    commandBuilder.append("--stacktrace")
 
-    int exitCode = ant.project.getProperty(resultproperty) as Integer
+    String command = commandBuilder.toString()
+
+    println "Running '$command'"
+
+    ProcessBuilder processBuilder = new ProcessBuilder(command.tokenize())
+    processBuilder.redirectErrorStream(true)
+
+    File workingDir = new File(projectDir)
+    processBuilder.directory(workingDir)
+
+    Map<String,String> environment = processBuilder.environment()
+    environment.put("GRAILS_HOME", grailsHome)
+
+    Process process = processBuilder.start()
+
+    final InputStream output = process.inputStream
+
+    new Thread(new Runnable() {
+        void run() {
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(output))
+
+                String line
+                while ((line = reader.readLine()) != null) {
+                    println line
+                }
+            }
+            catch (IOException e) {
+                throw new GradleException("Error capturing grails output", e)
+            }
+            finally {
+                output.close()
+            }
+        }
+    }).start()
+
+    int exitCode = process.waitFor()
     if (exitCode && !ignoreFailure) {
         throw new GradleException("Received Grails exit code: ${exitCode}")
     }
