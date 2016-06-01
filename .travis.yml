@@ -2,6 +2,7 @@ sudo: false
 language: groovy
 jdk:
 - oraclejdk7
+install: "./install-dependencies.sh"
 script: "./travis-build.sh"
 branches:
   only:
