@@ -27,7 +27,7 @@ task acceptanceTest(dependsOn: ":spring-security-oauth2-provider:install") {
             createApp(grailsHome, testProjectName)
 
             String testProjectDir = testProjectDir(testProjectName)
-            installPlugin(testProjectDir)
+            updateBuildScript(testProjectDir)
 
             runQuickstart(grailsHome, testProjectDir)
             copyTestResources(grailsHome, testProjectDir, testProjectName)
@@ -45,8 +45,8 @@ private void createApp(String grailsHome, String appName) {
     callGrails(grailsHome, workspace, 'create-app', [appName])
 }
 
-private void installPlugin(String testProjectDir) {
-    println "Installing plugins in ${testProjectDir}"
+private void updateBuildScript(String testProjectDir) {
+    println "Updating build.gradle in ${testProjectDir}"
 
     Project plugin = project(":spring-security-oauth2-provider")
 
@@ -72,6 +72,13 @@ private void installPlugin(String testProjectDir) {
     testRuntime "org.apache.httpcomponents:httpclient:4.3.2"
 """)
 
+    contents = contents + """
+tasks.withType(Test) {
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+"""
     buildGradle.withWriter { it.writeLine contents }
 }
 
@@ -201,7 +208,7 @@ private void callGrails(String grailsHome, String projectDir, String action,
     println "Running '$command'"
 
     ProcessBuilder processBuilder = new ProcessBuilder(command.tokenize())
-    processBuilder.redirectErrorStream(true)
+    processBuilder.inheritIO()
 
     File workingDir = new File(projectDir)
     processBuilder.directory(workingDir)
@@ -210,27 +217,6 @@ private void callGrails(String grailsHome, String projectDir, String action,
     environment.put("GRAILS_HOME", grailsHome)
 
     Process process = processBuilder.start()
-
-    final InputStream output = process.inputStream
-
-    new Thread(new Runnable() {
-        void run() {
-            try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(output))
-
-                String line
-                while ((line = reader.readLine()) != null) {
-                    println line
-                }
-            }
-            catch (IOException e) {
-                throw new GradleException("Error capturing grails output", e)
-            }
-            finally {
-                output.close()
-            }
-        }
-    }).start()
 
     int exitCode = process.waitFor()
     if (exitCode && !ignoreFailure) {

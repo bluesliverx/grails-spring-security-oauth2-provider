@@ -98,3 +98,9 @@ task wrapper(type: Wrapper) {
 integrationTest {
     systemProperties = ["http.basic": System.getProperty("http.basic")]
 }
+
+tasks.withType(Test) {
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
