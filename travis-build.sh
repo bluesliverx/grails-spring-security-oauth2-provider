@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 rm -rf *.zip
-./gradlew acceptanceTest --stacktrace -P grailsVersions=3.0.17,3.1.7
+./gradlew acceptanceTest --stacktrace -P grailsVersions=3.0.17
+./gradlew acceptanceTest --stacktrace -P grailsVersions=3.1.7
 ./gradlew spring-security-oauth2-provider:gdocs --stacktrace
 
 cd spring-security-oauth2-provider/build/libs
