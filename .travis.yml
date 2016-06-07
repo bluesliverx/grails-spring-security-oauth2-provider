@@ -1,5 +1,9 @@
 sudo: false
 language: groovy
+cache:
+  directories:
+  - "$HOME/.gradle/caches"
+  - "$HOME/.gradle/wrapper"
 jdk:
 - oraclejdk7
 install: "./install-dependencies.sh"
@@ -8,6 +12,8 @@ branches:
   only:
     - master
     - /^[0-9.]+.*$/
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 before_script:
   - rm -rf target
   - rm -rf docs
