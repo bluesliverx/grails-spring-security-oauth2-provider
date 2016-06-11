@@ -233,7 +233,8 @@ private void callGrails(String grailsHome, String projectDir, String action,
     }
 
     commandBuilder.append(" ")
-    commandBuilder.append("--stacktrace")
+    commandBuilder.append("--stacktrace ")
+    commandBuilder.append("--debug ")
 
     String command = commandBuilder.toString()
 
