@@ -1,6 +1,7 @@
 ext {
     grailsSDKsDir = project.hasProperty('grailsSDKsDir') ? project.property('grailsSDKsDir') : System.properties['user.home'] + '/sdk/grails'
     workspace = project.hasProperty('workspace') ? project.property('workspace') : System.properties['java.io.tmpdir']
+    isTravisBuild = System.getenv().get("TRAVIS") == 'true'
 }
 
 task acceptanceTest(dependsOn: ":spring-security-oauth2-provider:install") {
@@ -77,8 +78,23 @@ tasks.withType(Test) {
     testLogging {
         events "passed", "skipped", "failed"
     }
+"""
+    if (isTravisBuild) {
+        contents = contents + """
+    jvmArgs "-XX:MaxPermSize=256m"
+    maxParallelForks = 2
+    maxHeapSize = '768m'
+    forkEvery = 100   // helps when tests leak memory
+    afterSuite {
+        System.out.print('.')
+        System.out.flush()
+    }
+"""
+    }
+    contents = contents + """
 }
 """
+
     buildGradle.withWriter { it.writeLine contents }
 }
 
