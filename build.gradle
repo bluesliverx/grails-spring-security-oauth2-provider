@@ -2,6 +2,7 @@ ext {
     grailsSDKsDir = project.hasProperty('grailsSDKsDir') ? project.property('grailsSDKsDir') : System.properties['user.home'] + '/sdk/grails'
     workspace = project.hasProperty('workspace') ? project.property('workspace') : System.properties['java.io.tmpdir']
     isTravisBuild = System.getenv().get("TRAVIS") == 'true'
+    isWindows = System.properties['os.name'].toLowerCase().contains('windows')
 }
 
 task acceptanceTest(dependsOn: ":spring-security-oauth2-provider:install") {
@@ -206,10 +207,25 @@ private String testProjectDir(String name) {
     return workspace + '/' + name
 }
 
+// From http://stackoverflow.com/questions/14165517/processbuilder-forwarding-stdout-and-stderr-of-started-processes-without-blocki
+//  For some reason gradle swallows output even when you use inheritIO on the process builder
+private void inheritIO(final InputStream src, final PrintStream dest) {
+    new Thread(new Runnable() {
+        public void run() {
+            Scanner sc = new Scanner(src);
+            while (sc.hasNextLine()) {
+                def line = sc.nextLine()
+                logger.quiet(line)
+                dest.println(line);
+            }
+        }
+    }).start();
+}
+
 private void callGrails(String grailsHome, String projectDir, String action,
                         List extraArgs = null, boolean ignoreFailure = false) {
 
-    StringBuilder commandBuilder = new StringBuilder("${grailsHome}/bin/grails ${action}")
+    StringBuilder commandBuilder = new StringBuilder("${grailsHome}/bin/grails${isWindows?'.bat':''} ${action}")
 
     extraArgs.each { arg ->
         commandBuilder.append(" ")
@@ -224,7 +240,6 @@ private void callGrails(String grailsHome, String projectDir, String action,
     println "Running '$command'"
 
     ProcessBuilder processBuilder = new ProcessBuilder(command.tokenize())
-    processBuilder.inheritIO()
 
     File workingDir = new File(projectDir)
     processBuilder.directory(workingDir)
@@ -233,6 +248,8 @@ private void callGrails(String grailsHome, String projectDir, String action,
     environment.put("GRAILS_HOME", grailsHome)
 
     Process process = processBuilder.start()
+    inheritIO(process.getInputStream(), System.out)
+    inheritIO(process.getErrorStream(), System.err)
 
     int exitCode = process.waitFor()
     if (exitCode && !ignoreFailure) {
