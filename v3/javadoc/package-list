@@ -1,0 +1,9 @@
+grails.plugin.springsecurity.oauthprovider.approval
+grails.plugin.springsecurity.oauthprovider.endpoint
+grails.plugin.springsecurity.oauthprovider.exceptions
+grails.plugin.springsecurity.oauthprovider.filter
+grails.plugin.springsecurity.oauthprovider.provider
+grails.plugin.springsecurity.oauthprovider.provider.error
+grails.plugin.springsecurity.oauthprovider.provider.token
+grails.plugin.springsecurity.oauthprovider.serialization
+grails.plugin.springsecurity.oauthprovider.servlet
