@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 rm -rf *.zip
-./gradlew acceptanceTest -P grailsVersions=3.0.17,3.1.7 --stacktrace --info
+ #TODO Re-enable acceptance tests and remove install line
+./gradlew spring-security-oauth2-provider:install --stacktrace
+#./gradlew acceptanceTest -P grailsVersions=3.0.17,3.1.7 --stacktrace --info
 ./gradlew spring-security-oauth2-provider:gdocs --stacktrace
 
 cd spring-security-oauth2-provider/build/libs
