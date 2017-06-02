@@ -1,12 +1,12 @@
 package grails.plugin.springsecurity.oauthprovider
 
+import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugin.springsecurity.oauthprovider.exceptions.OAuth2ValidationException
 import grails.plugin.springsecurity.oauthprovider.serialization.OAuth2AdditionalInformationSerializer
 import grails.plugin.springsecurity.oauthprovider.serialization.OAuth2AuthenticationSerializer
 import grails.plugin.springsecurity.oauthprovider.serialization.OAuth2ScopeSerializer
 import grails.core.GrailsApplication
-import grails.transaction.Transactional
 import org.springframework.security.oauth2.common.DefaultExpiringOAuth2RefreshToken
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken
