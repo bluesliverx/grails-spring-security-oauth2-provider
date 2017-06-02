@@ -31,7 +31,7 @@ import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2AuthorizationEnd
 import grails.plugin.springsecurity.oauthprovider.servlet.OAuth2TokenEndpointExceptionResolver
 import grails.plugin.springsecurity.oauthprovider.filter.StatelessSecurityContextPersistenceFilter
 import grails.plugins.Plugin
-import org.springframework.boot.context.embedded.FilterRegistrationBean
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.http.converter.ByteArrayHttpMessageConverter
 import org.springframework.http.converter.FormHttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
@@ -52,7 +52,6 @@ import org.springframework.security.oauth2.provider.client.ClientCredentialsToke
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter
 import org.springframework.security.oauth2.provider.endpoint.DefaultRedirectResolver
-import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpointHandlerMapping
 import org.springframework.security.oauth2.provider.error.DefaultOAuth2ExceptionRenderer
 import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint
@@ -62,7 +61,6 @@ import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswo
 import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter
 import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices
-import org.springframework.security.oauth2.provider.token.TokenEnhancer
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain
 import org.springframework.security.web.access.ExceptionTranslationFilter
 import org.springframework.security.web.authentication.NullRememberMeServices
