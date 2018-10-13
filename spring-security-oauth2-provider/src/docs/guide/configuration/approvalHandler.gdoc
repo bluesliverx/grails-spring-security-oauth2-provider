@@ -2,7 +2,7 @@ The plugin provides support for the three @UserApprovalHandler@ implementations 
 
 {table}
 *Property*                      |   *Default Value*             |   *Meaning*
-auto                            |   @EXPLICIT@                  |   Determines which method of auto-approval to use. The value is determined by @grails.plugin.springsecurity.oauthprovider.approval.UserApprovalSupport@ and must be @EXPLICIT@, @TOKEN_STORE@ or @APPROVAL_STORE@.
+auto                            |   @EXPLICIT@                  |   Determines which method of auto-approval to use. The value is determined by @grails.plugin.springsecurity.oauthProvider.approval.UserApprovalSupport@ and must be @EXPLICIT@, @TOKEN_STORE@ or @APPROVAL_STORE@.
 handleRevocationAsExpiry        |   @false@                     |   When configured to use an approval store for auto-approval, this determines if approval revocation should expire the corresponding approval instance (@true@) or delete the approval (@false@) outright.
 approvalValiditySeconds         |   @60 \* 60 \* 24 \* 30@      |   When configured to use an approval store for auto-approval, the length of time that an approval will be valid after it has been granted.
 scopePrefix                     |   @'scope.'@                  |   When configured to use an approval store for auto-approval, the prefix added to approved scopes as part of the auto-approval process.
