@@ -3,7 +3,7 @@ set -e
 rm -rf *.zip
 # TODO: Determine why this fails on Travis with an exit code of 137
 #./gradlew acceptanceTest -P grailsVersions=3.0.17,3.1.7 --stacktrace --info
-./gradlew clean build
+./gradlew clean spring-security-oauth2-provider:build
 ./gradlew spring-security-oauth2-provider:gdocs --stacktrace
 
 cd spring-security-oauth2-provider/build/libs
