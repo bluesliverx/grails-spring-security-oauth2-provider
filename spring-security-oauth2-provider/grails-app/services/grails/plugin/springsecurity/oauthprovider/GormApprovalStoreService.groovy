@@ -1,8 +1,8 @@
 package grails.plugin.springsecurity.oauthprovider
 
+import grails.gorm.transactions.Transactional
 import grails.plugin.springsecurity.SpringSecurityUtils
 import grails.plugin.springsecurity.oauthprovider.exceptions.OAuth2ValidationException
-import grails.transaction.Transactional
 import org.springframework.security.oauth2.provider.approval.Approval
 import org.springframework.security.oauth2.provider.approval.ApprovalStore
 
