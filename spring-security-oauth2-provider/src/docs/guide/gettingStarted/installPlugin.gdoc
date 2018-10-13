@@ -2,6 +2,9 @@ Install the OAuth2 plugin by adding a dependency in @build.gradle@:
 
 {code}
 dependencies {
+    # For Grails 3.3+
+    compile 'org.grails.plugins:spring-security-oauth2-provider:3.1.0-RC1'
+    # For Grails 3 before 3.3
     compile 'org.grails.plugins:spring-security-oauth2-provider:3.0.0-RC2'
 }
 {code}
