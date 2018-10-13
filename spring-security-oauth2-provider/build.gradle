@@ -16,7 +16,7 @@ plugins {
     id "com.jfrog.bintray" version "1.2"
 }
 
-version "3.1.0-SNAPSHOT"
+version "3.1.1-SNAPSHOT"
 group "org.grails.plugins"
 
 //apply plugin: 'maven-publish'
@@ -26,18 +26,6 @@ apply plugin: "org.grails.grails-plugin"
 apply plugin: "org.grails.grails-plugin-publish"
 apply plugin: "org.grails.grails-gsp"
 apply plugin: "org.grails.grails-doc"
-
-// Workaround for jansi dependency problem with groovydoc (https://discuss.gradle.org/t/gradle-task-groovydoc-failing-with-noclassdeffounderror/2541/21)
-configurations {
-    jansi.extendsFrom(runtime)
-}
-groovydoc {
-    def title = "IPDS ${version}"
-    groovyClasspath = project.configurations.jansi
-}
-dependencies {
-    jansi 'org.fusesource.jansi:jansi:1.11'
-}
 
 repositories {
     mavenLocal()
@@ -99,20 +87,22 @@ task gdocs() {
     }
 }
 
-bintray {
-    pkg {
-        userOrg = 'bluesliverx'
-        repo = 'grails-plugins'
-        name = "org.grails.plugins:$project.name"
-        desc = "Grails OAuth 2 Provider Plugin"
-        websiteUrl = "http://grails.org/plugin/$project.name"
-        issueTrackerUrl = "https://github.com/bluesliverx/grails-spring-security-oauth2-provider/issues"
-        vcsUrl = "https://github.com/bluesliverx/grails-spring-security-oauth2-provider"
-        licenses = ['Apache-2.0']
-        publicDownloadNumbers = true
-        version {
-            attributes = ['grails-plugin': "org.grails.plugins:$project.name"]
-            name = project.version
-        }
+grailsPublish {
+    //user = 'user'  // Not required if you defined BINTRAY_USER var
+    //key = 'key'    // Not required if you defined BINTRAY_KEY var
+    userOrg = 'bluesliverx'
+    repo = 'grails-plugins'
+    githubSlug = 'bluesliverx/grails-spring-security-oauth2-provider'
+    license {
+        name = 'Apache-2.0'
     }
+    title = "spring-security-oauth2-provider"
+    desc = "Grails OAuth 2 Provider Plugin"
+    developers = [
+        bluesliverx:"Brian Saville", 
+        'bobby-vandiver':'Bobby Vandiver',
+        dynamind:'Roy Willemse'
+    ]
+    issueTrackerUrl = 'http://github.com/bluesliverx/grails-spring-security-oauth2-provider/issues'
+    vcsUrl = 'http://github.com/bluesliverx/grails-spring-security-oauth2-provider'
 }
