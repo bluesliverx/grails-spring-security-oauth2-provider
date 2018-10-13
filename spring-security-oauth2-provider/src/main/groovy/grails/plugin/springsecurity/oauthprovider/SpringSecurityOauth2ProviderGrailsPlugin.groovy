@@ -566,8 +566,8 @@ class SpringSecurityOauth2ProviderGrailsPlugin extends Plugin {
 
     @Override
     void doWithApplicationContext() {
-        def conf = loadSecurityConfig()
-        if(!conf) {
+        def conf = SpringSecurityUtils.securityConfig
+        if(!conf || !conf.active || !conf.oauthProvider.active) {
             return
         }
 
