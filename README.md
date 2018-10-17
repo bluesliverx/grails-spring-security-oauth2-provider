@@ -1,3 +1,10 @@
+## Deprecation Notice
+
+The plugin has been moved to new repository. 
+
+Please browse to [grails-plugins](https://github.com/grails-plugins) fork for new updates for the plugin source code:
+https://github.com/grails-plugins/grails-spring-security-oauth2-provider
+
 Grails Spring Security OAuth2 Provider Plugin
 =============================================
 [![Build Status](https://travis-ci.org/bluesliverx/grails-spring-security-oauth2-provider.svg?branch=master)](https://travis-ci.org/bluesliverx/grails-spring-security-oauth2-provider)
